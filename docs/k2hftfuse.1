@@ -1,0 +1,82 @@
+.TH k2hftfuse "1" "February 2015" "k2hftfuse" "K2HFUSE"
+.SH NAME
+k2hftfuse \- file transaction by FUSE-based file system with k2hash.
+.SH SYNOPSIS
+.TP
+\fBk2hftfuse [mount point] [options]
+.SH DESCRIPTION
+.TP
+k2hftfuse is file transaction system on FUSE file system with K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.
+.TP
+You can run k2hftfuse by manual and mount/umount system command(or fusermount command). If you run it manually, you can specify some following options.
+.TP
+For using mount/umount command, you need to modify /etc/fstab and add following line.
+.TP
+You can start k2hftfuse in any way. And you can see mount information by df command.
+.SH EXAMPLE
+.TP
+command line:
+$ k2hftfuse /mnt/k2hfs -o allow_other,dbglevel=err,conf=/etc/k2hftfuse.conf -f -d
+.TP
+/etc/fstab:
+k2hftfuse /mnt/k2hfs fuse allow_other,nodev,nosuid,_netdev,dbglevel=err,conf=/etc/k2hftfuse.conf 0 0
+.SH OPTIONS
+\fBmount point\fR
+directory path for k2hftfuse mount point
+.TP
+\fB\-h(\-\-help)\fR
+print help
+.TP
+\fB\-v(\-\-version)\fR
+print version
+.TP
+\fB\-d(\-\-debug)\fR
+set debug level "msg", this option is common with FUSE
+.TP
+\fB\-o umask=<number>\fR
+set umask with FUSE
+.TP
+\fB\-o uid=<number>\fR
+set uid with FUSE
+.TP
+\fB\-o gid=<number>\fR
+set gid with FUSE
+.TP
+\fB\-o dbglevel={err|wan|msg}\fR
+set debug level affect only k2hftfuse
+.TP
+\fB\-o conf=<configration file>\fR
+specify configration file for k2hftfuse and all sub system
+.TP
+\fB\-o json=<json string>\fR
+specify json string as configration for k2hftfuse and all sub system
+.TP
+\fB\-o enable_run_chmpx\fR
+run chmpx slave process
+.TP
+\fB\-o disable_run_chmpx\fR
+do not run chmpx slave process(default)
+.TP
+\fB\-o chmpxlog=<log file path>\fR
+chmpx log file path when k2hftfuse run chmpx
+.PP
+.SH ENVIRONMENT
+.TP 2
+This program use some environments automatically, plese take care these environments.
+.IP K2HFTCONFFILE 20
+specify configuratin file by environment, this program uses this value when configuration file is not specified in command line.
+.IP K2HFTJSONCONF 20
+specify configuratin json string by environment, chmpx uses this value when configuration json string is not specified in command line.
+.SH NOTES
+.TP
+When you run k2hftfuse on user level, you need to add "user_allow_other" word in /etc/fuse.conf.
+.TP
+k2hftfuse is K2HASH(NoSQL library) product by Yahoo! JAPAN. K2HASH is following specifications.
+.SH SEE ALSO
+.TP
+k2hftfusesvr(1) k2hash(1) chmpx(1)
+.SH BUGS
+.TP
+Please report owner and comitter.
+.SH AUTHOR
+k2hftfuse has been written by Takeshi Nakatani <ggtakec@gmail.com>.

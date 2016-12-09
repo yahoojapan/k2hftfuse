@@ -1,0 +1,139 @@
+#
+# k2hftfuse for file transaction by FUSE-based file system
+#
+# Copyright 2015 Yahoo! JAPAN corporation.
+#
+# k2hftfuse is file transaction system on FUSE file system with
+# K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.
+#
+# For the full copyright and license information, please view
+# the LICENSE file that was distributed with this source code.
+#
+# AUTHOR:   Takeshi Nakatani
+# CREATE:   Tue Sep 1 2015
+# REVISION:
+#
+
+#
+# Compiled Object files
+#
+*.slo
+*.lo
+*.o
+*.Po
+*.Plo
+
+#
+# Precompiled Headers
+#
+*.gch
+*.pch
+
+#
+# Compiled Dynamic libraries
+#
+*.so
+*.so.*
+*.dylib
+*.dll
+
+#
+# Fortran module files
+#
+*.mod
+
+#
+# Compiled Static libraries
+#
+*.lai
+*.la
+*.a
+*.lib
+
+#
+# Executables
+#
+*.exe
+*.out
+*.app
+
+#
+# autotools
+#
+aclocal.m4
+autom4te.cache
+autoscan.log
+config.guess
+config.h
+config.h.in
+config.h.in~
+config.log
+config.status
+config.sub
+configure
+configure.scan
+depcomp
+install-sh
+libtool
+ltmain.sh
+m4
+m4/*
+missing
+stamp-h1
+
+#
+# automakes
+#
+Makefile.in
+*/Makefile.in
+
+
+#
+# archive files and backups
+#
+*.tgz
+*.tar.gz
+*.rpm
+*.swp
+
+#
+# object directories
+#
+.deps
+.libs
+*/.deps
+*/.deps/*
+*/.libs
+*/.libs/*
+
+#
+# other files
+#
+compile
+compile/*
+test-driver
+test-driver/*
+
+#
+# Other built objects
+#
+*.pc
+Makefile
+*/Makefile
+
+#
+# project custom
+#
+RELEASE_VERSION
+src/k2hftfuseversion.cc
+src/k2hftfusesvrversion.cc
+*.k2h
+src/k2hftfuse
+src/k2hftfusesvr
+tests/k2hftfusetest
+
+#
+# VIM modelines
+#
+# vim:set ts=4 fenc=utf-8:
+#

@@ -1,0 +1,12 @@
+[submodule "fullock"]
+	path = fullock
+	url = https://github.com/yahoojapan/fullock.git
+[submodule "k2hash"]
+	path = k2hash
+	url = https://github.com/yahoojapan/k2hash.git
+[submodule "chmpx"]
+	path = chmpx
+	url = https://github.com/yahoojapan/chmpx.git
+[submodule "k2htp_dtor"]
+	path = k2htp_dtor
+	url = https://github.com/yahoojapan/k2htp_dtor.git

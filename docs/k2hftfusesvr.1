@@ -1,0 +1,45 @@
+.TH k2hftfusesvr "1" "February 2015" "k2hftfusesvr" "K2HFUSE"
+.SH NAME
+k2hftfusesvr \- file transaction by FUSE-based file system.
+.SH SYNOPSIS
+.TP
+\fBk2hftfusesvr [options]
+.SH DESCRIPTION
+.TP
+k2hftfusesvr is file transaction system on FUSE file system with K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.
+.TP
+k2hftfusesvr is receiver for k2hftfuse sending data. k2hftfusesvr can be end of transferring and repeater. The two operations are distinguished by the setting of the configuration file to specify the options.
+.SH OPTIONS
+\fB\-h(help)\fR
+print help
+.TP
+\fB\-v(version)\fR
+print version
+.TP
+\fB\-conf <configration file>\fR
+specify configration file for k2hftfusesvr and all sub system
+.TP
+\fB\-json <json string>\fR
+specify json string as configration for k2hftfusesvr and all sub system
+.TP
+\fB\-d(g) {err|wan|msg|silent}\fR
+set debug level affect only k2hftfusesvr
+.PP
+.SH ENVIRONMENT
+.TP 2
+This program use some environments automatically, plese take care these environments.
+.IP K2HFTSVRCONFFILE 20
+specify configuratin file by environment, this program uses this value when configuration file is not specified in command line.
+.IP K2HFTSVRJSONCONF 20
+specify configuratin json string by environment, chmpx uses this value when configuration json string is not specified in command line.
+.SH NOTES
+.TP
+k2hftfusesvr is K2HASH(NoSQL library) product by Yahoo! JAPAN. K2HASH is following specifications.
+.SH SEE ALSO
+.TP
+k2hftfuse(1) k2hash(1) chmpx(1)
+.SH BUGS
+.TP
+Please report owner and comitter.
+.SH AUTHOR
+k2hftfusesvr has been written by Takeshi Nakatani <ggtakec@gmail.com>.

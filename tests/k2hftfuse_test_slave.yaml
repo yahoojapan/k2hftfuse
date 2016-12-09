@@ -1,0 +1,241 @@
+#
+# k2hftfuse for file transaction by FUSE-based file system
+#
+# Copyright 2015 Yahoo! JAPAN corporation.
+#
+# k2hftfuse is file transaction system on FUSE file system with
+# K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.
+#
+# For the full copyright and license information, please view
+# the LICENSE file that was distributed with this source code.
+#
+# AUTHOR:   Takeshi Nakatani
+# CREATE:   Mon Nor 21 2016
+# REVISION:
+#
+
+# 
+# CHMPX CONFIGRATION FILE FOR TESTING K2HFUSE
+#
+
+#
+# GLOBAL SECTION
+#
+GLOBAL:
+    {
+        FILEVERSION:            1,
+        DATE:                   "Thu, 03 Sep 2015 17:27:28 +0900",
+        GROUP:                  K2HFUSETEST,
+        MODE:                   SLAVE,
+        DELIVERMODE:            random,
+        #DELIVERMODE:           hash,
+        MAXCHMPX:               2,
+        REPLICA:                0,
+        MAXMQSERVER:            2,
+        MAXMQCLIENT:            2,
+        MQPERATTACH:            1,
+        MAXQPERSERVERMQ:        1,
+        MAXQPERCLIENTMQ:        1,
+        MAXMQPERCLIENT:         1,
+        MAXHISTLOG:             1000,
+        PORT:                   8020,
+        CTLPORT:                8022,
+        SELFCTLPORT:            8022,
+        RWTIMEOUT:              100000,
+        RETRYCNT:               1000,
+        CONTIMEOUT:             500000,
+        MQRWTIMEOUT:            50,
+        MQRETRYCNT:             100000,
+        DOMERGE:                on,
+        SSL:                    no,
+        #SSL:                   yes,
+        #SSL_VERIFY_PEER:       yes,
+        #CAPATH:                /etc/ssl/certs,
+        #SERVER_CERT:           /home/xxxxx/certs/server.crt,
+        #SERVER_PRIKEY:         /home/xxxxx/certs/server_201501.key,
+        #SLAVE_CERT:            /home/xxxxx/certs/client.crt,
+        #SLAVE_PRIKEY:          /home/xxxxx/certs/client_201501.key,
+        K2HFULLMAP:             on,
+        K2HMASKBIT:             4,
+        K2HCMASKBIT:            4,
+        K2HMAXELE:              2
+    }
+
+#
+# SERVER NODES SECTION
+#
+SVRNODE:
+    [
+        {
+            NAME:               localhost,
+            PORT:               8020,
+            CTLPORT:            8021,
+            SSL:                no,
+            #SSL:               yes,
+            #SSL_VERIFY_PEER:   yes,
+            #CAPATH:            /etc/ssl/certs,
+            #SERVER_CERT:       /home/xxxxx/certs/server.crt,
+            #SERVER_PRIKEY:     /home/xxxxx/certs/server_201501.key,
+            #SLAVE_CERT:        /home/xxxxx/certs/client.crt,
+            #SLAVE_PRIKEY:      /home/xxxxx/certs/client_201501.keys
+        }
+    ]
+
+#
+# SLAVE NODES SECTION
+#
+SLVNODE:
+    [
+        {
+            NAME:               "[.]*",
+            CTLPORT:            8022,
+            #CAPATH:            /etc/ssl/certs,
+            #SLAVE_CERT:        /home/xxxxx/certs/client.crt,
+            #SLAVE_PRIKEY:      /home/xxxxx/certs/client_201501.key
+        }
+    ]
+
+#
+# K2HTPDTOR
+#
+K2HTPDTOR:
+    {
+        K2HTPDTOR_BROADCAST:    no,
+        #K2HTPDTOR_CHMPXCONF:   dtor_test_slave.yaml,
+        #K2HTPDTOR_EXCEPT_KEY:  test_key
+    }
+
+#
+# K2HFTFUSE
+#
+# K2HTYPE       type of k2hash used by transfer mode
+# K2HFILE       file path of k2hash used by transfer mode, when file type
+# K2HFULLMAP    mapping type of k2hash used by transfer mode, when file type
+# K2HINIT       initializing of k2hash used by transfer mode, when file type
+# K2HMASKBIT    init mask bit count of k2hash used by transfer mode, when file type
+# K2HCMASKBIT   collision mask bit count of k2hash used by transfer mode, when file type
+# K2HMAXELE     maximum element count of k2hash used by transfer mode, when file type
+# K2HPAGESIZE   page size of k2hash used by transfer mode, when file type
+# DTORTHREADCNT k2hdtor thread count
+# DTORCTP       custom k2hdtor plugin file name(or path)
+# BINTRANS      transfer as binary data array
+# EXPIRE        grant the expiration date to transfer
+# TRANSLINECNT  transfer line count limit at one time(default 0)
+# TRANSTIMEUP   transfer timeup limit(default 0)
+# BYTELIMIT     muxium bytes for one data length(default 0, means no limit)
+#
+K2HFTFUSE:
+    {
+        K2HTYPE:                mem,
+        #K2HFILE:               /tmp/k2hftfuse.k2h,
+        #K2HFULLMAP:            yes,
+        #K2HINIT:               yes,
+        K2HMASKBIT:             4,
+        K2HCMASKBIT:            4,
+        K2HMAXELE:              2,
+        K2HPAGESIZE:            128,
+        #DTORTHREADCNT:         1,
+        #DTORCTP:               path.so,
+        #BINTRANS:              yes,
+        #EXPIRE:                300,
+        #TRANSLINECNT:          10,
+        #TRANSTIMEUP:           1,
+        #BYTELIMIT:             0,
+
+        #
+        # K2HFTFUSE_RULE_DIR( K2HFTFUSE sub rule )
+        #
+        # TARGET        traget directory path
+        # TRUNS         enable/disable flag for transfer
+        # OUTPUTFILE    enable/disable flag for put file
+        # PLUGIN        plugin program path
+        # DEFAULTALL    default rule as DENY or ALLOW(DENY as default)
+        # ALLOW         allowed rule, rule is static string or regex. and convert rule when regex.
+        # DENY          denied rule, rule is static string or regex. and convert rule when regex.
+        #
+        K2HFTFUSE_RULE_DIR:
+        [
+            {
+                TARGET:             any/log,
+                TRUNS:              on,
+                OUTPUTFILE:         /tmp/k2hftfuse/log/,
+                DEFAULTALL:         DENY,
+                ALLOW:              [   INFO,
+                                        [ "(.*)([eE][rR][rR])(.*)", "$0" ]
+                                    ]
+            },
+            {
+                TARGET:             any/plugintest,
+                TRUNS:              on,
+                OUTPUTFILE:         /tmp/k2hftfuse/any/plugintest/,
+                PLUGIN:             /bin/cat,
+                DEFAULTALL:         ALLOW
+            }
+        ],
+
+        #
+        # K2HFTFUSE_RULE( K2HFTFUSE sub rule )
+        #
+        # TARGET        traget file path
+        # TRUNS         enable/disable flag for transfer
+        # OUTPUTFILE    enable/disable flag for put file
+        # PLUGIN        plugin program path
+        # DEFAULTALL    default rule as DENY or ALLOW
+        # ALLOW         allowed rule, rule is static string or regex. and convert rule when regex.
+        # DENY          denied rule, rule is static string or regex. and convert rule when regex.
+        #
+        K2HFTFUSE_RULE:
+        [
+            {
+                TARGET:             log/test.log,
+                TRUNS:              on,
+                OUTPUTFILE:         /dev/null,
+                DEFAULTALL:         DENY,
+                ALLOW:              [   INFO,
+                                        "(.*)([wW][aA][rR][nN])(.*)",
+                                        [ "(.*)([eE][rR][rR])(.*)", "$1 = ERROR = $3" ]
+                                    ]
+            },
+            {
+                TARGET:             log/error.log,
+                TRUNS:              off,
+                OUTPUTFILE:         log/nothing3.log,
+                DEFAULTALL:         DENY,
+                ALLOW:              [   INFO,
+                                        "(.*)([wW][aA][rR][nN])(.*)",
+                                        [ "(.*)([eE][rR][rR])(.*)", "$1,$3" ]
+                                    ]
+            },
+            {
+                TARGET:             log/nothing1.log,
+                TRUNS:              on,
+                OUTPUTFILE:         /tmp/k2hftfuse/log/nothing1.log
+            },
+            {
+                TARGET:             log/nothing2.log,
+                TRUNS:              on,
+                OUTPUTFILE:         "",
+                DEFAULTALL:         ALLOW
+            },
+            {
+                TARGET:             log/nothing3.log,
+                TRUNS:              on,
+                OUTPUTFILE:         /tmp/k2hftfuse/log/nothing3.log,
+                DEFAULTALL:         DENY,
+                ALLOW:              ""
+            },
+            {
+                TARGET:             log/plugintest.log,
+                TRUNS:              on,
+                OUTPUTFILE:         /tmp/k2hftfuse/log/plugintest.log,
+                PLUGIN:             /bin/cat,
+                DEFAULTALL:         ALLOW
+            }
+        ]
+    }
+
+#
+# VIM modelines
+#
+# vim:set ts=4 fenc=utf-8:
+#

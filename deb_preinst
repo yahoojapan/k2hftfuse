@@ -1,0 +1,79 @@
+#!/bin/sh
+#
+# k2hftfuse for file transaction by FUSE-based file system
+#
+# Copyright 2015 Yahoo! JAPAN corporation.
+#
+# k2hftfuse is file transaction system on FUSE file system with
+# K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.
+#
+# For the full copyright and license information, please view
+# the LICENSE file that was distributed with this source code.
+#
+# AUTHOR:   Takeshi Nakatani
+# CREATE:   Thu Sep 24 2015
+# REVISION:
+#
+
+#
+# preinst script for k2hftfuse
+#
+
+set -e
+
+#
+# summary of how this script can be called:
+#        * <new-preinst> `install'
+#        * <new-preinst> `install' <old-version>
+#        * <new-preinst> `upgrade' <old-version>
+#        * <old-preinst> `abort-upgrade' <new-version>
+# for details, see http://www.debian.org/doc/debian-policy/ or
+# the debian-policy package
+#
+case "$1" in
+	install|upgrade)
+		if [ -f /etc/fuse.conf ]; then
+			set +e
+			grep '^[[:space:]]*user_allow_other[[:space:]]*$' /etc/fuse.conf > /dev/null 2>&1
+			if [ $? != 0 ]; then
+				set -e
+				chmod -f 644 /etc/fuse.conf > /dev/null 2>&1
+				echo ""                     >> /etc/fuse.conf
+				echo "### add by k2hftfuse" >> /etc/fuse.conf
+				echo "user_allow_other"     >> /etc/fuse.conf
+			else
+				set -e
+			fi
+		else
+			touch /etc/fuse.conf
+			chmod -f 644 /etc/fuse.conf > /dev/null 2>&1
+			echo "### add by k2hftfuse" >> /etc/fuse.conf
+			echo "user_allow_other"     >> /etc/fuse.conf
+		fi
+
+		if [ -c /dev/fuse ]; then
+			chmod -f a+rw /dev/fuse > /dev/null 2>&1
+		fi
+
+		if [ -f /bin/fusermount ]; then
+			chmod -f o+rx /bin/fusermount > /dev/null 2>&1
+		fi
+	;;
+
+	abort-upgrade)
+		# nothing to do
+	;;
+
+	*)
+		echo "preinst called with unknown argument \`$1'" >&2
+		exit 1
+	;;
+esac
+
+exit 0
+
+#
+# VIM modelines
+#
+# vim:set ts=4 fenc=utf-8:
+#

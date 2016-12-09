@@ -1,0 +1,152 @@
+#
+# k2hftfuse for file transaction by FUSE-based file system
+#
+# Copyright 2015 Yahoo! JAPAN corporation.
+#
+# k2hftfuse is file transaction system on FUSE file system with
+# K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.
+#
+# For the full copyright and license information, please view
+# the LICENSE file that was distributed with this source code.
+#
+# AUTHOR:   Takeshi Nakatani
+# CREATE:   Mon Nor 21 2016
+# REVISION:
+#
+
+# 
+# CHMPX CONFIGRATION FILE FOR TESTING K2HFUSE
+#
+
+#
+# GLOBAL SECTION
+#
+GLOBAL:
+    {
+        FILEVERSION:            1,
+        DATE:                   "Thu, 03 Sep 2015 17:27:28 +0900",
+        GROUP:                  K2HFUSETEST,
+        MODE:                   SERVER,
+        DELIVERMODE:            random,
+        #DELIVERMODE:           hash,
+        MAXCHMPX:               2,
+        REPLICA:                0,
+        MAXMQSERVER:            2,
+        MAXMQCLIENT:            2,
+        MQPERATTACH:            1,
+        MAXQPERSERVERMQ:        1,
+        MAXQPERCLIENTMQ:        1,
+        MAXMQPERCLIENT:         1,
+        MAXHISTLOG:             1000,
+        PORT:                   8020,
+        CTLPORT:                8021,
+        SELFCTLPORT:            8021,
+        RWTIMEOUT:              100000,
+        RETRYCNT:               1000,
+        CONTIMEOUT:             500000,
+        MQRWTIMEOUT:            50,
+        MQRETRYCNT:             100000,
+        DOMERGE:                on,
+        SSL:                    no,
+        #SSL:                   yes,
+        #SSL_VERIFY_PEER:       yes,
+        #CAPATH:                /etc/ssl/certs,
+        #SERVER_CERT:           /home/xxxxx/certs/server.crt,
+        #SERVER_PRIKEY:         /home/xxxxx/certs/server_201501.key,
+        #SLAVE_CERT:            /home/xxxxx/certs/client.crt,
+        #SLAVE_PRIKEY:          /home/xxxxx/certs/client_201501.key,
+        K2HFULLMAP:             on,
+        K2HMASKBIT:             4,
+        K2HCMASKBIT:            4,
+        K2HMAXELE:              2
+    }
+
+#
+# SERVER NODES SECTION
+#
+SVRNODE:
+    [
+        {
+            NAME:               localhost,
+            #PORT:              8020,
+            #CTLPORT:           8021,
+            SSL:                no,
+            #SSL:               yes,
+            #SSL_VERIFY_PEER:   yes,
+            #CAPATH:            /etc/ssl/certs,
+            #SERVER_CERT:       /home/xxxxx/certs/server.crt,
+            #SERVER_PRIKEY:     /home/xxxxx/certs/server_201501.key,
+            #SLAVE_CERT:        /home/xxxxx/certs/client.crt,
+            #SLAVE_PRIKEY:      /home/xxxxx/certs/client_201501.key
+        }
+    ]
+
+#
+# SLAVE NODES SECTION
+#
+SLVNODE:
+    [
+        {
+            NAME:               "[.]*",
+            CTLPORT:            8022,
+            #CAPATH:            /etc/ssl/certs,
+            #SLAVE_CERT:        /home/xxxxx/certs/client.crt,
+            #SLAVE_PRIKEY:      /home/xxxxx/certs/client_201501.key
+        }
+    ]
+
+#
+# K2HFTFUSESVR
+#
+# TYPE              { trans | file | both }
+# FILE_BASEDIR      output file base directory
+# FILE_UNIFY        if puts one file for all, specify relative file path.(only file type)
+# FILE_TIMEFORM     format for time data like strftime function.(only file type) + '%-': ns(decimal), %%=%
+# PLUGIN            program file path for plugin
+# FORMAT            output format.(only file type)
+#                       %H  hostname
+#                       %P  thread(process) id
+#                       %F  file path
+#                       %f  file name
+#                       %T  time, formatted by FILE_TIMEFORM
+#                       %L  output content data
+#                   * If FORMAT is not specified, it means "%L".
+#
+# TRANSCONF         slave chmpx configuration file path.(only trans type)
+# K2HTYPE           type of k2hash used by transfer mode
+# K2HFILE           file path of k2hash used by transfer mode, when file type
+# K2HFULLMAP        mapping type of k2hash used by transfer mode, when file type
+# K2HINIT           initializing of k2hash used by transfer mode, when file type
+# K2HMASKBIT        init mask bit count of k2hash used by transfer mode, when file type
+# K2HCMASKBIT       collision mask bit count of k2hash used by transfer mode, when file type
+# K2HMAXELE         maximum element count of k2hash used by transfer mode, when file type
+# K2HPAGESIZE       page size of k2hash used by transfer mode, when file type
+# DTORTHREADCNT     k2hdtor thread count
+# DTORCTP           custom transaction plugin
+#
+K2HFTFUSESVR:
+    {
+        TYPE:                   file,
+        FILE_BASEDIR:           /tmp/k2hftfusesvr,
+        FILE_UNIFY:             log/unify.log,
+        FILE_TIMEFORM:          "%F %T(%s %-)",
+        PLUGIN:                 /bin/cat,
+        FORMAT:                 "%H:%F(%P):%f[%T] %L",
+        #TRANSCONF:             k2hftfusesvr_test_trans_slave.yaml,
+        #K2HTYPE:               mem,
+        #K2HFILE:               /tmp/k2hftfuse.k2h,
+        #K2HFULLMAP:            yes,
+        #K2HINIT:               yes,
+        K2HMASKBIT:             4,
+        K2HCMASKBIT:            4,
+        K2HMAXELE:              2,
+        K2HPAGESIZE:            128,
+        #DTORTHREADCNT:         1,
+        #DTORCTP:               path.so
+    }
+
+#
+# VIM modelines
+#
+# vim:set ts=4 fenc=utf-8:
+#
