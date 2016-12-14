@@ -259,7 +259,7 @@ bool K2hFtFdCache::Close(void)
 		run_thread = false;		// for stop
 
 		// kick signal
-		if(-1 == K2hFtFdCache::KickSignal()){
+		if(!K2hFtFdCache::KickSignal()){
 			ERR_K2HFTPRN("Could not kick signal, but continue...");
 		}else{
 			// wait for thread exit
