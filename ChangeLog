@@ -1,6 +1,11 @@
+k2hftfuse (1.0.19) trusty; urgency=low
+
+  * Fixed a bug and Updated submodules and Changed .travis.yaml - #1
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Mon, 19 Dec 2016 08:34:29 +0900
+
 k2hftfuse (1.0.18) trusty; urgency=low
 
   * First version of open sorce on Github
 
  -- Takeshi Nakatani <ggtakec@gmail.com>  Wed, 07 Dec 2016 20:46:37 +0900
-
