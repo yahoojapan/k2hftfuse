@@ -54,6 +54,8 @@ inline string get_string_content(const char* value)
 				strtmp = ptmp;
 				K2HFT_FREE(ptmp);
 			}
+		}else{
+			strtmp = value;
 		}
 	}
 	return strtmp;
