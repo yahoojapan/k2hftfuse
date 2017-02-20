@@ -930,7 +930,7 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 	#
 	# check line count
 	#
-	LINES=`wc -l /tmp/k2hftfusesvr/log/unify.log 2> /dev/null | awk '{print $1}' 2> /dev/null`
+	LINES=`grep 'log/nothing2.log' unify.log 2> /dev/null | wc -l 2> /dev/null | awk '{print $1}' 2> /dev/null`
 	if [ "X$LINES" != "X10" ]; then
 		echo "ERROR: unify.log file line count(${LINES}) is not as same as 10."
 		TESTSUBRESULT=1
@@ -1140,7 +1140,7 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 	#
 	# check line count
 	#
-	LINES=`wc -l /tmp/k2hftfusesvr/log/unify.log 2> /dev/null | awk '{print $1}' 2> /dev/null`
+	LINES=`grep 'log/nothing2.log' unify.log 2> /dev/null | wc -l 2> /dev/null | awk '{print $1}' 2> /dev/null`
 	if [ "X$LINES" != "X10" ]; then
 		echo "ERROR: unify.log file line count(${LINES}) is not as same as 10."
 		TESTSUBRESULT=1
@@ -1361,7 +1361,7 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 	#
 	# check line count
 	#
-	LINES=`wc -l /tmp/k2hftfusesvr/log/unify.log 2> /dev/null | awk '{print $1}' 2> /dev/null`
+	LINES=`grep 'log/nothing2.log' unify.log 2> /dev/null | wc -l 2> /dev/null | awk '{print $1}' 2> /dev/null`
 	if [ "X$LINES" != "X10" ]; then
 		echo "ERROR: unify.log file line count(${LINES}) is not as same as 10."
 		TESTSUBRESULT=1
@@ -1570,7 +1570,7 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 	#
 	# check line count
 	#
-	LINES=`wc -l /tmp/k2hftfusesvr/log/unify.log 2> /dev/null | awk '{print $1}' 2> /dev/null`
+	LINES=`grep 'log/nothing2.log' unify.log 2> /dev/null | wc -l 2> /dev/null | awk '{print $1}' 2> /dev/null`
 	if [ "X$LINES" != "X10" ]; then
 		echo "ERROR: unify.log file line count(${LINES}) is not as same as 10."
 		TESTSUBRESULT=1
@@ -1791,7 +1791,7 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 	#
 	# check line count
 	#
-	LINES=`wc -l /tmp/k2hftfusesvr/log/unify.log 2> /dev/null | awk '{print $1}' 2> /dev/null`
+	LINES=`grep 'log/nothing2.log' unify.log 2> /dev/null | wc -l 2> /dev/null | awk '{print $1}' 2> /dev/null`
 	if [ "X$LINES" != "X10" ]; then
 		echo "ERROR: unify.log file line count(${LINES}) is not as same as 10."
 		TESTSUBRESULT=1
@@ -2000,7 +2000,7 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 	#
 	# check line count
 	#
-	LINES=`wc -l /tmp/k2hftfusesvr/log/unify.log 2> /dev/null | awk '{print $1}' 2> /dev/null`
+	LINES=`grep 'log/nothing2.log' unify.log 2> /dev/null | wc -l 2> /dev/null | awk '{print $1}' 2> /dev/null`
 	if [ "X$LINES" != "X10" ]; then
 		echo "ERROR: unify.log file line count(${LINES}) is not as same as 10."
 		TESTSUBRESULT=1
@@ -2221,7 +2221,7 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 	#
 	# check line count
 	#
-	LINES=`wc -l /tmp/k2hftfusesvr/log/unify.log 2> /dev/null | awk '{print $1}' 2> /dev/null`
+	LINES=`grep 'log/nothing2.log' unify.log 2> /dev/null | wc -l 2> /dev/null | awk '{print $1}' 2> /dev/null`
 	if [ "X$LINES" != "X10" ]; then
 		echo "ERROR: unify.log file line count(${LINES}) is not as same as 10."
 		TESTSUBRESULT=1
