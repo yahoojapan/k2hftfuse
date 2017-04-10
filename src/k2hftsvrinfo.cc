@@ -128,6 +128,37 @@ inline bool make_time_output_string(string& strtime, const k2hftsvrtplist_t& lis
 	return true;
 }
 
+inline bool convert_hex_to_char(const char*& ptr, char& data)
+{
+	data = 0;
+	if(!ptr){
+		return false;
+	}else if('0' <= *ptr && *ptr <= '9'){
+		data += (*ptr - '0');
+	}else if('a' <= *ptr && *ptr <= 'f'){
+		data += ((*ptr - 'a') + 10);
+	}else if('A' <= *ptr && *ptr <= 'F'){
+		data += ((*ptr - 'A') + 10);
+	}else{
+		return false;
+	}
+	const char*	pnext = ptr + sizeof(char);
+	if('0' <= *pnext && *pnext <= '9'){
+		data *= 16;
+		data += (*pnext - '0');
+		++ptr;
+	}else if('a' <= *pnext && *pnext <= 'f'){
+		data *= 16;
+		data += ((*pnext - 'a') + 10);
+		++ptr;
+	}else if('A' <= *pnext && *pnext <= 'F'){
+		data *= 16;
+		data += ((*pnext - 'A') + 10);
+		++ptr;
+	}
+	return true;
+}
+
 inline void build_form_part_list(const char* form, k2hftsvrfplist_t& list)
 {
 	list.clear();
@@ -153,13 +184,22 @@ inline void build_form_part_list(const char* form, k2hftsvrfplist_t& list)
 					// %% -> %
 					tmppart.form += *cur;
 
-				}else if('L' == *cur || 'l' == *cur){
+				}else if('L' == *cur){
 					if(!tmppart.form.empty()){
 						tmppart.type = K2HFTSVR_FPT_STRING;
 						list.push_back(tmppart);
 						tmppart.form = "";
 					}
 					tmppart.type = K2HFTSVR_FPT_CONTENTS;
+					list.push_back(tmppart);
+
+				}else if('l' == *cur){
+					if(!tmppart.form.empty()){
+						tmppart.type = K2HFTSVR_FPT_STRING;
+						list.push_back(tmppart);
+						tmppart.form = "";
+					}
+					tmppart.type = K2HFTSVR_FPT_TRIM_CONTENTS;
 					list.push_back(tmppart);
 
 				}else if('T' == *cur || 't' == *cur){
@@ -213,7 +253,7 @@ inline void build_form_part_list(const char* form, k2hftsvrfplist_t& list)
 				}
 			}else if('\\' == *cur){
 				++cur;
-				if('\0' == *cur){
+				if('\0' == *cur || '0' == *cur){		// "\0" means Octal number = 0(0x00)
 					MSG_K2HFTPRN("format string(%s) last word is single \\, so skip this word.", form);
 					if(!tmppart.form.empty()){
 						tmppart.type = K2HFTSVR_FPT_STRING;
@@ -221,11 +261,43 @@ inline void build_form_part_list(const char* form, k2hftsvrfplist_t& list)
 						tmppart.form = "";
 					}
 					break;
-				}else if('\\' != *cur && '\"' != *cur && '\'' != *cur){
+				}else if('\\' == *cur || '\"' == *cur || '\'' == *cur || '\?' == *cur){
+					tmppart.form += *cur;
+				}else if('a' == *cur){
+					tmppart.form += '\a';
+				}else if('b' == *cur){
+					tmppart.form += '\b';
+				}else if('f' == *cur){
+					tmppart.form += '\f';
+				}else if('n' == *cur){
+					tmppart.form += '\n';
+				}else if('r' == *cur){
+					tmppart.form += '\r';
+				}else if('t' == *cur){
+					tmppart.form += '\t';
+				}else if('x' == *cur){
+					++cur;
+					char	tmpch = 0;
+					if(!convert_hex_to_char(cur, tmpch)){
+						if('\0' == *cur){
+							MSG_K2HFTPRN("format string(%s) last word is single \\, so skip this word.", form);
+							if(!tmppart.form.empty()){
+								tmppart.type = K2HFTSVR_FPT_STRING;
+								list.push_back(tmppart);
+								tmppart.form = "";
+							}
+							break;
+						}else{
+							WAN_K2HFTPRN("\"\\xN\" in format string(%s) is wrong format, so skip this string.", form);
+						}
+					}else{
+						tmppart.form += tmpch;
+					}
+				}else if('0' < *cur && *cur <= '8'){	// "\0" is already checked
+					tmppart.form += (*cur - '0');
+				}else{
 					MSG_K2HFTPRN("format string(%s) last word is single \\, so skip this word.", form);
 				}
-				tmppart.form += *cur;
-
 			}else{
 				tmppart.form += *cur;
 			}
@@ -249,6 +321,11 @@ inline void make_form_output_string(string& stroutput, const k2hftsvrfplist_t& o
 		if(K2HFTSVR_FPT_CONTENTS == iter->type){
 			if(content){
 				stroutput += content;
+			}
+		}else if(K2HFTSVR_FPT_TRIM_CONTENTS == iter->type){
+			if(content){
+				string	strtmp	= trim(string(content));
+				stroutput += strtmp;
 			}
 		}else if(K2HFTSVR_FPT_TIME == iter->type){
 			stroutput += strtime;
