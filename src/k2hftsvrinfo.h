@@ -62,12 +62,13 @@ typedef std::vector<K2HFTSVRTIMEPART>			k2hftsvrtplist_t;
 //
 typedef enum k2hftsvr_format_part_type{
 	K2HFTSVR_FPT_STRING,						// 
-	K2HFTSVR_FPT_CONTENTS,						// %L(%l)
+	K2HFTSVR_FPT_CONTENTS,						// %L
 	K2HFTSVR_FPT_TIME,							// %T(%t)
 	K2HFTSVR_FPT_FILENAME,						// %f
 	K2HFTSVR_FPT_FILEPATH,						// %F
 	K2HFTSVR_FPT_PID,							// %P(%p)
-	K2HFTSVR_FPT_HOSTNAME						// %H(%h)
+	K2HFTSVR_FPT_HOSTNAME,						// %H(%h)
+	K2HFTSVR_FPT_TRIM_CONTENTS					// %l
 }K2HFTSVRFPT;
 
 typedef struct k2hftsvr_form_part{

@@ -1,3 +1,17 @@
+k2hftfuse (1.0.23) trusty; urgency=low
+
+  * Supported trimed contents format keyword
+  * Added lib_version_for_link option to make_valiables.sh
+  * Updated submodule dependency for k2htp_dtor/chmpx/k2hash/fullock
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Tue, 28 Mar 2017 14:42:57 +0900
+
+k2hftfuse (1.0.22) trusty; urgency=low
+
+  * Only version increment for packaging
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Thu, 23 Feb 2017 13:29:41 +0900
+
 k2hftfuse (1.0.21) trusty; urgency=low
 
   * Fixed a bug about FORMAT does not work in k2hftfusesvr
