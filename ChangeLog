@@ -1,3 +1,15 @@
+k2hftfuse (1.0.25) trusty; urgency=low
+
+  * Update dependency on k2hash/chmpx/k2htp_dtor and README/AUTHORS
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Tue, 27 Mar 2018 09:27:45 +0900
+
+k2hftfuse (1.0.24) trusty; urgency=low
+
+  * Added/Modified files for new developer package
+
+ -- Takeshi Nakatani <ggtakec@gmail.com> Wed, 28 Feb 2018 15:35:35 +0900
+
 k2hftfuse (1.0.23) trusty; urgency=low
 
   * Supported trimed contents format keyword
