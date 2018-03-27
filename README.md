@@ -25,10 +25,13 @@ k2hftfuse /mnt/k2hfs fuse allow_other,nodev,nosuid,_netdev,dbglevel=err,conf=/et
 
 Please see man k2hftfuse.
 
-### Doccuments
+### Documents
   - [WIKI](https://github.com/yahoojapan/k2hftfuse/wiki)
 
 ### License
-This software is released under the MIT License, see the LICENSE file.
+This software is released under the MIT License, see the license file.
 
-Copyright 2015 Yahoo! JAPAN corporation.
+### AntPickax
+k2hftfuse is one of [AntPickax](https://yahoojapan.github.io/AntPickax/) products.
+
+Copyright(C) 2015 Yahoo Japan corporation.
