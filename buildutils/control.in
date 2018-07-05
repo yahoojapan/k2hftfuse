@@ -1,0 +1,24 @@
+Source: @PACKAGE_NAME@
+Section: net
+Priority: extra
+Maintainer: @DEV_NAME@ <@DEV_EMAIL@>
+Build-Depends: debhelper (>= 9), autotools-dev, k2hash-dev (>= 1.0.61), chmpx-dev (>= 1.0.62), libfullock-dev (>= 1.0.28), k2htpdtor (>= 1.0.24), libfuse-dev
+Standards-Version: 3.9.5
+Homepage: https://@GIT_DOMAIN@/@GIT_ORG@/@GIT_REPO@
+Vcs-Git: git://@GIT_DOMAIN@/@GIT_ORG@/@GIT_REPO@.git
+Vcs-Browser: https://@GIT_DOMAIN@/@GIT_ORG@/@GIT_REPO@
+
+Package: @PACKAGE_NAME@-dev
+Section: devel
+Architecture: amd64
+Depends: @PACKAGE_NAME@ (= ${binary:Version})
+Description: @SHORTDESC@ (development)
+ Development package for building with @PACKAGE_NAME@ shared library.
+  This package has header files and symbols for it.
+
+Package: @PACKAGE_NAME@
+Section: net
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}, k2hash (>= 1.0.61), chmpx (>= 1.0.62), libfullock (>= 1.0.28), k2htpdtor (>= 1.0.24)
+Description: @SHORTDESC@
+@DEBLONGDESC@

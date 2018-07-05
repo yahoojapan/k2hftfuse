@@ -1,13 +1,13 @@
 /*
  * k2hftfuse for file transaction by FUSE-based file system
  * 
- * Copyright 2015 Yahoo! JAPAN corporation.
+ * Copyright 2015 Yahoo Japan Corporation.
  * 
  * k2hftfuse is file transaction system on FUSE file system with
  * K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.
  * 
  * For the full copyright and license information, please view
- * the LICENSE file that was distributed with this source code.
+ * the license file that was distributed with this source code.
  *
  * AUTHOR:   Takeshi Nakatani
  * CREATE:   Fri Sep 4 2015
@@ -36,8 +36,6 @@
 class K2hFtManage
 {
 	protected:
-		static std::string	mount_point;			// mountpoint
-
 		volatile int		conf_lockval;			// like mutex for valiables
 		volatile int		wstack_lockval;			// like mutex for valiables
 		volatile int		exit_lockval;			// like mutex for valiables
@@ -64,7 +62,8 @@ class K2hFtManage
 		bool CheckPush(K2hFtWriteBuff* pwbuf, uint64_t filehandle, bool is_force = false);
 
 	public:
-		static const char* GetMountPoint(void) { return K2hFtManage::mount_point.c_str(); }
+		static std::string& GetMountPointString(void);	// mountpoint
+		static const char* GetMountPoint(void);
 		static bool SetMountPoint(const char* path);
 
 		K2hFtManage(void);

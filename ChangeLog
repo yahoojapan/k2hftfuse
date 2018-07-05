@@ -1,3 +1,17 @@
+k2hftfuse (1.0.27) trusty; urgency=low
+
+  * avoid static object initialization order problem(SIOF)
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Mon, 02 Jul 2018 14:51:00 +0900
+
+k2hftfuse (1.0.26) trusty; urgency=low
+
+  * Cleanup credit comments in sources and Modified etc
+  * Changed build logic to new for rpm/debian packaging
+  * Fixed a filename typo of make_variables.sh
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Thu, 17 May 2018 20:03:29 +0900
+
 k2hftfuse (1.0.25) trusty; urgency=low
 
   * Update dependency on k2hash/chmpx/k2htp_dtor and README/AUTHORS

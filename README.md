@@ -34,4 +34,4 @@ This software is released under the MIT License, see the license file.
 ### AntPickax
 k2hftfuse is one of [AntPickax](https://yahoojapan.github.io/AntPickax/) products.
 
-Copyright(C) 2015 Yahoo Japan corporation.
+Copyright(C) 2015 Yahoo Japan Corporation.

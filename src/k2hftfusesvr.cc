@@ -1,13 +1,13 @@
 /*
  * k2hftfuse for file transaction by FUSE-based file system
  * 
- * Copyright 2015 Yahoo! JAPAN corporation.
+ * Copyright 2015 Yahoo Japan Corporation.
  * 
  * k2hftfuse is file transaction system on FUSE file system with
  * K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.
  * 
  * For the full copyright and license information, please view
- * the LICENSE file that was distributed with this source code.
+ * the license file that was distributed with this source code.
  *
  * AUTHOR:   Takeshi Nakatani
  * CREATE:   Tue Sep 1 2015
@@ -77,7 +77,7 @@ static void k2hftfusesvr_print_version(FILE* stream)
 		"\n"
 		"k2hftfusesvr Version %s (commit: %s)\n"
 		"\n"
-		"Copyright 2015 Yahoo! JAPAN corporation.\n"
+		"Copyright(C) 2015 Yahoo Japan Corporation.\n"
 		"\n"
 		"k2hftfusesvr is file transaction receiver server on FUSE file\n"
 		"system with K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.\n"

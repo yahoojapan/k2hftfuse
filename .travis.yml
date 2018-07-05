@@ -28,25 +28,28 @@ git:
 before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -qq git autoconf autotools-dev gcc g++ make gdb dh-make fakeroot dpkg-dev devscripts libtool pkg-config libssl-dev libyaml-dev libfuse-dev
- - git submodule update --init --recursive
+ - git clone https://github.com/yahoojapan/fullock.git
  - cd fullock
  - ./autogen.sh
  - ./configure --prefix=/usr
  - make
  - sudo make install
  - cd ..
+ - git clone https://github.com/yahoojapan/k2hash.git
  - cd k2hash
  - ./autogen.sh
  - ./configure --prefix=/usr
  - make
  - sudo make install
  - cd ..
+ - git clone https://github.com/yahoojapan/chmpx.git
  - cd chmpx
  - ./autogen.sh
  - ./configure --prefix=/usr
  - make
  - sudo make install
  - cd ..
+ - git clone https://github.com/yahoojapan/k2htp_dtor.git
  - cd k2htp_dtor
  - ./autogen.sh
  - ./configure --prefix=/usr
