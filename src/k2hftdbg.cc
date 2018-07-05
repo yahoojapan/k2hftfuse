@@ -1,13 +1,13 @@
 /*
  * k2hftfuse for file transaction by FUSE-based file system
  * 
- * Copyright 2015 Yahoo! JAPAN corporation.
+ * Copyright 2015 Yahoo Japan Corporation.
  * 
  * k2hftfuse is file transaction system on FUSE file system with
  * K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.
  * 
  * For the full copyright and license information, please view
- * the LICENSE file that was distributed with this source code.
+ * the license file that was distributed with this source code.
  *
  * AUTHOR:   Takeshi Nakatani
  * CREATE:   Wed Sep 2 2015
@@ -23,6 +23,13 @@
 #include "k2hftdbg.h"
 
 //---------------------------------------------------------
+// Global variable
+//---------------------------------------------------------
+K2hFtDbgMode	k2hft_debug_mode		= K2HFTDBG_SILENT;
+FILE*			k2hft_dbg_fp			= NULL;
+bool			k2hft_foreground_mode	= false;
+
+//---------------------------------------------------------
 // Class K2hFtDbgCtrl
 //---------------------------------------------------------
 class K2hFtDbgCtrl
@@ -30,38 +37,57 @@ class K2hFtDbgCtrl
 	protected:
 		static const char*	DBGENVNAME;
 		static const char*	DBGENVFILE;
-		static K2hFtDbgCtrl	singleton;
-		static bool			isSetSignal;
+
+		bool				isSetSignal;
+		K2hFtDbgMode*		pk2hft_debug_mode;
+		FILE**				pk2hft_dbg_fp;
+
+	protected:
+		K2hFtDbgCtrl() : isSetSignal(false), pk2hft_debug_mode(&k2hft_debug_mode), pk2hft_dbg_fp(&k2hft_dbg_fp)
+		{
+			*pk2hft_debug_mode	= K2HFTDBG_SILENT;
+			*pk2hft_dbg_fp		= NULL;
+			FtDbgCtrlLoadEnv();
+		}
+
+		virtual ~K2hFtDbgCtrl()
+		{
+			SetFtDbgCtrlSignalUser1(false);
+		}
+
+		bool FtDbgCtrlLoadEnvName(void);
+		bool FtDbgCtrlLoadEnvFile(void);
 
 	public:
+		static K2hFtDbgCtrl& GetK2hFtDbgCtrl(void)
+		{
+			static K2hFtDbgCtrl	singleton;			// singleton
+			return singleton;
+		}
 		static bool CvtModeString(const char* strmode, K2hFtDbgMode& mode);
-		static bool LoadEnv(void);
-		static bool LoadEnvName(void);
-		static bool LoadEnvFile(void);
 		static void User1Handler(int Signal);
-		static bool SetK2hFtSignalUser1(bool isEnable);
 
-		K2hFtDbgCtrl();
-		virtual ~K2hFtDbgCtrl();
+		bool FtDbgCtrlLoadEnv(void);
+		bool SetFtDbgCtrlSignalUser1(bool isEnable);
+		void InitFtDbgCtrlSyslog(void);
+
+		K2hFtDbgMode SetFtDbgCtrlMode(K2hFtDbgMode mode);
+		K2hFtDbgMode BumpupFtDbgCtrlMode(void);
+		K2hFtDbgMode GetFtDbgCtrlMode(void);
+		bool SetFtDbgCtrlModeByString(const char* strmode);
+		bool SetFtDbgCtrlFile(const char* filepath);
+		bool UnsetFtDbgCtrlFile(void);
 };
 
+//
 // Class valiables
+//
 const char*		K2hFtDbgCtrl::DBGENVNAME = "K2HFTDBGMODE";
 const char*		K2hFtDbgCtrl::DBGENVFILE = "K2HFTDBGFILE";
-K2hFtDbgCtrl	K2hFtDbgCtrl::singleton;
-bool			K2hFtDbgCtrl::isSetSignal=	false;
 
-// Constructor / Destructor
-K2hFtDbgCtrl::K2hFtDbgCtrl()
-{
-	K2hFtDbgCtrl::LoadEnv();
-}
-K2hFtDbgCtrl::~K2hFtDbgCtrl()
-{
-	K2hFtDbgCtrl::SetK2hFtSignalUser1(false);
-}
-
+//
 // Class Methods
+//
 bool K2hFtDbgCtrl::CvtModeString(const char* strmode, K2hFtDbgMode& mode)
 {
 	if(K2HFT_ISEMPTYSTR(strmode)){
@@ -85,15 +111,24 @@ bool K2hFtDbgCtrl::CvtModeString(const char* strmode, K2hFtDbgMode& mode)
 	return true;
 }
 
-bool K2hFtDbgCtrl::LoadEnv(void)
+void K2hFtDbgCtrl::User1Handler(int Signal)
 {
-	if(!K2hFtDbgCtrl::LoadEnvName() || !K2hFtDbgCtrl::LoadEnvFile()){
+	MSG_K2HFTPRN("Caught signal SIGUSR1(%d), bumpup the logging level.", Signal);
+	K2hFtDbgCtrl::GetK2hFtDbgCtrl().BumpupFtDbgCtrlMode();
+}
+
+//
+// Methods
+//
+bool K2hFtDbgCtrl::FtDbgCtrlLoadEnv(void)
+{
+	if(!FtDbgCtrlLoadEnvName() || !FtDbgCtrlLoadEnvFile()){
 		return false;
 	}
 	return true;
 }
 
-bool K2hFtDbgCtrl::LoadEnvName(void)
+bool K2hFtDbgCtrl::FtDbgCtrlLoadEnvName(void)
 {
 	char*	pEnvVal;
 	if(NULL == (pEnvVal = getenv(K2hFtDbgCtrl::DBGENVNAME))){
@@ -105,33 +140,27 @@ bool K2hFtDbgCtrl::LoadEnvName(void)
 		MSG_K2HFTPRN("%s ENV is not unknown string(%s).", K2hFtDbgCtrl::DBGENVNAME, pEnvVal);
 		return false;
 	}
-	SetK2hFtDbgMode(newmode);
+	SetFtDbgCtrlMode(newmode);
 	return true;
 }
 
-bool K2hFtDbgCtrl::LoadEnvFile(void)
+bool K2hFtDbgCtrl::FtDbgCtrlLoadEnvFile(void)
 {
 	char*	pEnvVal;
 	if(NULL == (pEnvVal = getenv(K2hFtDbgCtrl::DBGENVFILE))){
 		MSG_K2HFTPRN("%s ENV is not set.", K2hFtDbgCtrl::DBGENVFILE);
 		return true;
 	}
-	if(!SetK2hFtDbgFile(pEnvVal)){
+	if(!SetFtDbgCtrlFile(pEnvVal)){
 		MSG_K2HFTPRN("%s ENV is unsafe string(%s).", K2hFtDbgCtrl::DBGENVFILE, pEnvVal);
 		return false;
 	}
 	return true;
 }
 
-void K2hFtDbgCtrl::User1Handler(int Signal)
+bool K2hFtDbgCtrl::SetFtDbgCtrlSignalUser1(bool isEnable)
 {
-	MSG_K2HFTPRN("Caught signal SIGUSR1(%d), bumpup the logging level.", Signal);
-	BumpupK2hFtDbgMode();
-}
-
-bool K2hFtDbgCtrl::SetK2hFtSignalUser1(bool isEnable)
-{
-	if(isEnable != K2hFtDbgCtrl::isSetSignal){
+	if(isEnable != isSetSignal){
 		struct sigaction	sa;
 
 		sigemptyset(&sa.sa_mask);
@@ -143,19 +172,12 @@ bool K2hFtDbgCtrl::SetK2hFtSignalUser1(bool isEnable)
 			WAN_K2HFTPRN("Could not %s signal USER1 handler. errno = %d", isEnable ? "set" : "unset", errno);
 			return false;
 		}
-		K2hFtDbgCtrl::isSetSignal = isEnable;
+		isSetSignal = isEnable;
 	}
 	return true;
 }
 
-//---------------------------------------------------------
-// Global variable
-//---------------------------------------------------------
-K2hFtDbgMode	k2hft_debug_mode		= K2HFTDBG_SILENT;
-FILE*			k2hft_dbg_fp			= NULL;
-bool			k2hft_foreground_mode	= false;
-
-void InitK2hFtDbgSyslog(void)
+void K2hFtDbgCtrl::InitFtDbgCtrlSyslog(void)
 {
 	static bool	is_open = false;
 
@@ -165,34 +187,34 @@ void InitK2hFtDbgSyslog(void)
 		is_open = true;
 	}
 	// set syslog level
-	setlogmask(LOG_UPTO(CVT_K2HFTDBGMODE_SYSLOGLEVEL(k2hft_debug_mode)));
+	setlogmask(LOG_UPTO(CVT_K2HFTDBGMODE_SYSLOGLEVEL(*pk2hft_debug_mode)));
 }
 
-K2hFtDbgMode SetK2hFtDbgMode(K2hFtDbgMode mode)
+K2hFtDbgMode K2hFtDbgCtrl::SetFtDbgCtrlMode(K2hFtDbgMode mode)
 {
-	K2hFtDbgMode	oldmode	= k2hft_debug_mode;
-	k2hft_debug_mode 		= mode;
+	K2hFtDbgMode	oldmode	= *pk2hft_debug_mode;
+	*pk2hft_debug_mode 		= mode;
 
 	// set syslog level
-	InitK2hFtDbgSyslog();
+	InitFtDbgCtrlSyslog();
 
 	return oldmode;
 }
 
-bool SetK2hFtDbgModeByString(const char* strmode)
+bool K2hFtDbgCtrl::SetFtDbgCtrlModeByString(const char* strmode)
 {
 	K2hFtDbgMode	newmode;
 	if(!K2hFtDbgCtrl::CvtModeString(strmode, newmode)){
 		MSG_K2HFTPRN("%s is not unknown mode.", strmode ? strmode : "");
 		return false;
 	}
-	SetK2hFtDbgMode(newmode);
+	SetFtDbgCtrlMode(newmode);
 	return true;
 }
 
-K2hFtDbgMode BumpupK2hFtDbgMode(void)
+K2hFtDbgMode K2hFtDbgCtrl::BumpupFtDbgCtrlMode(void)
 {
-	K2hFtDbgMode	mode = GetK2hFtDbgMode();
+	K2hFtDbgMode	mode = GetFtDbgCtrlMode();
 
 	if(K2HFTDBG_SILENT == mode){
 		mode = K2HFTDBG_ERR;
@@ -205,26 +227,21 @@ K2hFtDbgMode BumpupK2hFtDbgMode(void)
 	}else{	// K2HFTDBG_DUMP == mode
 		mode = K2HFTDBG_SILENT;
 	}
-	return ::SetK2hFtDbgMode(mode);
+	return SetFtDbgCtrlMode(mode);
 }
 
-K2hFtDbgMode GetK2hFtDbgMode(void)
+K2hFtDbgMode K2hFtDbgCtrl::GetFtDbgCtrlMode(void)
 {
-	return k2hft_debug_mode;
+	return *pk2hft_debug_mode;
 }
 
-bool LoadK2hFtDbgEnv(void)
-{
-	return K2hFtDbgCtrl::LoadEnv();
-}
-
-bool SetK2hFtDbgFile(const char* filepath)
+bool K2hFtDbgCtrl::SetFtDbgCtrlFile(const char* filepath)
 {
 	if(K2HFT_ISEMPTYSTR(filepath)){
 		ERR_K2HFTPRN("Parameter is wrong.");
 		return false;
 	}
-	if(!UnsetK2hFtDbgFile()){
+	if(!UnsetFtDbgCtrlFile()){
 		return false;
 	}
 	FILE*	newfp;
@@ -232,26 +249,69 @@ bool SetK2hFtDbgFile(const char* filepath)
 		ERR_K2HFTPRN("Could not open debug file(%s). errno = %d", filepath, errno);
 		return false;
 	}
-	k2hft_dbg_fp = newfp;
+	*pk2hft_dbg_fp = newfp;
 	return true;
 }
 
-bool UnsetK2hFtDbgFile(void)
+bool K2hFtDbgCtrl::UnsetFtDbgCtrlFile(void)
 {
-	if(k2hft_dbg_fp){
-		if(0 != fclose(k2hft_dbg_fp)){
+	if(*pk2hft_dbg_fp){
+		if(0 != fclose(*pk2hft_dbg_fp)){
 			ERR_K2HFTPRN("Could not close debug file. errno = %d", errno);
-			k2hft_dbg_fp = NULL;		// On this case, k2hft_dbg_fp is not correct pointer after error...
+			*pk2hft_dbg_fp = NULL;		// On this case, k2hft_dbg_fp is not correct pointer after error...
 			return false;
 		}
-		k2hft_dbg_fp = NULL;
+		*pk2hft_dbg_fp = NULL;
 	}
 	return true;
 }
 
+//---------------------------------------------------------
+// Global Functions
+//---------------------------------------------------------
+void InitK2hFtDbgSyslog(void)
+{
+	K2hFtDbgCtrl::GetK2hFtDbgCtrl().InitFtDbgCtrlSyslog();
+}
+
+K2hFtDbgMode SetK2hFtDbgMode(K2hFtDbgMode mode)
+{
+	return K2hFtDbgCtrl::GetK2hFtDbgCtrl().SetFtDbgCtrlMode(mode);
+}
+
+bool SetK2hFtDbgModeByString(const char* strmode)
+{
+	return K2hFtDbgCtrl::GetK2hFtDbgCtrl().SetFtDbgCtrlModeByString(strmode);
+}
+
+K2hFtDbgMode BumpupK2hFtDbgMode(void)
+{
+	return K2hFtDbgCtrl::GetK2hFtDbgCtrl().BumpupFtDbgCtrlMode();
+}
+
+K2hFtDbgMode GetK2hFtDbgMode(void)
+{
+	return K2hFtDbgCtrl::GetK2hFtDbgCtrl().GetFtDbgCtrlMode();
+}
+
+bool LoadK2hFtDbgEnv(void)
+{
+	return K2hFtDbgCtrl::GetK2hFtDbgCtrl().FtDbgCtrlLoadEnv();
+}
+
+bool SetK2hFtDbgFile(const char* filepath)
+{
+	return K2hFtDbgCtrl::GetK2hFtDbgCtrl().SetFtDbgCtrlFile(filepath);
+}
+
+bool UnsetK2hFtDbgFile(void)
+{
+	return K2hFtDbgCtrl::GetK2hFtDbgCtrl().UnsetFtDbgCtrlFile();
+}
+
 bool SetK2hFtSignalUser1(void)
 {
-	return K2hFtDbgCtrl::SetK2hFtSignalUser1(true);
+	return K2hFtDbgCtrl::GetK2hFtDbgCtrl().SetFtDbgCtrlSignalUser1(true);
 }
 
 /*

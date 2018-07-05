@@ -1,13 +1,13 @@
 /*
  * k2hftfuse for file transaction by FUSE-based file system
  * 
- * Copyright 2015 Yahoo! JAPAN corporation.
+ * Copyright 2015 Yahoo Japan Corporation.
  * 
  * k2hftfuse is file transaction system on FUSE file system with
  * K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.
  * 
  * For the full copyright and license information, please view
- * the LICENSE file that was distributed with this source code.
+ * the license file that was distributed with this source code.
  *
  * AUTHOR:   Takeshi Nakatani
  * CREATE:   Fri Sep 4 2015
@@ -49,20 +49,29 @@ using namespace std;
 typedef std::map<uint64_t, PK2HFTVALUE>		k2hftvaluemap_t;
 
 //---------------------------------------------------------
-// Class Variables
-//---------------------------------------------------------
-string	K2hFtManage::mount_point = "";
-
-//---------------------------------------------------------
 // Class Method
 //---------------------------------------------------------
+// [NOTE]
+// To avoid static object initialization order problem(SIOF)
+//
+string& K2hFtManage::GetMountPointString(void)
+{
+	static std::string	mount_point;				// singleton
+	return mount_point;
+}
+
+const char* K2hFtManage::GetMountPoint(void)
+{
+	return K2hFtManage::GetMountPointString().c_str();
+}
+
 bool K2hFtManage::SetMountPoint(const char* path)
 {
 	if(K2HFT_ISEMPTYSTR(path) || '/' != path[0]){
 		ERR_K2HFTPRN("path(%s) does not maount point.", path ? path : "null");
 		return false;
 	}
-	K2hFtManage::mount_point = path;
+	K2hFtManage::GetMountPointString() = path;
 	return true;
 }
 
@@ -292,7 +301,7 @@ bool K2hFtManage::Initialize(const char* config, bool is_run_chmpx, const char* 
 	}
 
 	// initialize plugin manager
-	if(!pluginman.Initialize(&fdcache, K2hFtManage::mount_point.empty() ? NULL : K2hFtManage::mount_point.c_str())){
+	if(!pluginman.Initialize(&fdcache, K2hFtManage::GetMountPointString().empty() ? NULL : K2hFtManage::GetMountPoint())){
 		ERR_K2HFTPRN("Could not initialize plugin manager.");
 		fullock::flck_unlock_noshared_mutex(&conf_lockval);		// Unlock
 		return false;

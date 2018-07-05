@@ -2,13 +2,13 @@
 #
 # k2hftfuse for file transaction by FUSE-based file system
 #
-# Copyright 2015 Yahoo! JAPAN corporation.
+# Copyright 2015 Yahoo Japan Corporation.
 #
 # k2hftfuse is file transaction system on FUSE file system with
 # K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.
 #
 # For the full copyright and license information, please view
-# the LICENSE file that was distributed with this source code.
+# the license file that was distributed with this source code.
 #
 # AUTHOR:   Takeshi Nakatani
 # CREATE:   Tue Sep 1 2015
@@ -114,6 +114,51 @@ if [ $# -ne 0 ]; then
 	done
 fi
 
+#
+# Check fusermount/etc and permission
+#
+# [NOTE]
+# In this test, if the FUSE environment is not in place,
+# the test can not be carried out. This case returns SUCCESS
+# without error.
+#
+IS_SAFE_TEST=1
+which fusermount >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+	echo ""
+	echo "[WARNNING] not found fusermount command or not allow permission, then this test is going to fail."
+	echo ""
+	IS_SAFE_TEST=1
+else
+	ls /dev/fuse >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		echo ""
+		echo "[WARNNING] not found /dev/fuse or not allow permission, then this test is going to fail."
+		echo ""
+		IS_SAFE_TEST=1
+	else
+		ls /etc/fuse.conf >/dev/null 2>&1
+		grep user_allow_other /etc/fuse.conf >/dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			echo ""
+			echo "[WARNNING] not found user_allow_other in /etc/fuse.conf, then this test is going to fail."
+			echo ""
+			IS_SAFE_TEST=1
+		fi
+	fi
+fi
+if [ ${IS_SAFE_TEST} -ne 1 ]; then
+	echo ""
+	echo "[NOTICE]"
+	echo ""
+	echo "This test is going to fail, because this environment is not allowed"
+	echo "to use FUSE for me."
+	echo "But this script returns SUCESS, if it reason is not using FUSE."
+	echo ""
+	echo "PLEASE CHECK YOUR FUSE ENVIRONMENT."
+	echo ""
+fi
+
 ##############################################################
 ## log files
 ##############################################################
@@ -154,6 +199,11 @@ K2HFTFUSE_TEST_TRANS_SERVER_JSON=`grep 'K2HFTFUSE_TEST_TRANS_SERVER_JSON=' ${INI
 # Result
 #
 TESTSUBRESULT=0
+
+#
+# Version
+#
+${K2HFUSEBIN} -v
 
 #
 # Cleanning
@@ -246,11 +296,11 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 	#
 	# check process
 	#
-	RESULT_RUN_k2HFTFUSE_PROC=true
+	RESULT_RUN_K2HFTFUSE_PROC=true
 	ps -p ${K2HFTFUSEPID} > /dev/null 2>&1
 	if [ $? != 0 ]; then
 		echo "ERROR: could not run k2hftfuse process"
-		RESULT_RUN_k2HFTFUSE_PROC=false
+		RESULT_RUN_K2HFTFUSE_PROC=false
 	fi
 
 	#
@@ -321,18 +371,13 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 		cat ${SINGLE_K2HFTFUSETEST_LOG}
 		echo "---------------------------------------------------------------------------------------------------"
 
-		if [ "X${RESULT_RUN_k2HFTFUSE_PROC}" = "Xtrue" ]; then
+		if [ "X${RESULT_RUN_K2HFTFUSE_PROC}" = "Xtrue" ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON SINGLE TEST)"
 			echo ""
 			exit 1
 		fi
-
-		OWNNAME=`whoami`
-		if [ "X${SCREWDRIVER}" != "Xtrue" -a "X${OWNNAME}" != "Xkarakuri" ]; then
-			echo ""
-			echo "This test is not run on CI, but could not run k2hftfuse process."
-			echo "Please check your environment."
+		if [ ${IS_SAFE_TEST} -eq 0 ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON SINGLE TEST)"
 			echo ""
@@ -461,11 +506,11 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 	#
 	# check process
 	#
-	RESULT_RUN_k2HFTFUSE_PROC=true
+	RESULT_RUN_K2HFTFUSE_PROC=true
 	ps -p ${K2HFTFUSEPID} > /dev/null 2>&1
 	if [ $? != 0 ]; then
 		echo "ERROR: could not run k2hftfuse process"
-		RESULT_RUN_k2HFTFUSE_PROC=false
+		RESULT_RUN_K2HFTFUSE_PROC=false
 	fi
 
 	#
@@ -554,18 +599,14 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 		cat ${NEST_K2HFTFUSETEST_LOG}
 		echo "---------------------------------------------------------------------------------------------------"
 
-		if [ "X${RESULT_RUN_k2HFTFUSE_PROC}" = "Xtrue" ]; then
+		if [ "X${RESULT_RUN_K2HFTFUSE_PROC}" = "Xtrue" ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON NEST TEST)"
 			echo ""
 			exit 1
 		fi
 
-		OWNNAME=`whoami`
-		if [ "X${SCREWDRIVER}" != "Xtrue" -a "X${OWNNAME}" != "Xkarakuri" ]; then
-			echo ""
-			echo "This test is not run on CI, but could not run k2hftfuse process."
-			echo "Please check your environment."
+		if [ ${IS_SAFE_TEST} -eq 0 ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON NEST TEST)"
 			echo ""
@@ -677,11 +718,11 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 	#
 	# check process
 	#
-	RESULT_RUN_k2HFTFUSE_PROC=true
+	RESULT_RUN_K2HFTFUSE_PROC=true
 	ps -p ${K2HFTFUSEPID} > /dev/null 2>&1
 	if [ $? != 0 ]; then
 		echo "ERROR: could not run k2hftfuse process"
-		RESULT_RUN_k2HFTFUSE_PROC=false
+		RESULT_RUN_K2HFTFUSE_PROC=false
 	fi
 
 	#
@@ -752,18 +793,14 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 		cat ${SINGLE_K2HFTFUSETEST_LOG}
 		echo "---------------------------------------------------------------------------------------------------"
 
-		if [ "X${RESULT_RUN_k2HFTFUSE_PROC}" = "Xtrue" ]; then
+		if [ "X${RESULT_RUN_K2HFTFUSE_PROC}" = "Xtrue" ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON SINGLE TEST)"
 			echo ""
 			exit 1
 		fi
 
-		OWNNAME=`whoami`
-		if [ "X${SCREWDRIVER}" != "Xtrue" -a "X${OWNNAME}" != "Xkarakuri" ]; then
-			echo ""
-			echo "This test is not run on CI, but could not run k2hftfuse process."
-			echo "Please check your environment."
+		if [ ${IS_SAFE_TEST} -eq 0 ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON SINGLE TEST)"
 			echo ""
@@ -892,11 +929,11 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 	#
 	# check process
 	#
-	RESULT_RUN_k2HFTFUSE_PROC=true
+	RESULT_RUN_K2HFTFUSE_PROC=true
 	ps -p ${K2HFTFUSEPID} > /dev/null 2>&1
 	if [ $? != 0 ]; then
 		echo "ERROR: could not run k2hftfuse process"
-		RESULT_RUN_k2HFTFUSE_PROC=false
+		RESULT_RUN_K2HFTFUSE_PROC=false
 	fi
 
 	#
@@ -985,18 +1022,14 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 		cat ${NEST_K2HFTFUSETEST_LOG}
 		echo "---------------------------------------------------------------------------------------------------"
 
-		if [ "X${RESULT_RUN_k2HFTFUSE_PROC}" = "Xtrue" ]; then
+		if [ "X${RESULT_RUN_K2HFTFUSE_PROC}" = "Xtrue" ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON NEST TEST)"
 			echo ""
 			exit 1
 		fi
 
-		OWNNAME=`whoami`
-		if [ "X${SCREWDRIVER}" != "Xtrue" -a "X${OWNNAME}" != "Xkarakuri" ]; then
-			echo ""
-			echo "This test is not run on CI, but could not run k2hftfuse process."
-			echo "Please check your environment."
+		if [ ${IS_SAFE_TEST} -eq 0 ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON NEST TEST)"
 			echo ""
@@ -1108,11 +1141,11 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 	#
 	# check process
 	#
-	RESULT_RUN_k2HFTFUSE_PROC=true
+	RESULT_RUN_K2HFTFUSE_PROC=true
 	ps -p ${K2HFTFUSEPID} > /dev/null 2>&1
 	if [ $? != 0 ]; then
 		echo "ERROR: could not run k2hftfuse process"
-		RESULT_RUN_k2HFTFUSE_PROC=false
+		RESULT_RUN_K2HFTFUSE_PROC=false
 	fi
 
 	#
@@ -1183,18 +1216,14 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 		cat ${SINGLE_K2HFTFUSETEST_LOG}
 		echo "---------------------------------------------------------------------------------------------------"
 
-		if [ "X${RESULT_RUN_k2HFTFUSE_PROC}" = "Xtrue" ]; then
+		if [ "X${RESULT_RUN_K2HFTFUSE_PROC}" = "Xtrue" ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON SINGLE TEST)"
 			echo ""
 			exit 1
 		fi
 
-		OWNNAME=`whoami`
-		if [ "X${SCREWDRIVER}" != "Xtrue" -a "X${OWNNAME}" != "Xkarakuri" ]; then
-			echo ""
-			echo "This test is not run on CI, but could not run k2hftfuse process."
-			echo "Please check your environment."
+		if [ ${IS_SAFE_TEST} -eq 0 ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON SINGLE TEST)"
 			echo ""
@@ -1323,11 +1352,11 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 	#
 	# check process
 	#
-	RESULT_RUN_k2HFTFUSE_PROC=true
+	RESULT_RUN_K2HFTFUSE_PROC=true
 	ps -p ${K2HFTFUSEPID} > /dev/null 2>&1
 	if [ $? != 0 ]; then
 		echo "ERROR: could not run k2hftfuse process"
-		RESULT_RUN_k2HFTFUSE_PROC=false
+		RESULT_RUN_K2HFTFUSE_PROC=false
 	fi
 
 	#
@@ -1416,18 +1445,14 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 		cat ${NEST_K2HFTFUSETEST_LOG}
 		echo "---------------------------------------------------------------------------------------------------"
 
-		if [ "X${RESULT_RUN_k2HFTFUSE_PROC}" = "Xtrue" ]; then
+		if [ "X${RESULT_RUN_K2HFTFUSE_PROC}" = "Xtrue" ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON NEST TEST)"
 			echo ""
 			exit 1
 		fi
 
-		OWNNAME=`whoami`
-		if [ "X${SCREWDRIVER}" != "Xtrue" -a "X${OWNNAME}" != "Xkarakuri" ]; then
-			echo ""
-			echo "This test is not run on CI, but could not run k2hftfuse process."
-			echo "Please check your environment."
+		if [ ${IS_SAFE_TEST} -eq 0 ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON NEST TEST)"
 			echo ""
@@ -1538,11 +1563,11 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 	#
 	# check process
 	#
-	RESULT_RUN_k2HFTFUSE_PROC=true
+	RESULT_RUN_K2HFTFUSE_PROC=true
 	ps -p ${K2HFTFUSEPID} > /dev/null 2>&1
 	if [ $? != 0 ]; then
 		echo "ERROR: could not run k2hftfuse process"
-		RESULT_RUN_k2HFTFUSE_PROC=false
+		RESULT_RUN_K2HFTFUSE_PROC=false
 	fi
 
 	#
@@ -1613,18 +1638,14 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 		cat ${SINGLE_K2HFTFUSETEST_LOG}
 		echo "---------------------------------------------------------------------------------------------------"
 
-		if [ "X${RESULT_RUN_k2HFTFUSE_PROC}" = "Xtrue" ]; then
+		if [ "X${RESULT_RUN_K2HFTFUSE_PROC}" = "Xtrue" ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON SINGLE TEST)"
 			echo ""
 			exit 1
 		fi
 
-		OWNNAME=`whoami`
-		if [ "X${SCREWDRIVER}" != "Xtrue" -a "X${OWNNAME}" != "Xkarakuri" ]; then
-			echo ""
-			echo "This test is not run on CI, but could not run k2hftfuse process."
-			echo "Please check your environment."
+		if [ ${IS_SAFE_TEST} -eq 0 ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON SINGLE TEST)"
 			echo ""
@@ -1753,11 +1774,11 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 	#
 	# check process
 	#
-	RESULT_RUN_k2HFTFUSE_PROC=true
+	RESULT_RUN_K2HFTFUSE_PROC=true
 	ps -p ${K2HFTFUSEPID} > /dev/null 2>&1
 	if [ $? != 0 ]; then
 		echo "ERROR: could not run k2hftfuse process"
-		RESULT_RUN_k2HFTFUSE_PROC=false
+		RESULT_RUN_K2HFTFUSE_PROC=false
 	fi
 
 	#
@@ -1846,18 +1867,14 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 		cat ${NEST_K2HFTFUSETEST_LOG}
 		echo "---------------------------------------------------------------------------------------------------"
 
-		if [ "X${RESULT_RUN_k2HFTFUSE_PROC}" = "Xtrue" ]; then
+		if [ "X${RESULT_RUN_K2HFTFUSE_PROC}" = "Xtrue" ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON NEST TEST)"
 			echo ""
 			exit 1
 		fi
 
-		OWNNAME=`whoami`
-		if [ "X${SCREWDRIVER}" != "Xtrue" -a "X${OWNNAME}" != "Xkarakuri" ]; then
-			echo ""
-			echo "This test is not run on CI, but could not run k2hftfuse process."
-			echo "Please check your environment."
+		if [ ${IS_SAFE_TEST} -eq 0 ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON NEST TEST)"
 			echo ""
@@ -1968,11 +1985,11 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 	#
 	# check process
 	#
-	RESULT_RUN_k2HFTFUSE_PROC=true
+	RESULT_RUN_K2HFTFUSE_PROC=true
 	ps -p ${K2HFTFUSEPID} > /dev/null 2>&1
 	if [ $? != 0 ]; then
 		echo "ERROR: could not run k2hftfuse process"
-		RESULT_RUN_k2HFTFUSE_PROC=false
+		RESULT_RUN_K2HFTFUSE_PROC=false
 	fi
 
 	#
@@ -2043,18 +2060,14 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 		cat ${SINGLE_K2HFTFUSETEST_LOG}
 		echo "---------------------------------------------------------------------------------------------------"
 
-		if [ "X${RESULT_RUN_k2HFTFUSE_PROC}" = "Xtrue" ]; then
+		if [ "X${RESULT_RUN_K2HFTFUSE_PROC}" = "Xtrue" ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON SINGLE TEST)"
 			echo ""
 			exit 1
 		fi
 
-		OWNNAME=`whoami`
-		if [ "X${SCREWDRIVER}" != "Xtrue" -a "X${OWNNAME}" != "Xkarakuri" ]; then
-			echo ""
-			echo "This test is not run on CI, but could not run k2hftfuse process."
-			echo "Please check your environment."
+		if [ ${IS_SAFE_TEST} -eq 0 ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON SINGLE TEST)"
 			echo ""
@@ -2183,11 +2196,11 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 	#
 	# check process
 	#
-	RESULT_RUN_k2HFTFUSE_PROC=true
+	RESULT_RUN_K2HFTFUSE_PROC=true
 	ps -p ${K2HFTFUSEPID} > /dev/null 2>&1
 	if [ $? != 0 ]; then
 		echo "ERROR: could not run k2hftfuse process"
-		RESULT_RUN_k2HFTFUSE_PROC=false
+		RESULT_RUN_K2HFTFUSE_PROC=false
 	fi
 
 	#
@@ -2276,18 +2289,14 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 		cat ${NEST_K2HFTFUSETEST_LOG}
 		echo "---------------------------------------------------------------------------------------------------"
 
-		if [ "X${RESULT_RUN_k2HFTFUSE_PROC}" = "Xtrue" ]; then
+		if [ "X${RESULT_RUN_K2HFTFUSE_PROC}" = "Xtrue" ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON NEST TEST)"
 			echo ""
 			exit 1
 		fi
 
-		OWNNAME=`whoami`
-		if [ "X${SCREWDRIVER}" != "Xtrue" -a "X${OWNNAME}" != "Xkarakuri" ]; then
-			echo ""
-			echo "This test is not run on CI, but could not run k2hftfuse process."
-			echo "Please check your environment."
+		if [ ${IS_SAFE_TEST} -eq 0 ]; then
 			echo ""
 			echo "RESULT --> FAILED(ON NEST TEST)"
 			echo ""

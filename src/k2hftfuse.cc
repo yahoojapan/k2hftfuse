@@ -1,13 +1,13 @@
 /*
  * k2hftfuse for file transaction by FUSE-based file system
  * 
- * Copyright 2015 Yahoo! JAPAN corporation.
+ * Copyright 2015 Yahoo Japan Corporation.
  * 
  * k2hftfuse is file transaction system on FUSE file system with
  * K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.
  * 
  * For the full copyright and license information, please view
- * the LICENSE file that was distributed with this source code.
+ * the license file that was distributed with this source code.
  *
  * AUTHOR:   Takeshi Nakatani
  * CREATE:   Tue Sep 1 2015
@@ -45,28 +45,45 @@ using namespace std;
 #define	K2HFT_FUSERMOUNT_CMDLINE_SUFIX		" > /dev/null 2>&1 &"
 
 // Environment
-#define	K2HFT_CONFFILE_ENV_NAME			"K2HFTCONFFILE"
-#define	K2HFT_JSONCONF_ENV_NAME			"K2HFTJSONCONF"
+#define	K2HFT_CONFFILE_ENV_NAME				"K2HFTCONFFILE"
+#define	K2HFT_JSONCONF_ENV_NAME				"K2HFTJSONCONF"
 
 //---------------------------------------------------------
 // Variables
 //---------------------------------------------------------
-static K2hFtManage*	pK2hFtMan		= NULL;
-static string		mountpoint("");
-static string		config("");
-static string		chmpxlog("");
-
-static bool			help_mode		= false;
-static bool			version_mode	= false;
-static bool			is_run_chmpx	= false;			// default: do not run chmpx
+static K2hFtManage*	pK2hFtMan				= NULL;
+static bool			help_mode				= false;
+static bool			version_mode			= false;
+static bool			is_run_chmpx			= false;			// default: do not run chmpx
 
 // for options
-static mode_t		opt_umask		= 0;
-static uid_t		opt_uid			= 0;
-static gid_t		opt_gid			= 0;
-static bool			is_set_umask	= false;
-static bool			is_set_uid		= false;
-static bool			is_set_gid		= false;
+static mode_t		opt_umask				= 0;
+static uid_t		opt_uid					= 0;
+static gid_t		opt_gid					= 0;
+static bool			is_set_umask			= false;
+static bool			is_set_uid				= false;
+static bool			is_set_gid				= false;
+
+// [NOTE]
+// To avoid static object initialization order problem(SIOF)
+//
+static string& GetMountPoint(void)
+{
+	static string	mountpoint("");
+	return mountpoint;
+}
+
+static string& GetConfig(void)
+{
+	static string	config("");
+	return config;
+}
+
+static string& GetChmpxLog(void)
+{
+	static string	chmpxlog("");
+	return chmpxlog;
+}
 
 //---------------------------------------------------------
 // Version & Usage
@@ -79,7 +96,7 @@ static void k2hftfuse_print_version(FILE* stream)
 		"\n"
 		"k2hftfuse Version %s (commit: %s)\n"
 		"\n"
-		"Copyright 2015 Yahoo! JAPAN corporation.\n"
+		"Copyright(C) 2015 Yahoo Japan Corporation.\n"
 		"\n"
 		"k2hftfuse is file transaction system on FUSE file system with\n"
 		"K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.\n"
@@ -276,7 +293,7 @@ static void exit_signal_handler(int sig)
 	// umount by fusermount
 	int		rtncode;
 	string	exitcmd(K2HFT_FUSERMOUNT_CMDLINE_PREFIX);
-	exitcmd += mountpoint;
+	exitcmd += GetMountPoint();
 	exitcmd += K2HFT_FUSERMOUNT_CMDLINE_SUFIX;
 	if(0 != (rtncode = system(exitcmd.c_str()))){
 		ERR_K2HFTPRN("could not run fusermount command. return code(%d)", rtncode);
@@ -290,7 +307,7 @@ static int k2hft_opt_proc(void* data, const char* arg, int key, struct fuse_args
 {
 	if(FUSE_OPT_KEY_NONOPT == key){
 		// This is mount point
-		if(!mountpoint.empty()){
+		if(!GetMountPoint().empty()){
 			K2HFTERR("Unknown option: %s", arg);
 			return -1;
 		}
@@ -304,7 +321,7 @@ static int k2hft_opt_proc(void* data, const char* arg, int key, struct fuse_args
 			K2HFTERR("Does not allow to access mount point(%s).", arg);
 			return -1;
 		}
-		mountpoint = arg;
+		GetMountPoint() = arg;
 
 	}else if(FUSE_OPT_KEY_OPT == key){
 		// k2hft options
@@ -360,12 +377,12 @@ static int k2hft_opt_proc(void* data, const char* arg, int key, struct fuse_args
 
 		}else if(0 == strncasecmp(arg, "conf=", strlen("conf="))){
 			// -o conf=XXX
-			if(!config.empty()){
+			if(!GetConfig().empty()){
 				K2HFTERR("Option conf is specified, but already specify json option.");
 				return -1;
 			}
 			const char*	pparam = strchr(arg, '=') + sizeof(char);
-			if(!check_path_real_path(pparam, config)){
+			if(!check_path_real_path(pparam, GetConfig())){
 				K2HFTERR("Option conf has wrong paramter(%s)", pparam);
 				return -1;
 			}
@@ -373,12 +390,12 @@ static int k2hft_opt_proc(void* data, const char* arg, int key, struct fuse_args
 
 		}else if(0 == strncasecmp(arg, "json=", strlen("json="))){
 			// -o json=XXX
-			if(!config.empty()){
+			if(!GetConfig().empty()){
 				K2HFTERR("Option json is specified, but already specify conf option.");
 				return -1;
 			}
 			const char*	pparam = strchr(arg, '=') + sizeof(char);
-			config = pparam;
+			GetConfig() = pparam;
 			return 0;	// stop extraditing
 
 		}else if(0 == strcasecmp(arg, "disable_run_chmpx")){
@@ -394,7 +411,7 @@ static int k2hft_opt_proc(void* data, const char* arg, int key, struct fuse_args
 		}else if(0 == strncasecmp(arg, "chmpxlog=", strlen("chmpxlog="))){
 			// -o conf=XXX
 			const char*	pparam = strchr(arg, '=') + sizeof(char);
-			chmpxlog = pparam;
+			GetChmpxLog() = pparam;
 			return 0;	// stop extraditing
 		}
 	}
@@ -1019,13 +1036,13 @@ int main(int argc, char** argv)
 		k2hftfuse_print_usage(stdout);
 		exit(EXIT_SUCCESS);
 	}
-	if(mountpoint.empty()){
+	if(GetMountPoint().empty()){
 		K2HFTERR("Need to specify mount point path.");
 		exit(EXIT_FAILURE);
 	}
 
 	// check configuration
-	CHMCONFTYPE	conftype = check_chmconf_type_ex(config.c_str(), K2HFT_CONFFILE_ENV_NAME, K2HFT_JSONCONF_ENV_NAME, &config);
+	CHMCONFTYPE	conftype = check_chmconf_type_ex(GetConfig().c_str(), K2HFT_CONFFILE_ENV_NAME, K2HFT_JSONCONF_ENV_NAME, &(GetConfig()));
 	if(CHMCONF_TYPE_UNKNOWN == conftype || CHMCONF_TYPE_NULL == conftype){
 		ERR_K2HPRN("configuration file or json string is wrong.");
 		return false;
@@ -1043,7 +1060,7 @@ int main(int argc, char** argv)
 
 	// initialize all
 	pK2hFtMan = new K2hFtManage();
-	if(!pK2hFtMan->K2hFtManage::SetMountPoint(mountpoint.c_str())){
+	if(!pK2hFtMan->K2hFtManage::SetMountPoint(GetMountPoint().c_str())){
 		K2HFTERR("Something error occurred in initializing internal data about mount point.");
 		K2HFT_DELETE(pK2hFtMan);
 		exit(EXIT_FAILURE);
@@ -1053,8 +1070,8 @@ int main(int argc, char** argv)
 		K2HFT_DELETE(pK2hFtMan);
 		exit(EXIT_FAILURE);
 	}
-	if(!pK2hFtMan->Initialize(config.c_str(), is_run_chmpx, chmpxlog.c_str())){
-		K2HFTERR("Something error occurred in initializing internal data from configration(%s).", config.c_str());
+	if(!pK2hFtMan->Initialize(GetConfig().c_str(), is_run_chmpx, GetChmpxLog().c_str())){
+		K2HFTERR("Something error occurred in initializing internal data from configration(%s).", GetConfig().c_str());
 		K2HFT_DELETE(pK2hFtMan);
 		exit(EXIT_FAILURE);
 	}
