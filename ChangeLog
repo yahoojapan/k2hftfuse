@@ -1,3 +1,9 @@
+k2hftfuse (1.0.28) trusty; urgency=low
+
+  * Fixed spec file and updated dependency
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Wed, 17 Oct 2018 20:05:31 +0900
+
 k2hftfuse (1.0.27) trusty; urgency=low
 
   * avoid static object initialization order problem(SIOF)

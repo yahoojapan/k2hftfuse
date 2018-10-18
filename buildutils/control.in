@@ -2,7 +2,7 @@ Source: @PACKAGE_NAME@
 Section: net
 Priority: extra
 Maintainer: @DEV_NAME@ <@DEV_EMAIL@>
-Build-Depends: debhelper (>= 9), autotools-dev, k2hash-dev (>= 1.0.61), chmpx-dev (>= 1.0.62), libfullock-dev (>= 1.0.28), k2htpdtor (>= 1.0.24), libfuse-dev
+Build-Depends: debhelper (>= 9), autotools-dev, k2hash-dev (>= 1.0.63), chmpx-dev (>= 1.0.63), libfullock-dev (>= 1.0.30), k2htpdtor (>= 1.0.25), libfuse-dev
 Standards-Version: 3.9.5
 Homepage: https://@GIT_DOMAIN@/@GIT_ORG@/@GIT_REPO@
 Vcs-Git: git://@GIT_DOMAIN@/@GIT_ORG@/@GIT_REPO@.git
@@ -19,6 +19,6 @@ Description: @SHORTDESC@ (development)
 Package: @PACKAGE_NAME@
 Section: net
 Architecture: amd64
-Depends: ${shlibs:Depends}, ${misc:Depends}, k2hash (>= 1.0.61), chmpx (>= 1.0.62), libfullock (>= 1.0.28), k2htpdtor (>= 1.0.24)
+Depends: ${shlibs:Depends}, ${misc:Depends}, k2hash (>= 1.0.63), chmpx (>= 1.0.63), libfullock (>= 1.0.30), k2htpdtor (>= 1.0.25)
 Description: @SHORTDESC@
 @DEBLONGDESC@
