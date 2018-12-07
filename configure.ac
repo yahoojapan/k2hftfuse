@@ -45,7 +45,6 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
-AC_PROG_LIBTOOL
 
 #
 # Checks for header files.
@@ -101,6 +100,9 @@ AC_SUBST([LIB_VERSION_LINK], "`$(pwd)/buildutils/make_variables.sh -lib_version_
 AC_SUBST([LIB_MAJOR_NUMBER], "`$(pwd)/buildutils/make_variables.sh -major_number`")
 AC_SUBST([PKGLICENSE], "`grep License COPYING | sed 's/ License//g'`")
 AC_SUBST([DEBCOPYING], "`tail -n +5 COPYING | sed 's/^$/./g' | sed 's/^/ /g'`")
+AC_SUBST([DEBHELPER_DEP], "`$(pwd)/buildutils/make_variables.sh -debhelper_dep`")
+AC_SUBST([RPMPKG_GROUP], ["`$(pwd)/buildutils/make_variables.sh -rpmpkg_group | sed 's#NEEDRPMGROUP#Group: System Environment/Libraries#g'`"])
+AC_SUBST([CONFIGREWITHOPT], "")
 AM_SUBST_NOTMAKE([CURRENTREV])
 AM_SUBST_NOTMAKE([RPMCHANGELOG])
 AM_SUBST_NOTMAKE([SHORTDESC])
@@ -108,6 +110,9 @@ AM_SUBST_NOTMAKE([LONGDESC])
 AM_SUBST_NOTMAKE([ESCLONGDESC])
 AM_SUBST_NOTMAKE([DEBLONGDESC])
 AM_SUBST_NOTMAKE([DEBCOPYING])
+AM_SUBST_NOTMAKE([DEBHELPER_DEP])
+AM_SUBST_NOTMAKE([RPMPKG_GROUP])
+AM_SUBST_NOTMAKE([CONFIGREWITHOPT])
 
 #
 # pkg-config for old version
@@ -128,9 +133,9 @@ AC_ARG_ENABLE(check-depend-libs,
 	esac]
 )
 AS_IF([test ${check_depend_libs} = 1], [AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)])
-AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([fullock], [libfullock >= 1.0.30], [], [AC_MSG_ERROR(not found libfullock package)])])
-AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([k2hash], [libk2hash >= 1.0.63], [], [AC_MSG_ERROR(not found k2hash package)])])
-AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([chmpx], [libchmpx >= 1.0.63], [], [AC_MSG_ERROR(not found chmpx package)])])
+AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([fullock], [libfullock >= 1.0.32], [], [AC_MSG_ERROR(not found libfullock package)])])
+AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([k2hash], [libk2hash >= 1.0.67], [], [AC_MSG_ERROR(not found k2hash package)])])
+AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([chmpx], [libchmpx >= 1.0.64], [], [AC_MSG_ERROR(not found chmpx package)])])
 
 #
 # Checking FUSE Library

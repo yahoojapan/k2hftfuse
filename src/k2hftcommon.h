@@ -57,7 +57,7 @@
 #define	K2HFT_INVALID_PID				(-1)
 
 // deafult dtor
-#define	K2HFT_K2HTPDTOR					"libk2htpdtor.so"
+#define	K2HFT_K2HTPDTOR					"libk2htpdtor.so.1"
 
 //---------------------------------------------------------
 // Templates

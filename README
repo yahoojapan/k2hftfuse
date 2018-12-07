@@ -11,22 +11,21 @@ k2hftfuse is one of [AntPickax](https://yahoojapan.github.io/AntPickax/ "AntPick
 ### Usage
 You can run k2hftfuse by manual and mount/umount system command(or fusermount command).
 If you run it manually, you can specify some following options.
-```
+
 $ k2hftfuse /mnt/k2hfs -o allow_other,dbglevel=err,conf=/etc/k2hftfuse.conf -f -d
-```
 
 For using mount/umount command, you need to modify /etc/fstab and add following line.
 You can start k2hftfuse in any way. And you can see mount information by df command.
 
 /etc/fstab:
-```
 k2hftfuse /mnt/k2hfs fuse allow_other,nodev,nosuid,_netdev,dbglevel=err,conf=/etc/k2hftfuse.conf 0 0
-```
 
 Please see man k2hftfuse.
 
-### Doccuments
-  - https://github.com/yahoojapan/k2hftfuse/wiki
+### Documents
+  - Github Pages - https://k2hftfuse.antpick.ax/
+  - Github Wiki - https://github.com/yahoojapan/k2hftfuse/wiki
+  - AntPickax - https://antpick.ax/
 
 ### License
 This software is released under the MIT License, see the license file.
