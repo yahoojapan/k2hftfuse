@@ -1,6 +1,12 @@
 k2hftfuse
 ---------
 [![Build Status](https://travis-ci.org/yahoojapan/k2hftfuse.svg?branch=master)](https://travis-ci.org/yahoojapan/k2hftfuse)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/yahoojapan/k2hftfuse/master/COPYING)
+[![GitHub forks](https://img.shields.io/github/forks/yahoojapan/k2hftfuse.svg)](https://github.com/yahoojapan/k2hftfuse/network)
+[![GitHub stars](https://img.shields.io/github/stars/yahoojapan/k2hftfuse.svg)](https://github.com/yahoojapan/k2hftfuse/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/yahoojapan/k2hftfuse.svg)](https://github.com/yahoojapan/k2hftfuse/issues)
+[![debian packages](https://img.shields.io/badge/deb-packagecloud.io-844fec.svg)](https://packagecloud.io/antpickax/stable)
+[![RPM packages](https://img.shields.io/badge/rpm-packagecloud.io-844fec.svg)](https://packagecloud.io/antpickax/stable)
 
 k2hftfuse for file transaction by FUSE-based file system.
 
@@ -26,12 +32,18 @@ k2hftfuse /mnt/k2hfs fuse allow_other,nodev,nosuid,_netdev,dbglevel=err,conf=/et
 Please see man k2hftfuse.
 
 ### Documents
-  - [WIKI](https://github.com/yahoojapan/k2hftfuse/wiki)
+  - [Document top page](https://k2hftfuse.antpick.ax/)
+  - [Github wiki page](https://github.com/yahoojapan/k2hftfuse/wiki)
+  - [About AntPickax](https://antpick.ax/)
+
+### Packages
+  - [RPM packages(packagecloud.io)](https://packagecloud.io/antpickax/stable)
+  - [Debian packages(packagecloud.io)](https://packagecloud.io/antpickax/stable)
 
 ### License
 This software is released under the MIT License, see the license file.
 
 ### AntPickax
-k2hftfuse is one of [AntPickax](https://yahoojapan.github.io/AntPickax/) products.
+k2hash is one of [AntPickax](https://yahoojapan.github.io/AntPickax/) products.
 
 Copyright(C) 2015 Yahoo Japan Corporation.

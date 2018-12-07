@@ -138,7 +138,22 @@ else
 		IS_SAFE_TEST=1
 	else
 		ls /etc/fuse.conf >/dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			echo "[MESSAGE] not found /etc/fuse.conf, try to set up by preinst script."
+
+			# setup
+			/bin/sh ${SRCTOP}/buildutils/k2hftfuse.preinst install
+		fi
+
 		grep user_allow_other /etc/fuse.conf >/dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			echo "[MESSAGE] not found user_allow_other in /etc/fuse.conf, try to set up by preinst script."
+			# setup
+			/bin/sh ${SRCTOP}/buildutils/k2hftfuse.preinst install
+
+			# retry
+			grep user_allow_other /etc/fuse.conf >/dev/null 2>&1
+		fi
 		if [ $? -ne 0 ]; then
 			echo ""
 			echo "[WARNNING] not found user_allow_other in /etc/fuse.conf, then this test is going to fail."
@@ -162,24 +177,24 @@ fi
 ##############################################################
 ## log files
 ##############################################################
-SINGLE_CHMPX_SERVER_LOG=/tmp/single_chmpx_server.log
-SINGLE_CHMPX_SLAVE_LOG=/tmp/single_chmpx_slave.log
-SINGLE_K2HFTFUSESVR_LOG=/tmp/single_k2hftfusesvr.log
-SINGLE_K2HFTFUSE_LOG=/tmp/single_k2hftfuse.log
-SINGLE_K2HFTFUSE_CHMPX_LOG=/tmp/single_k2hftfuse_chmpx.log
-SINGLE_K2HFTFUSE_K2HASH_LOG=/tmp/single_k2hftfuse_k2hash.log
-SINGLE_K2HFTFUSETEST_LOG=/tmp/single_k2hftfusetest.log
+SINGLE_CHMPX_SERVER_LOG=/tmp/test/single_chmpx_server.log
+SINGLE_CHMPX_SLAVE_LOG=/tmp/test/single_chmpx_slave.log
+SINGLE_K2HFTFUSESVR_LOG=/tmp/test/single_k2hftfusesvr.log
+SINGLE_K2HFTFUSE_LOG=/tmp/test/single_k2hftfuse.log
+SINGLE_K2HFTFUSE_CHMPX_LOG=/tmp/test/single_k2hftfuse_chmpx.log
+SINGLE_K2HFTFUSE_K2HASH_LOG=/tmp/test/single_k2hftfuse_k2hash.log
+SINGLE_K2HFTFUSETEST_LOG=/tmp/test/single_k2hftfusetest.log
 
-NEST_TRANS_CHMPX_SERVER_LOG=/tmp/nest_trans_chmpx_server.log
-NEST_CHMPX_SERVER_LOG=/tmp/nest_chmpx_server.log
-NEST_TRANS_CHMPX_SLAVE_LOG=/tmp/nest_trans_chmpx_slave.log
-NEST_CHMPX_SLAVE_LOG=/tmp/nest_chmpx_slave.log
-NEST_TRANS_K2HFTFUSESVR_LOG=/tmp/nest_trans_k2hftfusesvr.log
-NEST_K2HFTFUSESVR_LOG=/tmp/nest_k2hftfusesvr.log
-NEST_K2HFTFUSE_LOG=/tmp/nest_k2hftfuse.log
-NEST_K2HFTFUSE_CHMPX_LOG=/tmp/nest_k2hftfuse_chmpx.log
-NEST_K2HFTFUSE_K2HASH_LOG=/tmp/nest_k2hftfuse_k2hash.log
-NEST_K2HFTFUSETEST_LOG=/tmp/nest_k2hftfusetest.log
+NEST_TRANS_CHMPX_SERVER_LOG=/tmp/test/nest_trans_chmpx_server.log
+NEST_CHMPX_SERVER_LOG=/tmp/test/nest_chmpx_server.log
+NEST_TRANS_CHMPX_SLAVE_LOG=/tmp/test/nest_trans_chmpx_slave.log
+NEST_CHMPX_SLAVE_LOG=/tmp/test/nest_chmpx_slave.log
+NEST_TRANS_K2HFTFUSESVR_LOG=/tmp/test/nest_trans_k2hftfusesvr.log
+NEST_K2HFTFUSESVR_LOG=/tmp/test/nest_k2hftfusesvr.log
+NEST_K2HFTFUSE_LOG=/tmp/test/nest_k2hftfuse.log
+NEST_K2HFTFUSE_CHMPX_LOG=/tmp/test/nest_k2hftfuse_chmpx.log
+NEST_K2HFTFUSE_K2HASH_LOG=/tmp/test/nest_k2hftfuse_k2hash.log
+NEST_K2HFTFUSETEST_LOG=/tmp/test/nest_k2hftfusetest.log
 
 
 ##############################################################
@@ -208,7 +223,7 @@ ${K2HFUSEBIN} -v
 #
 # Cleanning
 #
-rm -f /tmp/k2hftfusesvr/log/unify.log
+rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 if [ $? -ne 0 ]; then
 	echo "RESULT --> FAILED(COULD NOT REMOVE RESULT FILE)"
 	exit 1
@@ -226,15 +241,27 @@ fi
 #
 # clean old files in /tmp
 #
-rm -rf /tmp/k2hftfuse
-rm -rf /tmp/k2hftfusesvr
-rm -rf /tmp/K2HFUSESVRTEST-*.chmpx
-rm -rf /tmp/K2HFUSESVRTEST-*.k2h
-rm -rf /tmp/K2HFUSETEST-*.chmpx
-rm -rf /tmp/K2HFUSETEST-*.k2h
+rm -rf /tmp/mnt/k2hftfuse
+rm -rf /tmp/mnt/k2hftfusesvr
+rm -rf /tmp/test/K2HFUSESVRTEST-*.chmpx
+rm -rf /tmp/test/K2HFUSESVRTEST-*.k2h
+rm -rf /tmp/test/K2HFUSETEST-*.chmpx
+rm -rf /tmp/test/K2HFUSETEST-*.k2h
 rm -rf /tmp/k2hftfuse_np_*
-rm -rf /tmp/nest_*.log
-rm -rf /tmp/single_*.log
+rm -rf /tmp/test/nest_*.log
+rm -rf /tmp/test/single_*.log
+
+#
+# mount point and log directory, etc
+#
+if [ -d /tmp/test -o -f /tmp/test ]; then
+	rm -rf /tmp/test
+fi
+if [ -d /tmp/mnt -o -f /tmp/mnt ]; then
+	rm -rf /tmp/mnt
+fi
+mkdir /tmp/test
+mkdir /tmp/mnt
 
 ##############################################################
 # Start INI conf file
@@ -253,7 +280,7 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 	# chmpx for server
 	#
 	echo "------ RUN chmpx on server side ----------------------------"
-	chmpx -conf ${INIFILEDIR}/k2hftfuse_test_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${SINGLE_CHMPX_SLAVE_LOG} 2>&1 &
+	chmpx -conf ${INIFILEDIR}/k2hftfuse_test_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${SINGLE_CHMPX_SERVER_LOG} 2>&1 &
 	CHMPXSVRPID=$!
 	echo "chmpx on server side pid = ${CHMPXSVRPID}"
 	sleep 2
@@ -265,14 +292,6 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 	${K2HFUSESVRBIN} -conf ${INIFILEDIR}/k2hftfuse_test_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${SINGLE_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRPID=$!
 	echo "server process pid = ${K2HFTFUSESVRPID}"
-	sleep 2
-
-	#
-	# chmpx server service in
-	#
-	echo "------ SET chmpx mode to SERVICEIN ------------------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8021
-	echo "chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -328,7 +347,7 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 	#
 	# check line count
 	#
-	LINES=`wc -l /tmp/k2hftfusesvr/log/unify.log 2> /dev/null | awk '{print $1}' 2> /dev/null`
+	LINES=`wc -l /tmp/mnt/k2hftfusesvr/log/unify.log 2> /dev/null | awk '{print $1}' 2> /dev/null`
 	if [ "X$LINES" != "X10" ]; then
 		echo "ERROR: unify.log file line count(${LINES}) is not as same as 10."
 		TESTSUBRESULT=1
@@ -400,7 +419,7 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 		#
 		# cleanning
 		#
-		rm -f /tmp/k2hftfusesvr/log/unify.log
+		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
 			echo "RESULT --> FAILED(COULD NOT REMOVE RESULT FILE)"
 			exit 1
@@ -411,15 +430,15 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 	#
 	# clean old files in /tmp
 	#
-	rm -rf /tmp/k2hftfuse
-	rm -rf /tmp/k2hftfusesvr
-	rm -rf /tmp/K2HFUSESVRTEST-*.chmpx
-	rm -rf /tmp/K2HFUSESVRTEST-*.k2h
-	rm -rf /tmp/K2HFUSETEST-*.chmpx
-	rm -rf /tmp/K2HFUSETEST-*.k2h
+	rm -rf /tmp/mnt/k2hftfuse
+	rm -rf /tmp/mnt/k2hftfusesvr
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.k2h
+	rm -rf /tmp/test/K2HFUSETEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSETEST-*.k2h
 	rm -rf /tmp/k2hftfuse_np_*
-	rm -rf /tmp/nest_*.log
-	rm -rf /tmp/single_*.log
+	rm -rf /tmp/test/nest_*.log
+	rm -rf /tmp/test/single_*.log
 
 	#######################
 	# TEST for NEST SERVER
@@ -440,14 +459,6 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 	${K2HFUSESVRBIN} -conf ${INIFILEDIR}/k2hftfusesvr_test_trans_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${NEST_TRANS_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRTRANSPID=$!
 	echo "transferred server process pid = ${K2HFTFUSESVRTRANSPID}"
-	sleep 2
-
-	#
-	# transferred chmpx server service in
-	#
-	echo "------ SET transferred chmpx mode to SERVICEIN -------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8031
-	echo "transferred chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -475,14 +486,6 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 	${K2HFUSESVRBIN} -conf ${INIFILEDIR}/k2hftfuse_test_trans_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${NEST_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRPID=$!
 	echo "server process pid = ${K2HFTFUSESVRPID}"
-	sleep 2
-
-	#
-	# chmpx server service in
-	#
-	echo "------ SET chmpx mode to SERVICEIN ------------------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8021
-	echo "chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -544,7 +547,7 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 	#
 	# check line count
 	#
-	LINES=`wc -l /tmp/k2hftfusesvr/log/unify.log 2> /dev/null | awk '{print $1}' 2> /dev/null`
+	LINES=`wc -l /tmp/mnt/k2hftfusesvr/log/unify.log 2> /dev/null | awk '{print $1}' 2> /dev/null`
 	if [ "X$LINES" != "X10" ]; then
 		echo "ERROR: unify.log file line count(${LINES}) is not as same as 10."
 		TESTSUBRESULT=1
@@ -629,7 +632,7 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 		#
 		# cleanning
 		#
-		rm -f /tmp/k2hftfusesvr/log/unify.log
+		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
 			echo "RESULT --> FAILED(COULD NOT REMOVE RESULT FILE)"
 			exit 1
@@ -640,15 +643,15 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 	#
 	# clean old files in /tmp
 	#
-	rm -rf /tmp/k2hftfuse
-	rm -rf /tmp/k2hftfusesvr
-	rm -rf /tmp/K2HFUSESVRTEST-*.chmpx
-	rm -rf /tmp/K2HFUSESVRTEST-*.k2h
-	rm -rf /tmp/K2HFUSETEST-*.chmpx
-	rm -rf /tmp/K2HFUSETEST-*.k2h
+	rm -rf /tmp/mnt/k2hftfuse
+	rm -rf /tmp/mnt/k2hftfusesvr
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.k2h
+	rm -rf /tmp/test/K2HFUSETEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSETEST-*.k2h
 	rm -rf /tmp/k2hftfuse_np_*
-	rm -rf /tmp/nest_*.log
-	rm -rf /tmp/single_*.log
+	rm -rf /tmp/test/nest_*.log
+	rm -rf /tmp/test/single_*.log
 
 	#######################
 	# Finish
@@ -675,7 +678,7 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 	# chmpx for server
 	#
 	echo "------ RUN chmpx on server side ----------------------------"
-	chmpx -conf ${INIFILEDIR}/k2hftfuse_test_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${SINGLE_CHMPX_SLAVE_LOG} 2>&1 &
+	chmpx -conf ${INIFILEDIR}/k2hftfuse_test_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${SINGLE_CHMPX_SERVER_LOG} 2>&1 &
 	CHMPXSVRPID=$!
 	echo "chmpx on server side pid = ${CHMPXSVRPID}"
 	sleep 2
@@ -687,14 +690,6 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 	${K2HFUSESVRBIN} -conf ${INIFILEDIR}/k2hftfuse_test_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${SINGLE_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRPID=$!
 	echo "server process pid = ${K2HFTFUSESVRPID}"
-	sleep 2
-
-	#
-	# chmpx server service in
-	#
-	echo "------ SET chmpx mode to SERVICEIN ------------------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8021
-	echo "chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -750,7 +745,7 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 	#
 	# check line count
 	#
-	LINES=`wc -l /tmp/k2hftfusesvr/log/unify.log 2> /dev/null | awk '{print $1}' 2> /dev/null`
+	LINES=`wc -l /tmp/mnt/k2hftfusesvr/log/unify.log 2> /dev/null | awk '{print $1}' 2> /dev/null`
 	if [ "X$LINES" != "X10" ]; then
 		echo "ERROR: unify.log file line count(${LINES}) is not as same as 10."
 		TESTSUBRESULT=1
@@ -823,7 +818,7 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 		#
 		# cleanning
 		#
-		rm -f /tmp/k2hftfusesvr/log/unify.log
+		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
 			echo "RESULT --> FAILED(COULD NOT REMOVE RESULT FILE)"
 			exit 1
@@ -834,15 +829,15 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 	#
 	# clean old files in /tmp
 	#
-	rm -rf /tmp/k2hftfuse
-	rm -rf /tmp/k2hftfusesvr
-	rm -rf /tmp/K2HFUSESVRTEST-*.chmpx
-	rm -rf /tmp/K2HFUSESVRTEST-*.k2h
-	rm -rf /tmp/K2HFUSETEST-*.chmpx
-	rm -rf /tmp/K2HFUSETEST-*.k2h
+	rm -rf /tmp/mnt/k2hftfuse
+	rm -rf /tmp/mnt/k2hftfusesvr
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.k2h
+	rm -rf /tmp/test/K2HFUSETEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSETEST-*.k2h
 	rm -rf /tmp/k2hftfuse_np_*
-	rm -rf /tmp/nest_*.log
-	rm -rf /tmp/single_*.log
+	rm -rf /tmp/test/nest_*.log
+	rm -rf /tmp/test/single_*.log
 
 	#######################
 	# TEST for NEST SERVER
@@ -863,14 +858,6 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 	${K2HFUSESVRBIN} -conf ${INIFILEDIR}/k2hftfusesvr_test_trans_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${NEST_TRANS_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRTRANSPID=$!
 	echo "transferred server process pid = ${K2HFTFUSESVRTRANSPID}"
-	sleep 2
-
-	#
-	# transferred chmpx server service in
-	#
-	echo "------ SET transferred chmpx mode to SERVICEIN -------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8031
-	echo "transferred chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -898,14 +885,6 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 	${K2HFUSESVRBIN} -conf ${INIFILEDIR}/k2hftfuse_test_trans_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${NEST_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRPID=$!
 	echo "server process pid = ${K2HFTFUSESVRPID}"
-	sleep 2
-
-	#
-	# chmpx server service in
-	#
-	echo "------ SET chmpx mode to SERVICEIN ------------------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8021
-	echo "chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -1052,7 +1031,7 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 		#
 		# cleanning
 		#
-		rm -f /tmp/k2hftfusesvr/log/unify.log
+		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
 			echo "RESULT --> FAILED(COULD NOT REMOVE RESULT FILE)"
 			exit 1
@@ -1063,15 +1042,15 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 	#
 	# clean old files in /tmp
 	#
-	rm -rf /tmp/k2hftfuse
-	rm -rf /tmp/k2hftfusesvr
-	rm -rf /tmp/K2HFUSESVRTEST-*.chmpx
-	rm -rf /tmp/K2HFUSESVRTEST-*.k2h
-	rm -rf /tmp/K2HFUSETEST-*.chmpx
-	rm -rf /tmp/K2HFUSETEST-*.k2h
+	rm -rf /tmp/mnt/k2hftfuse
+	rm -rf /tmp/mnt/k2hftfusesvr
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.k2h
+	rm -rf /tmp/test/K2HFUSETEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSETEST-*.k2h
 	rm -rf /tmp/k2hftfuse_np_*
-	rm -rf /tmp/nest_*.log
-	rm -rf /tmp/single_*.log
+	rm -rf /tmp/test/nest_*.log
+	rm -rf /tmp/test/single_*.log
 
 	#######################
 	# Finish
@@ -1098,7 +1077,7 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 	# chmpx for server
 	#
 	echo "------ RUN chmpx on server side ----------------------------"
-	chmpx -conf ${INIFILEDIR}/k2hftfuse_test_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${SINGLE_CHMPX_SLAVE_LOG} 2>&1 &
+	chmpx -conf ${INIFILEDIR}/k2hftfuse_test_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${SINGLE_CHMPX_SERVER_LOG} 2>&1 &
 	CHMPXSVRPID=$!
 	echo "chmpx on server side pid = ${CHMPXSVRPID}"
 	sleep 2
@@ -1110,14 +1089,6 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 	${K2HFUSESVRBIN} -conf ${INIFILEDIR}/k2hftfuse_test_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${SINGLE_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRPID=$!
 	echo "server process pid = ${K2HFTFUSESVRPID}"
-	sleep 2
-
-	#
-	# chmpx server service in
-	#
-	echo "------ SET chmpx mode to SERVICEIN ------------------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8021
-	echo "chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -1246,7 +1217,7 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 		#
 		# cleanning
 		#
-		rm -f /tmp/k2hftfusesvr/log/unify.log
+		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
 			echo "RESULT --> FAILED(COULD NOT REMOVE RESULT FILE)"
 			exit 1
@@ -1257,15 +1228,15 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 	#
 	# clean old files in /tmp
 	#
-	rm -rf /tmp/k2hftfuse
-	rm -rf /tmp/k2hftfusesvr
-	rm -rf /tmp/K2HFUSESVRTEST-*.chmpx
-	rm -rf /tmp/K2HFUSESVRTEST-*.k2h
-	rm -rf /tmp/K2HFUSETEST-*.chmpx
-	rm -rf /tmp/K2HFUSETEST-*.k2h
+	rm -rf /tmp/mnt/k2hftfuse
+	rm -rf /tmp/mnt/k2hftfusesvr
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.k2h
+	rm -rf /tmp/test/K2HFUSETEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSETEST-*.k2h
 	rm -rf /tmp/k2hftfuse_np_*
-	rm -rf /tmp/nest_*.log
-	rm -rf /tmp/single_*.log
+	rm -rf /tmp/test/nest_*.log
+	rm -rf /tmp/test/single_*.log
 
 	#######################
 	# TEST for NEST SERVER
@@ -1286,14 +1257,6 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 	${K2HFUSESVRBIN} -conf ${INIFILEDIR}/k2hftfusesvr_test_trans_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${NEST_TRANS_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRTRANSPID=$!
 	echo "transferred server process pid = ${K2HFTFUSESVRTRANSPID}"
-	sleep 2
-
-	#
-	# transferred chmpx server service in
-	#
-	echo "------ SET transferred chmpx mode to SERVICEIN -------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8031
-	echo "transferred chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -1321,14 +1284,6 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 	${K2HFUSESVRBIN} -conf ${INIFILEDIR}/k2hftfuse_test_trans_server${CONF_FILE_EXT} -d ${DEBUGMODE} > ${NEST_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRPID=$!
 	echo "server process pid = ${K2HFTFUSESVRPID}"
-	sleep 2
-
-	#
-	# chmpx server service in
-	#
-	echo "------ SET chmpx mode to SERVICEIN ------------------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8021
-	echo "chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -1475,7 +1430,7 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 		#
 		# cleanning
 		#
-		rm -f /tmp/k2hftfusesvr/log/unify.log
+		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
 			echo "RESULT --> FAILED(COULD NOT REMOVE RESULT FILE)"
 			exit 1
@@ -1486,15 +1441,15 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 	#
 	# clean old files in /tmp
 	#
-	rm -rf /tmp/k2hftfuse
-	rm -rf /tmp/k2hftfusesvr
-	rm -rf /tmp/K2HFUSESVRTEST-*.chmpx
-	rm -rf /tmp/K2HFUSESVRTEST-*.k2h
-	rm -rf /tmp/K2HFUSETEST-*.chmpx
-	rm -rf /tmp/K2HFUSETEST-*.k2h
+	rm -rf /tmp/mnt/k2hftfuse
+	rm -rf /tmp/mnt/k2hftfusesvr
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.k2h
+	rm -rf /tmp/test/K2HFUSETEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSETEST-*.k2h
 	rm -rf /tmp/k2hftfuse_np_*
-	rm -rf /tmp/nest_*.log
-	rm -rf /tmp/single_*.log
+	rm -rf /tmp/test/nest_*.log
+	rm -rf /tmp/test/single_*.log
 
 	#######################
 	# Finish
@@ -1520,7 +1475,7 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 	# chmpx for server
 	#
 	echo "------ RUN chmpx on server side ----------------------------"
-	chmpx -json "${K2HFTFUSE_TEST_SERVER_JSON}" -d ${DEBUGMODE} > ${SINGLE_CHMPX_SLAVE_LOG} 2>&1 &
+	chmpx -json "${K2HFTFUSE_TEST_SERVER_JSON}" -d ${DEBUGMODE} > ${SINGLE_CHMPX_SERVER_LOG} 2>&1 &
 	CHMPXSVRPID=$!
 	echo "chmpx on server side pid = ${CHMPXSVRPID}"
 	sleep 2
@@ -1532,14 +1487,6 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 	${K2HFUSESVRBIN} -json "${K2HFTFUSE_TEST_SERVER_JSON}" -d ${DEBUGMODE} > ${SINGLE_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRPID=$!
 	echo "server process pid = ${K2HFTFUSESVRPID}"
-	sleep 2
-
-	#
-	# chmpx server service in
-	#
-	echo "------ SET chmpx mode to SERVICEIN ------------------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8021
-	echo "chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -1668,7 +1615,7 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 		#
 		# cleanning
 		#
-		rm -f /tmp/k2hftfusesvr/log/unify.log
+		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
 			echo "RESULT --> FAILED(COULD NOT REMOVE RESULT FILE)"
 			exit 1
@@ -1679,15 +1626,15 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 	#
 	# clean old files in /tmp
 	#
-	rm -rf /tmp/k2hftfuse
-	rm -rf /tmp/k2hftfusesvr
-	rm -rf /tmp/K2HFUSESVRTEST-*.chmpx
-	rm -rf /tmp/K2HFUSESVRTEST-*.k2h
-	rm -rf /tmp/K2HFUSETEST-*.chmpx
-	rm -rf /tmp/K2HFUSETEST-*.k2h
+	rm -rf /tmp/mnt/k2hftfuse
+	rm -rf /tmp/mnt/k2hftfusesvr
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.k2h
+	rm -rf /tmp/test/K2HFUSETEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSETEST-*.k2h
 	rm -rf /tmp/k2hftfuse_np_*
-	rm -rf /tmp/nest_*.log
-	rm -rf /tmp/single_*.log
+	rm -rf /tmp/test/nest_*.log
+	rm -rf /tmp/test/single_*.log
 
 	#######################
 	# TEST for NEST SERVER
@@ -1708,14 +1655,6 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 	${K2HFUSESVRBIN} -json "${K2HFTFUSESVR_TEST_TRANS_SERVER_JSON}" -d ${DEBUGMODE} > ${NEST_TRANS_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRTRANSPID=$!
 	echo "transferred server process pid = ${K2HFTFUSESVRTRANSPID}"
-	sleep 2
-
-	#
-	# transferred chmpx server service in
-	#
-	echo "------ SET transferred chmpx mode to SERVICEIN -------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8031
-	echo "transferred chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -1743,14 +1682,6 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 	${K2HFUSESVRBIN} -json "${K2HFTFUSE_TEST_TRANS_SERVER_JSON}" -d ${DEBUGMODE} > ${NEST_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRPID=$!
 	echo "server process pid = ${K2HFTFUSESVRPID}"
-	sleep 2
-
-	#
-	# chmpx server service in
-	#
-	echo "------ SET chmpx mode to SERVICEIN ------------------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8021
-	echo "chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -1897,7 +1828,7 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 		#
 		# cleanning
 		#
-		rm -f /tmp/k2hftfusesvr/log/unify.log
+		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
 			echo "RESULT --> FAILED(COULD NOT REMOVE RESULT FILE)"
 			exit 1
@@ -1908,15 +1839,15 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 	#
 	# clean old files in /tmp
 	#
-	rm -rf /tmp/k2hftfuse
-	rm -rf /tmp/k2hftfusesvr
-	rm -rf /tmp/K2HFUSESVRTEST-*.chmpx
-	rm -rf /tmp/K2HFUSESVRTEST-*.k2h
-	rm -rf /tmp/K2HFUSETEST-*.chmpx
-	rm -rf /tmp/K2HFUSETEST-*.k2h
+	rm -rf /tmp/mnt/k2hftfuse
+	rm -rf /tmp/mnt/k2hftfusesvr
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.k2h
+	rm -rf /tmp/test/K2HFUSETEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSETEST-*.k2h
 	rm -rf /tmp/k2hftfuse_np_*
-	rm -rf /tmp/nest_*.log
-	rm -rf /tmp/single_*.log
+	rm -rf /tmp/test/nest_*.log
+	rm -rf /tmp/test/single_*.log
 
 	#######################
 	# Finish
@@ -1942,7 +1873,7 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 	# chmpx for server
 	#
 	echo "------ RUN chmpx on server side ----------------------------"
-	CHMJSONCONF="${K2HFTFUSE_TEST_SERVER_JSON}" chmpx -d ${DEBUGMODE} > ${SINGLE_CHMPX_SLAVE_LOG} 2>&1 &
+	CHMJSONCONF="${K2HFTFUSE_TEST_SERVER_JSON}" chmpx -d ${DEBUGMODE} > ${SINGLE_CHMPX_SERVER_LOG} 2>&1 &
 	CHMPXSVRPID=$!
 	echo "chmpx on server side pid = ${CHMPXSVRPID}"
 	sleep 2
@@ -1954,14 +1885,6 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 	K2HFTSVRJSONCONF="${K2HFTFUSE_TEST_SERVER_JSON}" ${K2HFUSESVRBIN} -d ${DEBUGMODE} > ${SINGLE_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRPID=$!
 	echo "server process pid = ${K2HFTFUSESVRPID}"
-	sleep 2
-
-	#
-	# chmpx server service in
-	#
-	echo "------ SET chmpx mode to SERVICEIN ------------------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8021
-	echo "chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -2090,7 +2013,7 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 		#
 		# cleanning
 		#
-		rm -f /tmp/k2hftfusesvr/log/unify.log
+		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
 			echo "RESULT --> FAILED(COULD NOT REMOVE RESULT FILE)"
 			exit 1
@@ -2101,15 +2024,15 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 	#
 	# clean old files in /tmp
 	#
-	rm -rf /tmp/k2hftfuse
-	rm -rf /tmp/k2hftfusesvr
-	rm -rf /tmp/K2HFUSESVRTEST-*.chmpx
-	rm -rf /tmp/K2HFUSESVRTEST-*.k2h
-	rm -rf /tmp/K2HFUSETEST-*.chmpx
-	rm -rf /tmp/K2HFUSETEST-*.k2h
+	rm -rf /tmp/mnt/k2hftfuse
+	rm -rf /tmp/mnt/k2hftfusesvr
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.k2h
+	rm -rf /tmp/test/K2HFUSETEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSETEST-*.k2h
 	rm -rf /tmp/k2hftfuse_np_*
-	rm -rf /tmp/nest_*.log
-	rm -rf /tmp/single_*.log
+	rm -rf /tmp/test/nest_*.log
+	rm -rf /tmp/test/single_*.log
 
 	#######################
 	# TEST for NEST SERVER
@@ -2130,14 +2053,6 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 	K2HFTSVRJSONCONF="${K2HFTFUSESVR_TEST_TRANS_SERVER_JSON}" ${K2HFUSESVRBIN} -d ${DEBUGMODE} > ${NEST_TRANS_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRTRANSPID=$!
 	echo "transferred server process pid = ${K2HFTFUSESVRTRANSPID}"
-	sleep 2
-
-	#
-	# transferred chmpx server service in
-	#
-	echo "------ SET transferred chmpx mode to SERVICEIN -------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8031
-	echo "transferred chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -2165,14 +2080,6 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 	K2HFTSVRJSONCONF="${K2HFTFUSE_TEST_TRANS_SERVER_JSON}" ${K2HFUSESVRBIN} -d ${DEBUGMODE} > ${NEST_K2HFTFUSESVR_LOG} 2>&1 &
 	K2HFTFUSESVRPID=$!
 	echo "server process pid = ${K2HFTFUSESVRPID}"
-	sleep 2
-
-	#
-	# chmpx server service in
-	#
-	echo "------ SET chmpx mode to SERVICEIN ------------------------"
-	(sleep 2; echo SERVICEIN) | telnet localhost 8021
-	echo "chmpx on server side status to SERVICEIN"
 	sleep 2
 
 	#
@@ -2319,7 +2226,7 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 		#
 		# cleanning
 		#
-		rm -f /tmp/k2hftfusesvr/log/unify.log
+		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
 			echo "RESULT --> FAILED(COULD NOT REMOVE RESULT FILE)"
 			exit 1
@@ -2330,15 +2237,15 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 	#
 	# clean old files in /tmp
 	#
-	rm -rf /tmp/k2hftfuse
-	rm -rf /tmp/k2hftfusesvr
-	rm -rf /tmp/K2HFUSESVRTEST-*.chmpx
-	rm -rf /tmp/K2HFUSESVRTEST-*.k2h
-	rm -rf /tmp/K2HFUSETEST-*.chmpx
-	rm -rf /tmp/K2HFUSETEST-*.k2h
+	rm -rf /tmp/mnt/k2hftfuse
+	rm -rf /tmp/mnt/k2hftfusesvr
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSESVRTEST-*.k2h
+	rm -rf /tmp/test/K2HFUSETEST-*.chmpx
+	rm -rf /tmp/test/K2HFUSETEST-*.k2h
 	rm -rf /tmp/k2hftfuse_np_*
-	rm -rf /tmp/nest_*.log
-	rm -rf /tmp/single_*.log
+	rm -rf /tmp/test/nest_*.log
+	rm -rf /tmp/test/single_*.log
 
 	#######################
 	# Finish

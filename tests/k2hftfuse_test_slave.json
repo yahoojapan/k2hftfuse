@@ -128,7 +128,7 @@
     "K2HFTFUSE":
     {
         "K2HTYPE":                "mem",
-        #"K2HFILE":               "/tmp/k2hftfuse.k2h",
+        #"K2HFILE":               "/tmp/test/k2hftfuse.k2h",
         #"K2HFULLMAP":            "yes",
         #"K2HINIT":               "yes",
         "K2HMASKBIT":             "4",
@@ -159,7 +159,7 @@
             {
                 "TARGET":             "any/log",
                 "TRUNS":              "on",
-                "OUTPUTFILE":         "/tmp/k2hftfuse/log/",
+                "OUTPUTFILE":         "/tmp/mnt/k2hftfuse/log/",
                 "DEFAULTALL":         "DENY",
                 "ALLOW":              [   "INFO",
                                         [ "(.*)([eE][rR][rR])(.*)", "$0" ]
@@ -168,7 +168,7 @@
             {
                 "TARGET":             "any/plugintest",
                 "TRUNS":              "on",
-                "OUTPUTFILE":         "/tmp/k2hftfuse/any/plugintest/",
+                "OUTPUTFILE":         "/tmp/mnt/k2hftfuse/any/plugintest/",
                 "PLUGIN":             "/bin/cat",
                 "DEFAULTALL":         "ALLOW"
             }
@@ -210,7 +210,7 @@
             {
                 "TARGET":             "log/nothing1.log",
                 "TRUNS":              "on",
-                "OUTPUTFILE":         "/tmp/k2hftfuse/log/nothing1.log"
+                "OUTPUTFILE":         "/tmp/mnt/k2hftfuse/log/nothing1.log"
             },
             {
                 "TARGET":             "log/nothing2.log",
@@ -221,14 +221,14 @@
             {
                 "TARGET":             "log/nothing3.log",
                 "TRUNS":              "on",
-                "OUTPUTFILE":         "/tmp/k2hftfuse/log/nothing3.log",
+                "OUTPUTFILE":         "/tmp/mnt/k2hftfuse/log/nothing3.log",
                 "DEFAULTALL":         "DENY",
                 "ALLOW":              ""
             },
             {
                 "TARGET":             "log/plugintest.log",
                 "TRUNS":              "on",
-                "OUTPUTFILE":         "/tmp/k2hftfuse/log/plugintest.log",
+                "OUTPUTFILE":         "/tmp/mnt/k2hftfuse/log/plugintest.log",
                 "PLUGIN":             "/bin/cat",
                 "DEFAULTALL":         "ALLOW"
             }
