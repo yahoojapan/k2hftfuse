@@ -102,7 +102,7 @@ AC_SUBST([PKGLICENSE], "`grep License COPYING | sed 's/ License//g'`")
 AC_SUBST([DEBCOPYING], "`tail -n +5 COPYING | sed 's/^$/./g' | sed 's/^/ /g'`")
 AC_SUBST([DEBHELPER_DEP], "`$(pwd)/buildutils/make_variables.sh -debhelper_dep`")
 AC_SUBST([RPMPKG_GROUP], ["`$(pwd)/buildutils/make_variables.sh -rpmpkg_group | sed 's#NEEDRPMGROUP#Group: System Environment/Libraries#g'`"])
-AC_SUBST([CONFIGREWITHOPT], "")
+AC_SUBST([CONFIGUREWITHOPT], "")
 AM_SUBST_NOTMAKE([CURRENTREV])
 AM_SUBST_NOTMAKE([RPMCHANGELOG])
 AM_SUBST_NOTMAKE([SHORTDESC])
@@ -112,7 +112,7 @@ AM_SUBST_NOTMAKE([DEBLONGDESC])
 AM_SUBST_NOTMAKE([DEBCOPYING])
 AM_SUBST_NOTMAKE([DEBHELPER_DEP])
 AM_SUBST_NOTMAKE([RPMPKG_GROUP])
-AM_SUBST_NOTMAKE([CONFIGREWITHOPT])
+AM_SUBST_NOTMAKE([CONFIGUREWITHOPT])
 
 #
 # pkg-config for old version
@@ -133,9 +133,9 @@ AC_ARG_ENABLE(check-depend-libs,
 	esac]
 )
 AS_IF([test ${check_depend_libs} = 1], [AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)])
-AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([fullock], [libfullock >= 1.0.32], [], [AC_MSG_ERROR(not found libfullock package)])])
-AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([k2hash], [libk2hash >= 1.0.67], [], [AC_MSG_ERROR(not found k2hash package)])])
-AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([chmpx], [libchmpx >= 1.0.64], [], [AC_MSG_ERROR(not found chmpx package)])])
+AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([fullock], [libfullock >= 1.0.33], [], [AC_MSG_ERROR(not found libfullock package)])])
+AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([k2hash], [libk2hash >= 1.0.68], [], [AC_MSG_ERROR(not found k2hash package)])])
+AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([chmpx], [libchmpx >= 1.0.65], [], [AC_MSG_ERROR(not found chmpx package)])])
 
 #
 # Checking FUSE Library
