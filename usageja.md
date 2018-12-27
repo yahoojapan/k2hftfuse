@@ -14,6 +14,74 @@ next_string: Build
 ---
 
 # 使い方
+ここでは、**K2HFTFUSE** のインストールと簡単な動作確認について説明します。
+
+# 1. 利用環境構築
+
+## K2HFTFUSEインストール
+**K2HFTFUSE** をご利用の環境にインストールするには、2つの方法があります。  
+ひとつは、[packagecloud.io](https://packagecloud.io/)から **K2HFTFUSE** のパッケージをダウンロードし、インストールする方法です。  
+もうひとつは、ご自身で **K2HFTFUSE** をソースコードからビルドし、インストールする方法です。  
+これらの方法について、以下に説明します。
+
+### パッケージを使ったインストール
+**K2HFTFUSE** は、誰でも利用できるように[packagecloud.io - AntPickax stable repository](https://packagecloud.io/antpickax/stable/)で[パッケージ](https://packagecloud.io/app/antpickax/stable/search?q=k2hftfuse)を公開しています。  
+**K2HFTFUSE** のパッケージは、Debianパッケージ、RPMパッケージの形式で公開しています。  
+お使いのOSによりインストール方法が異なりますので、以下の手順を確認してインストールしてください。  
+
+#### Debian(Stretch) / Ubuntu(Bionic Beaver)
+```
+$ sudo apt-get update -y
+$ sudo apt-get install curl -y
+$ curl -s https://packagecloud.io/install/repositories/antpickax/stable/script.deb.sh | sudo bash
+$ sudo apt-get install k2hftfuse
+```
+開発者向けパッケージをインストールする場合は、以下のパッケージをインストールしてください。
+```
+$ sudo apt-get install k2hftfuse-dev
+```
+
+#### Fedora28 / CentOS7.x(6.x)
+```
+$ sudo yum makecache
+$ sudo yum install curl -y
+$ curl -s https://packagecloud.io/install/repositories/antpickax/stable/script.rpm.sh | sudo bash
+$ sudo yum install k2hftfuse
+```
+開発者向けパッケージをインストールする場合は、以下のパッケージをインストールしてください。
+```
+$ sudo yum install k2hftfuse-devel
+```
+
+#### 上記以外のOS
+上述したOS以外をお使いの場合は、パッケージが準備されていないため、直接インストールすることはできません。  
+この場合には、後述の[ソースコード](https://github.com/yahoojapan/k2hftfuse)からビルドし、インストールするようにしてください。
+
+### ソースコードからビルド・インストール
+**K2HFTFUSE** を[ソースコード](https://github.com/yahoojapan/k2hftfuse)からビルドし、インストールする方法は、[ビルド](https://k2hftfuse.antpick.ax/buildja.html)を参照してください。
+
+## OS環境設定
+**k2HFTFUSE**は、[FUSE (Filesystem in Userspace)](https://github.com/libfuse/libfuse)を利用したFUSEクライアントアプリケーションです。  
+このため、あらかじめシステム（OS）でFUSEが利用できるように設定しておく必要があります。  
+以下に設定例を示します。詳細は、[FUSE (Filesystem in Userspace)](https://github.com/libfuse/libfuse)などを参照してください。  
+
+### /etc/fuse.conf
+root以外で**K2HFTFUSE**を利用する場合には、このファイルに以下の設定を記述します。
+```
+user_allow_other
+```
+### /dev/fuse
+root以外で**K2HFTFUSE**を利用する場合には、このデバイスファイルにパーミッションを与える必要があります。
+```
+$ sudo chmod -f a+rw /dev/fuse
+```
+### /bin/fusermount
+root以外で**K2HFTFUSE**を利用する場合には、このファイルにパーミッションを与える必要があります。
+```
+$ sudo chmod -f o+rx /bin/fusermount
+```
+
+# 2. 動作確認
 ## サンプルコンフィグレーション
 K2HFTFUSEとK2HFTFUSESVRの利用するコンフィグレーションのサンプルを示します。
 
