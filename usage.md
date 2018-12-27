@@ -14,8 +14,71 @@ next_string: Build
 ---
 
 # Usage
-After building K2HFTFUSE, you can check the operation by the following procedure.
+This is an explanation about **K2HFTFUSE** installation and easy operation confirmation.
 
+# 1. Creating a usage environment
+
+## Install K2HFTFUSE
+There are two ways to install **K2HFTFUSE** in your environment.  
+One is to download and install the package of **K2HFTFUSE** from [packagecloud.io](https://packagecloud.io/).  
+The other way is to build and install **K2HFTFUSE** from source code yourself.  
+These methods are described below.  
+
+### Installing packages
+The **K2HFTFUSE** publishes [packages](https://packagecloud.io/app/antpickax/stable/search?q=k2hftfuse) in [packagecloud.io - AntPickax stable repository](https://packagecloud.io/antpickax/stable) so that anyone can use it.  
+The package of the **K2HFTFUSE** is released in the form of Debian package, RPM package.  
+Since the installation method differs depending on your OS, please check the following procedure and install it.  
+
+#### Debian(Stretch) / Ubuntu(Bionic Beaver)
+```
+$ sudo apt-get update -y
+$ sudo apt-get install curl -y
+$ curl -s https://packagecloud.io/install/repositories/antpickax/stable/script.deb.sh | sudo bash
+$ sudo apt-get install k2hftfuse
+```
+To install the developer package, please install the following package.
+```
+$ sudo apt-get install k2hftfuse-dev
+```
+
+#### Fedora28 / CentOS7.x(6.x)
+```
+$ sudo yum makecache
+$ sudo yum install curl -y
+$ curl -s https://packagecloud.io/install/repositories/antpickax/stable/script.rpm.sh | sudo bash
+$ sudo yum install k2hftfuse
+```
+To install the developer package, please install the following package.
+```
+$ sudo yum install k2hftfuse-devel
+```
+
+#### Other OS
+If you are not using the above OS, packages are not prepared and can not be installed directly.  
+In this case, build from the [source code](https://github.com/yahoojapan/k2hftfuse) described below and install it.
+
+## OS preference
+**k2HFTFUSE** is one of [FUSE (Filesystem in Userspace)](https://github.com/libfuse/libfuse) client application.  
+Therefore, you need to set up the system(OS) before using **K2HFTFUSE**.  
+An example of the setting is shown below. For details, refer to [FUSE (Filesystem in Userspace)](https://github.com/libfuse/libfuse).
+
+### /etc/fuse.conf
+To use **K2HFTFUSE** other than root, write the following setting in this file.  
+```
+user_allow_other
+```
+### /dev/fuse
+To use **K2HFTFUSE** other than root, you need to set read/write permission to this device file.  
+```
+$ sudo chmod -f a+rw /dev/fuse
+```
+### /bin/fusermount
+To use **K2HFTFUSE** other than root, you need to set execute permission to this file.
+```
+$ sudo chmod -f o+rx /bin/fusermount
+```
+
+# 2. Operation check
 ## Sample Configuration
 The following is the configuration used for K2HFTFUSE and K2HFTFUSESVR test. please refer.
 
