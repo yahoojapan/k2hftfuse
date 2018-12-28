@@ -13,7 +13,7 @@ next_url:
 next_string: 
 ---
 
-# 造る
+# ビルド
 
 この章は3つの部分で構成されています。
 
@@ -23,27 +23,27 @@ next_string:
 
 ## 1. ビルド環境の構築
 
-K2HFTFUSEとK2HFTFUSESVRは、主にfullock、k2hash、chmpx、およびk2htp_dtorに依存します。それぞれの依存ライブラリとヘッダファイルは、K2HFTFUSEとK2HFTFUSESVRをビルドするために必要です。それらをインストールする方法は2つあります。好きなものを選ぶことができます。
+K2HFTFUSEとK2HFTFUSESVRは、主に[FULLOCK](https://fullock.antpick.ax/indexja.html), [K2HASH](https://k2hash.antpick.ax/indexja.html), [CHMPX](https://chmpx.antpick.ax/indexja.html) および [K2HTPDTOR](https://k2hthdtor.antpick.ax/indexja.html)に依存します。それぞれの依存ライブラリとヘッダファイルは、K2HFTFUSEとK2HFTFUSESVRをビルドするために必要です。それらをインストールする方法は2つあります。好きなものを選ぶことができます。
 
-* [GitHub](https://github.com/yahoojapan/k2hftfuse)  を使う  
+* [GitHub](https://github.com/yahoojapan)  を使う  
 依存ライブラリのソースコードとヘッダファイルをインストールします。あなたはそれらをビルドしてインストールします。
 * [packagecloud.io](https://packagecloud.io/antpickax/stable/) を使用する  
 依存ライブラリのパッケージとヘッダファイルをインストールします。あなたはそれらをインストールするだけです。ライブラリはすでに構築されています。
 
-### 1.1. [GitHub](https://github.com/yahoojapan/k2hftfuse)  から各依存ライブラリとヘッダファイルをインストールする
+### 1.1. [GitHub](https://github.com/yahoojapan)  から各依存ライブラリとヘッダファイルをインストールする
 
 詳細については以下の文書を読んでください。
 
-* [fullock](https://fullock.antpick.ax/buildja.html)
-* [k2hash](https://k2hash.antpick.ax/buildja.html)  
-* [chmpx](https://chmpx.antpick.ax/buildja.html)  
-* [k2htp_dtor](https://k2htpdtor.antpick.ax/buildja.html)  
+* [FULLOCK](https://fullock.antpick.ax/buildja.html)
+* [K2HASH](https://k2hash.antpick.ax/buildja.html)  
+* [CHMPX](https://chmpx.antpick.ax/buildja.html)  
+* [K2HTPDTOR](https://k2htpdtor.antpick.ax/buildja.html)  
 
 ### 1.2.  packagecloud.ioから各依存ライブラリとヘッダファイルをインストールします。
 
 このセクションでは、[packagecloud.io](https://packagecloud.io/antpickax/stable/) から各依存ライブラリとヘッダーファイルをインストールする方法を説明します。
 
-注：前のセクションで各依存ライブラリと[GitHub](https://github.com/yahoojapan/k2hftfuse)  からのヘッダーファイルをインストールした場合は、このセクションを読み飛ばしてください。
+注：前のセクションで各依存ライブラリと[GitHub](https://github.com/yahoojapan)  からのヘッダーファイルをインストールした場合は、このセクションを読み飛ばしてください。
 
 DebianStretchまたはUbuntu（Bionic Beaver）をお使いの場合は、以下の手順に従ってください。
 ```bash
