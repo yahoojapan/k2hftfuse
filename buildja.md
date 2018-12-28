@@ -13,70 +13,118 @@ next_url:
 next_string: 
 ---
 
-# ビルド方法
-K2HFTFUSE、およびK2HFTFUSESVRをビルドする方法を説明します。
+# 造る
 
-## 1. 事前環境
-- Debian / Ubuntu  
-```
-$ sudo aptitude update
-$ sudo aptitude install git autoconf autotools-dev gcc g++ make gdb dh-make fakeroot dpkg-dev devscripts libtool pkg-config libssl-dev libyaml-dev libfuse-dev
+この章は3つの部分で構成されています。
+
+* ローカル開発用にK2HFTFUSEとK2HFTFUSESVRをセットアップする方法
+* ソースコードからK2HFTFUSEとK2HFTFUSESVRを構築する方法
+* K2HFTFUSEとK2HFTFUSESVRのインストール方法
+
+## 1. ビルド環境の構築
+
+K2HFTFUSEとK2HFTFUSESVRは、主にfullock、k2hash、chmpx、およびk2htp_dtorに依存します。それぞれの依存ライブラリとヘッダファイルは、K2HFTFUSEとK2HFTFUSESVRをビルドするために必要です。それらをインストールする方法は2つあります。好きなものを選ぶことができます。
+
+* [GitHub](https://github.com/yahoojapan/k2hftfuse)  を使う  
+依存ライブラリのソースコードとヘッダファイルをインストールします。あなたはそれらをビルドしてインストールします。
+* [packagecloud.io](https://packagecloud.io/antpickax/stable/) を使用する  
+依存ライブラリのパッケージとヘッダファイルをインストールします。あなたはそれらをインストールするだけです。ライブラリはすでに構築されています。
+
+### 1.1. [GitHub](https://github.com/yahoojapan/k2hftfuse)  から各依存ライブラリとヘッダファイルをインストールする
+
+詳細については以下の文書を読んでください。
+
+* [fullock](https://fullock.antpick.ax/buildja.html)
+* [k2hash](https://k2hash.antpick.ax/buildja.html)  
+* [chmpx](https://chmpx.antpick.ax/buildja.html)  
+* [k2htp_dtor](https://k2htpdtor.antpick.ax/buildja.html)  
+
+### 1.2.  packagecloud.ioから各依存ライブラリとヘッダファイルをインストールします。
+
+このセクションでは、[packagecloud.io](https://packagecloud.io/antpickax/stable/) から各依存ライブラリとヘッダーファイルをインストールする方法を説明します。
+
+注：前のセクションで各依存ライブラリと[GitHub](https://github.com/yahoojapan/k2hftfuse)  からのヘッダーファイルをインストールした場合は、このセクションを読み飛ばしてください。
+
+DebianStretchまたはUbuntu（Bionic Beaver）をお使いの場合は、以下の手順に従ってください。
+```bash
+$ sudo apt-get update -y
+$ sudo apt-get install curl -y
+$ curl -s https://packagecloud.io/install/repositories/antpickax/stable/script.deb.sh \
+    | sudo bash
+$ sudo apt-get install autoconf autotools-dev gcc g++ make gdb libtool pkg-config \
+    libyaml-dev libfullock-dev k2hash-dev chmpx-dev libfuse-dev -y
+$ sudo apt-get install git -y
 ```
 
-- Fedora / CentOS  
-```
-$ sudo yum install git autoconf automake gcc libstdc++-devel gcc-c++ make libtool openssl-devel libyaml-devel fuse fuse-devel
+Fedora28またはCentOS7.x（6.x）ユーザーの場合は、以下の手順に従ってください。
+```bash
+$ sudo yum makecache
+$ sudo yum install curl -y
+$ curl -s https://packagecloud.io/install/repositories/antpickax/stable/script.rpm.sh \
+    |スードバッシュ
+$ sudo yumインストールautoconf automake gcc gcc-c ++ gdb make libtool pkgconfig \
+    libyaml-devel libfullock-devel k2ハッシュ-devel chmpx-devel fuse fuse-devel -y
+$ sudo yum install git -y
 ```
 
-## 2. ビルド、インストール：FULLOCK
+## 2. [GitHub](https://github.com/yahoojapan/k2hftfuse)  からソースコードを複製する
+
+[GitHub](https://github.com/yahoojapan/k2hftfuse)  からK2HFTFUSEとK2HFTFUSESVRのソースコードをダウンロードしてください。
+
+```bash
+$ git clone https://github.com/yahoojapan/k2hftfuse.git
 ```
-$ git clone https://github.com/yahoojapan/fullock.git
-$ cd fullock
-$ ./autogen.sh
-$ ./configure --prefix=/usr
+
+## 3. ビルドしてインストールする
+
+以下のステップに従ってK2HFTFUSEとK2HFTFUSESVRをビルドしてインストールしてください。 K2HFTFUSEとK2HFTFUSESVRを構築するためにGNU Automakeを使います。
+
+```bash
+$ cd k2hftfuse
+$ sh autogen.sh
+$ ./configure --prefix = / usr
 $ make
 $ sudo make install
 ```
 
-## 3. ビルド、インストール：K2HASH
-```
-$ git clone https://github.com/yahoojapan/k2hash.git
-$ cd k2hash
-$ ./autogen.sh
-$ ./configure --prefix=/usr
-$ make
-$ sudo make install
-```
+K2HFTFUSEとK2HFTFUSESVRを正常にインストールすると、k2hftfuseのヘルプテキストが表示されます。
+```bash
+$ k2hftfuse -h
+[Usage] k2hftfuse
+ You can run k2hftfuse by two way, one is manual and the other is using mount command.
 
-## 4. ビルド、インストール：CHMPX
-```
-$ git clone https://github.com/yahoojapan/chmpx.git
-$ cd chmpx
-$ ./autogen.sh
-$ ./configure --prefix=/usr
-$ make
-$ sudo make install
-```
+ * run k2hftfuse manually
+     k2hftfuse [mount point] [k2hftfuse or fuse options]
+   for example:
+     $ k2hftfuse /mnt/k2hfs -o allow_other,nodev,nosuid,_netdev,dbglevel=err,conf=/etc/k2hftfuse.conf -f -d &
 
-## 5. ビルド、インストール：K2HTPDTOR
-```
-$ git clone https://github.com/yahoojapan/k2htp_dtor.git
-$ cd k2htp_dtor
-$ ./autogen.sh
-$ ./configure --prefix=/usr
-$ make
-$ sudo make install
-```
+ * using mount/umount/fusermount
+   makes following formatted line in fstab:
+     k2hftfuse [mount point] fuse [k2hftfuse or fuse options]
+   for example:
+     k2hftfuse /mnt/k2hfs fuse allow_other,nodev,nosuid,_netdev,dbglevel=err,conf=/etc/k2hftfuse.conf 0 0
+   you can run k2hftfuse by mount command.
+     $ mount /mnt/k2hfs
+     $ umount /mnt/k2hfs
+     $ fusermount -d /mnt/k2hfs
 
-## 6. clone
-```
-$ git clone git@github.com:yahoojapan/k2hftfuse.git
-```
+ * k2hftfuse options:
+     -h(--help)                   print help
+     -v(--version)                print version
+     -d(--debug)                  set debug level "msg", this option is common with FUSE
+     -o umask=<number>            set umask with FUSE
+     -o uid=<number>              set uid with FUSE
+     -o gid=<number>              set gid with FUSE
+     -o dbglevel={err|wan|msg}    set debug level affect only k2hftfuse
+     -o conf=<configration file>  specify configration file(.ini .yaml .json) for k2hftfuse and all sub system
+     -o json=<json string>        specify json string as configration for k2hftfuse and all sub system
+     -o enable_run_chmpx          run chmpx slave process
+     -o disable_run_chmpx         do not run chmpx slave process(default)
+     -o chmpxlog=<log file path>  chmpx log file path when k2hftfuse run chmpx
 
-## 7. ビルド、インストール：K2HFTFUSE
-```
-$ ./autogen.sh
-$ ./configure --prefix=/usr
-$ make
-$ sudo make install
-```
+ * k2hftfuse environments:
+     K2HFTCONFFILE                specify configration file(.ini .yaml .json) instead of conf option.
+     K2HFTJSONCONF                specify json string as configration instead of json option.
+
+ Please see man page - k2hftfuse(1) for more details.
+ ```
