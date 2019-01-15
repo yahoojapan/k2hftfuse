@@ -385,16 +385,17 @@ bool Processing(K2hFtSvrInfo& confinfo, K2hFtPluginMan& pluginman, K2HShm* pTran
 
 				}else{
 					// put file, do stacking
-					size_t	NewSize = FilePutSize + ((!confinfo.IsBinMode() && 0x00 == data[datalength - 1]) ? (datalength - 1) : datalength);
+					size_t			NewSize = FilePutSize + ((!confinfo.IsBinMode() && 0x00 == data[datalength - 1]) ? (datalength - 1) : datalength);
+					unsigned char*	pTmpFile;
 
-					if(NULL == (pFileOutput = reinterpret_cast<unsigned char*>(realloc(pFileOutput, NewSize)))){
+					if(NULL == (pTmpFile = reinterpret_cast<unsigned char*>(realloc(pFileOutput, NewSize)))){
 						ERR_K2HFTPRN("Could not allocate memory, but continue...");
 					}else{
+						pFileOutput = pTmpFile;
 						memcpy(&pFileOutput[FilePutSize], data, ((!confinfo.IsBinMode() && 0x00 == data[datalength - 1]) ? (datalength - 1) : datalength));
 						FilePutSize = NewSize;
 					}
 				}
-
 				pLines = pNextLines;
 			}
 

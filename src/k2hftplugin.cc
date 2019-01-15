@@ -338,6 +338,8 @@ pid_t K2hFtPluginMan::RunPluginProcess(const char* pluginparam, const char* outp
 				exit(EXIT_FAILURE);
 			}
 			// close writer fd
+			// cppcheck-suppress unmatchedSuppression
+			// cppcheck-suppress unreadVariable
 			K2HFT_CLOSE(child_wr_pipe);
 		}
 
@@ -453,7 +455,11 @@ pid_t K2hFtPluginMan::RunPluginProcess(const char* pluginparam, const char* outp
 			exit(EXIT_FAILURE);
 		}
 		// close all
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress unreadVariable
 		K2HFT_CLOSE(child_input_pipe);
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress unreadVariable
 		K2HFT_CLOSE(fd);
 
 		MSG_K2HFTPRN("CHILD PROCESS: Started child plugin(%s) process(pid=%d).", filename.c_str(), getpid());
@@ -482,11 +488,9 @@ pid_t K2hFtPluginMan::RunPluginProcess(const char* pluginparam, const char* outp
 //---------------------------------------------------------
 // Methods
 //---------------------------------------------------------
-K2hFtPluginMan::K2hFtPluginMan(void) : pfdcache(NULL), mountpoint(""), condname(""), mutexname(""), lockval(FLCK_NOSHARED_MUTEX_VAL_UNLOCKED)
+K2hFtPluginMan::K2hFtPluginMan(void) : pfdcache(NULL), mountpoint(""), condname(K2HFT_PLUGIN_CONDNAME_PREFIX), mutexname(K2HFT_PLUGIN_MUTEXNAME_PREFIX), lockval(FLCK_NOSHARED_MUTEX_VAL_UNLOCKED)
 {
 	// set named condition/mutex value
-	condname	= K2HFT_PLUGIN_CONDNAME_PREFIX;
-	mutexname	= K2HFT_PLUGIN_MUTEXNAME_PREFIX;
 	condname	+= to_string(getpid());
 	mutexname	+= to_string(getpid());
 }
@@ -657,6 +661,8 @@ bool K2hFtPluginMan::RunPlugin(PK2HFT_PLUGIN pplugin, bool is_wait_cond)
 		pplugin->st_dev	= 0;
 		pplugin->st_ino	= 0;
 
+												// cppcheck-suppress unmatchedSuppression
+												// cppcheck-suppress stlIfStrFind
 	}else if(!mountpoint.empty() && 0 == pplugin->OutputPath.find(mountpoint)){
 		// output directory is under mount point,
 		// so we do not need to make directory and watch it.
@@ -939,6 +945,8 @@ bool K2hFtPluginMan::Write(PK2HFT_PLUGIN pplugin, unsigned char* pdata, size_t l
 	}
 
 	// check output
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress stlIfStrFind
 	if(!pplugin->OutputPath.empty() && (mountpoint.empty() || 0 != pplugin->OutputPath.find(mountpoint))){
 		if(!pfdcache->Find(pplugin->OutputPath, pplugin->st_dev, pplugin->st_ino)){
 			// output file is changed or removed, so need to restart plugin.

@@ -209,6 +209,8 @@ void* K2hFtFdCache::WorkerThread(void* param)
 	if(-1 == epoll_ctl(pFdCache->epollfd, EPOLL_CTL_DEL, sigfd, NULL)){
 		ERR_K2HFTPRN("Failed to remove signal fd(%d) from epoll fd(%d) by errno(%d), but continue...", sigfd, pFdCache->epollfd, errno);
 	}
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress unreadVariable
 	K2HFT_CLOSE(sigfd);
 
 	pthread_exit(NULL);
@@ -310,6 +312,8 @@ bool K2hFtFdCache::DeleteFileWatchEpoll(PK2HFTFW pfw)
 	MSG_K2HFTPRN("Succeed deleting file watch for %s", pfw->filepath.c_str());
 
 	// no care for lockval
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress uselessAssignmentPtrArg
 	K2HFT_DELETE(pfw);
 
 	return true;
@@ -626,6 +630,7 @@ bool K2hFtFdCache::Write(const string& filepath, int openflags, mode_t openmode,
 	fullock_rwlock_unlock(fd, 0, 1);					// UNLOCK
 
 	if(K2HFT_INVALID_HANDLE != direct_fd){
+		// cppcheck-suppress unreadVariable
 		K2HFT_CLOSE(direct_fd);
 	}
 	return result;

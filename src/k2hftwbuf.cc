@@ -57,10 +57,12 @@ bool K2hFtBinBuff::AppendStringBuff(const unsigned char* data, size_t length, bo
 		// buffer over flow, so reallocate
 		CacheBuffSize += max(K2hFtBinBuff::BUFFER_SINGLE_SIZE, (length + 1));
 
-		if(NULL == (CacheBuff = reinterpret_cast<unsigned char*>(realloc(CacheBuff, CacheBuffSize)))){
+		unsigned char*	TmpBuff;
+		if(NULL == (TmpBuff = reinterpret_cast<unsigned char*>(realloc(CacheBuff, CacheBuffSize)))){
 			ERR_K2HFTPRN("Could not allocate memory.");
 			return false;
 		}
+		CacheBuff = TmpBuff;
 	}
 	// append data
 	if(data && 0 < length){
@@ -325,6 +327,8 @@ bool K2hFtWriteBuff::StackPush(unsigned char* data, size_t length, pid_t pid)
 	if(pOutput != data){		// [NOTICE]
 		K2HFT_FREE(pOutput);
 	}
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress uselessAssignmentPtrArg
 	K2HFT_FREE(data);
 
 	return true;

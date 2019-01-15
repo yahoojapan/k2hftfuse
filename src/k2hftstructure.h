@@ -106,7 +106,10 @@ inline bool FreeK2hFtKey(unsigned char* pk2hftkey)
 		ERR_K2HFTPRN("pk2hftkey is NULL.");
 		return false;
 	}
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress uselessAssignmentPtrArg
 	K2HFT_FREE(pk2hftkey);
+
 	return true;
 }
 
@@ -206,7 +209,10 @@ inline bool FreeK2hFtValue(PK2HFTVALUE pk2hftval)
 		ERR_K2HFTPRN("pk2hftval is NULL.");
 		return false;
 	}
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress uselessAssignmentPtrArg
 	K2HFT_FREE(pk2hftval);
+
 	return true;
 }
 
@@ -287,6 +293,8 @@ inline bool FreeK2hFtLine(PK2HFTLINE pk2hftline)
 		ERR_K2HFTPRN("pk2hftline is NULL.");
 		return false;
 	}
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress uselessAssignmentPtrArg
 	K2HFT_FREE(pk2hftline);
 	return true;
 }
@@ -298,7 +306,7 @@ inline PK2HFTLINE GetNextK2hFtLine(PK2HFTLINE pk2hftline)
 		return NULL;
 	}
 	size_t	curlength = GetK2hFtLineSize(pk2hftline);
-	if(curlength <= 0){
+	if(curlength == 0){
 		return NULL;
 	}
 	unsigned char*	pNext = GetK2hFtLinePtr(pk2hftline);
