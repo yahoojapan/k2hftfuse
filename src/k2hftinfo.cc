@@ -68,8 +68,8 @@ static PK2HFTMATCHPTN build_k2hft_match_pattern(const char* compptn, const char*
 		// REGEX pattern
 		//
 		if(strlen(compptn) < 3 || '\"' != compptn[strlen(compptn) - 1]){
-			// compptn start '"', but it does not terminate charactor(\").
-			ERR_K2HFTPRN("compptn(%s) does not terminate '\"' charactor.", compptn);
+			// compptn start '"', but it does not terminate character(\").
+			ERR_K2HFTPRN("compptn(%s) does not terminate '\"' character.", compptn);
 			K2HFT_DELETE(pMatchPtn);
 			return NULL;
 		}
@@ -92,7 +92,7 @@ static PK2HFTMATCHPTN build_k2hft_match_pattern(const char* compptn, const char*
 			errbuf[0] = '\0';
 			regerror(regresult, &(pMatchPtn->RegexBuffer), errbuf, REGEX_ERROR_BUFF_SIZE);
 
-			ERR_K2HFTPRN("Failed to complie compptn(%s) regex, error is %s(%d)", ptmpcompptn, errbuf, regresult);
+			ERR_K2HFTPRN("Failed to compile compptn(%s) regex, error is %s(%d)", ptmpcompptn, errbuf, regresult);
 			K2HFT_FREE(ptmpcompptn);
 			K2HFT_DELETE(pMatchPtn);
 			return NULL;
@@ -133,7 +133,7 @@ static PK2HFTMATCHPTN build_k2hft_match_pattern(const char* compptn, const char*
 			bool	is_found_term	= false;
 			for(char* preadpos = &ptmprepptn[1]; preadpos && '\0' != *preadpos; ++preadpos){
 				if('\\' == *preadpos){
-					// found escape charactor
+					// found escape character
 					if(is_last_escape){
 						*psetpos++		= *preadpos;					// '\\' -> '\'
 						is_last_escape	= false;
@@ -150,13 +150,13 @@ static PK2HFTMATCHPTN build_k2hft_match_pattern(const char* compptn, const char*
 						// not escape '"' is found, it is only allowed lastest word pos.
 						if('\0' != preadpos[1]){
 							// it is not end of string, so ERROR
-							ERR_K2HFTPRN("replaceptn(%s) is regex, but there is no terminate charactor(\").", replaceptn);
+							ERR_K2HFTPRN("replaceptn(%s) is regex, but there is no terminate character(\").", replaceptn);
 							K2HFT_FREE(ptmprepptn);
 							K2HFT_DELETE(pMatchPtn);
 							return NULL;
 						}
 
-						// OK, it is regex terminated charactor(").
+						// OK, it is regex terminated character(").
 						*psetpos = '\0';								// terminate
 
 						// add lastest static pattern into list
@@ -254,26 +254,26 @@ static PK2HFTMATCHPTN build_k2hft_match_pattern(const char* compptn, const char*
 					}
 
 				}else{
-					// normal charactor
+					// normal character
 					if(is_last_escape){
 						WAN_K2HFTPRN("replaceptn(%s) has single \"\\\" word, so it is skipped.", replaceptn);
 						is_last_escape	= false;						// skip single '\' word
 					}
-					*psetpos++			= *preadpos;					// set normal charactor
+					*psetpos++			= *preadpos;					// set normal character
 				}
 			}
 			K2HFT_FREE(ptmprepptn);
 
 			if(!is_found_term){
-				// not found terminate charactor (")
-				ERR_K2HFTPRN("replaceptn(%s) is regex, but there is no terminate charactor(\").", replaceptn);
+				// not found terminate character (")
+				ERR_K2HFTPRN("replaceptn(%s) is regex, but there is no terminate character(\").", replaceptn);
 				K2HFT_DELETE(pMatchPtn);
 				return NULL;
 			}
 
 		}else{
-			// compptn start '"' charactor(it means regex), but replaceptn does not start '"'.
-			ERR_K2HFTPRN("replaceptn(%s) does not start '\"' charactor.", replaceptn);
+			// compptn start '"' character(it means regex), but replaceptn does not start '"'.
+			ERR_K2HFTPRN("replaceptn(%s) does not start '\"' character.", replaceptn);
 			K2HFT_DELETE(pMatchPtn);
 			return NULL;
 		}
@@ -407,7 +407,7 @@ static unsigned char* build_replace_result_data(k2hftreplist_t& replist, const u
 	for(k2hftreplist_t::const_iterator iter = replist.begin(); iter != replist.end(); ++iter){
 		if(K2HTFT_MAX_REG_MATCH <= (*iter)->matchno){
 			// why?
-			ERR_K2HFTPRN("Replace posision(%d) is over %d, it should be error at loading ini file.", (*iter)->matchno, K2HTFT_MAX_REG_MATCH);
+			ERR_K2HFTPRN("Replace position(%d) is over %d, it should be error at loading ini file.", (*iter)->matchno, K2HTFT_MAX_REG_MATCH);
 			K2HFT_FREE(presult);
 			return NULL;
 
@@ -430,7 +430,7 @@ static unsigned char* build_replace_result_data(k2hftreplist_t& replist, const u
 		}
 	}
 
-	// terminate data(add CR/LF and '\0' charactor to end)
+	// terminate data(add CR/LF and '\0' character to end)
 	// setpos is set position which is next pos after '\0' char.
 	if(NULL == (ptmp = append_lastword(presult, setpos, rsize, reinterpret_cast<const char*>(data), length))){
 		ERR_K2HFTPRN("Failed to append last words and terminate.");
@@ -452,7 +452,7 @@ static unsigned char* build_replace_result_data(k2hftreplist_t& replist, const u
 //				found by rule, returned pointer MUST free.
 //
 // [NOTE]
-// If binary mode, rule does not have MathingList.
+// If binary mode, rule does not have MatchingList.
 //
 static unsigned char* convert_to_output(PK2HFTRULE prule, const unsigned char* data, size_t length, size_t& rsize)
 {
@@ -736,7 +736,7 @@ bool K2hFtInfo::CheckBinaryMode(void)
 	for(k2hftrulemap_t::const_iterator iter = RuleMap.begin(); iter != RuleMap.end(); ++iter){
 		PK2HFTRULE	pRule = iter->second;
 		if(0 != pRule->MatchingList.size()){
-			ERR_K2HFTPRN("Rule for %s has mathcing list, but the process run BINARY TRANSFER MODE, Thus ALL MATCHING RULE is ignored!!!", pRule->TargetPath.c_str());
+			ERR_K2HFTPRN("Rule for %s has matching list, but the process run BINARY TRANSFER MODE, Thus ALL MATCHING RULE is ignored!!!", pRule->TargetPath.c_str());
 			free_match_list(pRule->MatchingList);
 		}
 	}
@@ -771,14 +771,14 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 		return false;
 	}
 	if(!Config.empty()){
-		ERR_K2HFTPRN("Already load configration file, so could not load %s file.", conffile);
+		ERR_K2HFTPRN("Already load configuration file, so could not load %s file.", conffile);
 		return false;
 	}
 
 	strlst_t	lines;
 	strlst_t	files;
 	if(!read_ini_file_contents(conffile, lines, files)){
-		ERR_K2HFTPRN("Failed to load oncfigration ini file(%s)", conffile);
+		ERR_K2HFTPRN("Failed to load configuration ini file(%s)", conffile);
 		return false;
 	}
 
@@ -818,14 +818,14 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					}else if(INI_K2HFT_FILE1_VAL_STR == value || INI_K2HFT_FILE2_VAL_STR == value){
 						IsMemType	= false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
 					}
 
 				}else if(INI_K2HFT_K2HFILE_STR == key){
 					// K2hFilePath
 					K2hFilePath = "";
 					if(!check_path_real_path(value.c_str(), K2hFilePath)){
-						MSG_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
+						MSG_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
 						// not abspath.
 						K2hFilePath = value;
 					}
@@ -838,7 +838,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						IsFullmap = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
 					}
 
 				}else if(INI_K2HFT_K2HINIT_STR == key){
@@ -849,7 +849,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						IsInitialize = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
 					}
 
 				}else if(INI_K2HFT_K2HMASKBIT_STR == key){
@@ -872,7 +872,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					// DtorThreadCnt
 					int	nTmp = atoi(value.c_str());
 					if(0 >= nTmp){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) must be over 0.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) must be over 0.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
 						Clean();
 						return false;
 					}
@@ -882,7 +882,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					// DtorCtpPath
 					DtorCtpPath = K2HFT_K2HTPDTOR;
 					if(!check_path_real_path(value.c_str(), DtorCtpPath)){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
 						Clean();
 						return false;
 					}
@@ -895,14 +895,14 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						IsBinaryMode = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
 					}
 
 				}else if(INI_K2HFT_EXPIRE_STR == key){
 					// Expire seconds
 					time_t	expire_sec = static_cast<time_t>(atoi(value.c_str()));
 					if(expire_sec <= 0){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) must be over 0.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) must be over 0.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
 						Clean();
 						return false;
 					}
@@ -912,7 +912,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					// Minimum transfer line limit
 					int	linecnt = atoi(value.c_str());
 					if(linecnt < 0){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) must be a positive number including 0.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) must be a positive number including 0.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
 						Clean();
 						return false;
 					}
@@ -922,7 +922,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					// transfer timeup limit
 					int	timeup = atoi(value.c_str());
 					if(timeup < 0){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) must be a positive number including 0.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) must be a positive number including 0.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
 						Clean();
 						return false;
 					}
@@ -932,14 +932,14 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					// transfer timeup limit
 					int	limit = atoi(value.c_str());
 					if(limit < 0){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) must be a positive number including 0.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) must be a positive number including 0.", key.c_str(), value.c_str(), INI_K2HFT_MAIN_SEC_STR);
 						Clean();
 						return false;
 					}
 					K2hFtWriteBuff::SetLineByteLimit(static_cast<size_t>(limit));
 
 				}else{
-					WAN_K2HFTPRN("Unknown keyworad(%s) in main section(%s), so skip it and continue...", key.c_str(), INI_K2HFT_MAIN_SEC_STR);
+					WAN_K2HFTPRN("Unknown keyword(%s) in main section(%s), so skip it and continue...", key.c_str(), INI_K2HFT_MAIN_SEC_STR);
 				}
 			}
 
@@ -984,7 +984,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						pTmpRule->IsTransfer = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in rule section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in rule section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
 					}
 
 				}else if(INI_K2HFT_OUTPUTFILE_STR == key){
@@ -998,7 +998,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 				}else if(INI_K2HFT_PLUGIN_STR == key){
 					// K2HFTRULE::pPlugin
 					if(pTmpRule->pPlugin){
-						WAN_K2HFTPRN("keyworad(%s) in rule section(%s) is already set, then it is over wrote by new value(%s),", key.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR), value.c_str());
+						WAN_K2HFTPRN("keyword(%s) in rule section(%s) is already set, then it is over wrote by new value(%s),", key.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR), value.c_str());
 						K2HFT_DELETE(pTmpRule->pPlugin);
 					}
 					pTmpRule->pPlugin			= new K2HFT_PLUGIN;
@@ -1006,7 +1006,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 
 					// add plugin to manager
 					if(!pluginman.AddPluginInfo(pTmpRule->pPlugin)){
-						ERR_K2HFTPRN("keyworad(%s) in rule section(%s) has plugin, but failed to set it to plugin manager.", key.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
+						ERR_K2HFTPRN("keyword(%s) in rule section(%s) has plugin, but failed to set it to plugin manager.", key.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
 						K2HFT_DELETE(pTmpRule->pPlugin);
 					}
 
@@ -1018,7 +1018,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					}else if(INI_K2HFT_ALLOW_VAL_STR == value){
 						pTmpRule->DefaultDenyAll = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in rule section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in rule section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
 					}
 
 				}else if(INI_K2HFT_ALLOW_STR == key || INI_K2HFT_DENY_STR == key){
@@ -1031,7 +1031,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					parse_ini_value(value, values);
 					if(0 == values.size()){
 						// any pattern
-						MSG_K2HFTPRN("keyworad(%s)'s value(%s) in rule section(%s) has nothing, this is any pattern hits.", key.c_str(), value.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
+						MSG_K2HFTPRN("keyword(%s)'s value(%s) in rule section(%s) has nothing, this is any pattern hits.", key.c_str(), value.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
 
 						PK2HFTMATCHPTN	pMatchPtn	= new K2HFTMATCHPTN;
 						pMatchPtn->IsRegex 			= false;
@@ -1042,7 +1042,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 						}
 
 					}else if(2 < values.size()){
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in rule section(%s) has nothing or too many elements, so skip it.", key.c_str(), value.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in rule section(%s) has nothing or too many elements, so skip it.", key.c_str(), value.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
 
 					}else{
 						string			strcompptn	= values.front();
@@ -1050,7 +1050,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 						string			strrepptn	= 0 < values.size() ? values.front() : "";
 						PK2HFTMATCHPTN	pMatchPtn	= build_k2hft_match_pattern(strcompptn.c_str(), strrepptn.c_str());
 						if(!pMatchPtn){
-							WAN_K2HFTPRN("keyworad(%s)'s value(%s) in rule section(%s) is something wrong, so skip it.", key.c_str(), value.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
+							WAN_K2HFTPRN("keyword(%s)'s value(%s) in rule section(%s) is something wrong, so skip it.", key.c_str(), value.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
 						}else{
 							if(is_key_allow){
 								AllowMatchs.push_back(pMatchPtn);
@@ -1061,7 +1061,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					}
 
 				}else{
-					WAN_K2HFTPRN("Unknown keyworad(%s) in rule section(%s), so skip it and continue...", key.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
+					WAN_K2HFTPRN("Unknown keyword(%s) in rule section(%s), so skip it and continue...", key.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
 				}
 			}
 
@@ -1069,7 +1069,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 			if(pTmpRule->DefaultDenyAll){
 				// check deny list
 				if(0 < DenyMatchs.size()){
-					WAN_K2HFTPRN("rule section(%s) is Default Deny from All, but it has some DENY keywors, so skip those and continue...", (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
+					WAN_K2HFTPRN("rule section(%s) is Default Deny from All, but it has some DENY keywords, so skip those and continue...", (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
 
 					for(k2hftmatchlist_t::iterator iter = DenyMatchs.begin(); iter != DenyMatchs.end(); ++iter){
 						K2HFT_DELETE(*iter);
@@ -1085,7 +1085,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 			}else{
 				// check allow list
 				if(0 < AllowMatchs.size()){
-					WAN_K2HFTPRN("rule section(%s) is Default Deny from All, but it has some DENY keywors, so skip those and continue...", (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
+					WAN_K2HFTPRN("rule section(%s) is Default Deny from All, but it has some DENY keywords, so skip those and continue...", (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
 
 					for(k2hftmatchlist_t::iterator iter = AllowMatchs.begin(); iter != AllowMatchs.end(); ++iter){
 						K2HFT_DELETE(*iter);
@@ -1166,7 +1166,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 		Clean();
 		return false;
 	}
-	// check binrary mode
+	// check binary mode
 	CheckBinaryMode();
 
 	// set
@@ -1409,7 +1409,7 @@ bool K2hFtInfo::LoadYamlTopLevel(yaml_parser_t& yparser, mode_t init_mode, mode_
 						result = false;
 					}
 				}else{
-					// Found Top Level Keywards, start to loading
+					// Found Top Level Keywords, start to loading
 					if(0 == strcasecmp(K2HFT_MAIN_SEC_STR, reinterpret_cast<const char*>(yevent.data.scalar.value))){
 						if(is_set_main){
 							MSG_K2HFTPRN("Got yaml scalar event in loop, but already loading %s. Thus stacks this event.", K2HFT_MAIN_SEC_STR);
@@ -1425,7 +1425,7 @@ bool K2hFtInfo::LoadYamlTopLevel(yaml_parser_t& yparser, mode_t init_mode, mode_
 						}
 
 					}else{
-						MSG_K2HFTPRN("Got yaml scalar event in loop, but unknown keyward(%s) for me. Thus stacks this event.", reinterpret_cast<const char*>(yevent.data.scalar.value));
+						MSG_K2HFTPRN("Got yaml scalar event in loop, but unknown keyword(%s) for me. Thus stacks this event.", reinterpret_cast<const char*>(yevent.data.scalar.value));
 						if(!other_stack.add(yevent.type)){
 							result = false;
 						}
@@ -1514,14 +1514,14 @@ bool K2hFtInfo::LoadYamlMainSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 					}else if(INI_K2HFT_FILE1_VAL_STR == value || INI_K2HFT_FILE2_VAL_STR == value){
 						IsMemType	= false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
 					}
 
 				}else if(0 == strcasecmp(INI_K2HFT_K2HFILE_STR, key.c_str())){
 					// K2hash file path
 					K2hFilePath = "";
 					if(!check_path_real_path(reinterpret_cast<const char*>(yevent.data.scalar.value), K2hFilePath)){
-						MSG_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
+						MSG_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
 						// not abspath.
 						K2hFilePath = reinterpret_cast<const char*>(yevent.data.scalar.value);
 					}
@@ -1534,7 +1534,7 @@ bool K2hFtInfo::LoadYamlMainSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						IsFullmap = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
 					}
 
 				}else if(0 == strcasecmp(INI_K2HFT_K2HINIT_STR, key.c_str())){
@@ -1545,7 +1545,7 @@ bool K2hFtInfo::LoadYamlMainSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						IsInitialize = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
 					}
 
 				}else if(0 == strcasecmp(INI_K2HFT_K2HMASKBIT_STR, key.c_str())){
@@ -1568,7 +1568,7 @@ bool K2hFtInfo::LoadYamlMainSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 					// DtorThreadCnt
 					int	nTmp = atoi(reinterpret_cast<const char*>(yevent.data.scalar.value));
 					if(0 >= nTmp){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) must be over 0.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) must be over 0.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
 						result = false;
 					}else{
 						DtorThreadCnt = nTmp;
@@ -1578,7 +1578,7 @@ bool K2hFtInfo::LoadYamlMainSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 					// DtorCtpPath
 					DtorCtpPath = K2HFT_K2HTPDTOR;
 					if(!check_path_real_path(reinterpret_cast<const char*>(yevent.data.scalar.value), DtorCtpPath)){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
 						result = false;
 					}
 
@@ -1590,14 +1590,14 @@ bool K2hFtInfo::LoadYamlMainSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						IsBinaryMode = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
 					}
 
 				}else if(0 == strcasecmp(INI_K2HFT_EXPIRE_STR, key.c_str())){
 					// Expire seconds
 					time_t	expire_sec = static_cast<time_t>(atoi(reinterpret_cast<const char*>(yevent.data.scalar.value)));
 					if(expire_sec <= 0){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) must be over 0.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) must be over 0.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
 						result = false;
 					}else{
 						ExpireTime = expire_sec;
@@ -1607,7 +1607,7 @@ bool K2hFtInfo::LoadYamlMainSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 					// Minimum transfer line limit
 					int	linecnt = atoi(reinterpret_cast<const char*>(yevent.data.scalar.value));
 					if(linecnt < 0){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) must be a positive number including 0.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) must be a positive number including 0.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
 						result = false;
 					}else{
 						K2hFtWriteBuff::SetStackLineMax(static_cast<size_t>(linecnt));
@@ -1617,7 +1617,7 @@ bool K2hFtInfo::LoadYamlMainSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 					// transfer timeup limit
 					int	timeup = atoi(reinterpret_cast<const char*>(yevent.data.scalar.value));
 					if(timeup < 0){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) must be a positive number including 0.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) must be a positive number including 0.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
 						result = false;
 					}else{
 						K2hFtWriteBuff::SetStackTimeup(static_cast<time_t>(timeup));
@@ -1627,7 +1627,7 @@ bool K2hFtInfo::LoadYamlMainSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 					// transfer timeup limit
 					int	limit = atoi(reinterpret_cast<const char*>(yevent.data.scalar.value));
 					if(limit < 0){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) must be a positive number including 0.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) must be a positive number including 0.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFT_MAIN_SEC_STR);
 						result = false;
 					}else{
 						K2hFtWriteBuff::SetLineByteLimit(static_cast<size_t>(limit));
@@ -1744,7 +1744,7 @@ bool K2hFtInfo::LoadYamlRuleSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 				if(pTmpRule->DefaultDenyAll){
 					// check deny list
 					if(0 < DenyMatchs.size()){
-						WAN_K2HFTPRN("rule section(%s) is Default Deny from All, but it has some DENY keywors, so skip those and continue...", (is_dir_rule ? K2HFT_RULEDIR_SEC_STR : K2HFT_RULE_SEC_STR));
+						WAN_K2HFTPRN("rule section(%s) is Default Deny from All, but it has some DENY keywords, so skip those and continue...", (is_dir_rule ? K2HFT_RULEDIR_SEC_STR : K2HFT_RULE_SEC_STR));
 
 						for(k2hftmatchlist_t::iterator iter = DenyMatchs.begin(); iter != DenyMatchs.end(); ++iter){
 							K2HFT_DELETE(*iter);
@@ -1760,7 +1760,7 @@ bool K2hFtInfo::LoadYamlRuleSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 				}else{
 					// check allow list
 					if(0 < AllowMatchs.size()){
-						WAN_K2HFTPRN("rule section(%s) is Default Deny from All, but it has some DENY keywors, so skip those and continue...", (is_dir_rule ? K2HFT_RULEDIR_SEC_STR : K2HFT_RULE_SEC_STR));
+						WAN_K2HFTPRN("rule section(%s) is Default Deny from All, but it has some DENY keywords, so skip those and continue...", (is_dir_rule ? K2HFT_RULEDIR_SEC_STR : K2HFT_RULE_SEC_STR));
 
 						for(k2hftmatchlist_t::iterator iter = AllowMatchs.begin(); iter != AllowMatchs.end(); ++iter){
 							K2HFT_DELETE(*iter);
@@ -1861,7 +1861,7 @@ bool K2hFtInfo::LoadYamlRuleSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						pTmpRule->IsTransfer = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in rule section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), (is_dir_rule ? K2HFT_RULEDIR_SEC_STR : K2HFT_RULE_SEC_STR));
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in rule section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), (is_dir_rule ? K2HFT_RULEDIR_SEC_STR : K2HFT_RULE_SEC_STR));
 					}
 
 				}else if(0 == strcasecmp(INI_K2HFT_OUTPUTFILE_STR, key.c_str())){
@@ -1875,7 +1875,7 @@ bool K2hFtInfo::LoadYamlRuleSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 				}else if(0 == strcasecmp(INI_K2HFT_PLUGIN_STR, key.c_str())){
 					// K2HFTRULE::pPlugin
 					if(pTmpRule->pPlugin){
-						WAN_K2HFTPRN("keyworad(%s) in rule section(%s) is already set, then it is over wrote by new value(%s),", key.c_str(), (is_dir_rule ? K2HFT_RULEDIR_SEC_STR : K2HFT_RULE_SEC_STR), reinterpret_cast<const char*>(yevent.data.scalar.value));
+						WAN_K2HFTPRN("keyword(%s) in rule section(%s) is already set, then it is over wrote by new value(%s),", key.c_str(), (is_dir_rule ? K2HFT_RULEDIR_SEC_STR : K2HFT_RULE_SEC_STR), reinterpret_cast<const char*>(yevent.data.scalar.value));
 						K2HFT_DELETE(pTmpRule->pPlugin);
 					}
 					pTmpRule->pPlugin			= new K2HFT_PLUGIN;
@@ -1883,7 +1883,7 @@ bool K2hFtInfo::LoadYamlRuleSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 
 					// add plugin to manager
 					if(!pluginman.AddPluginInfo(pTmpRule->pPlugin)){
-						ERR_K2HFTPRN("keyworad(%s) in rule section(%s) has plugin, but failed to set it to plugin manager.", key.c_str(), (is_dir_rule ? K2HFT_RULEDIR_SEC_STR : K2HFT_RULE_SEC_STR));
+						ERR_K2HFTPRN("keyword(%s) in rule section(%s) has plugin, but failed to set it to plugin manager.", key.c_str(), (is_dir_rule ? K2HFT_RULEDIR_SEC_STR : K2HFT_RULE_SEC_STR));
 						K2HFT_DELETE(pTmpRule->pPlugin);
 					}
 
@@ -1895,7 +1895,7 @@ bool K2hFtInfo::LoadYamlRuleSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 					}else if(INI_K2HFT_ALLOW_VAL_STR == value){
 						pTmpRule->DefaultDenyAll = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in rule section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), (is_dir_rule ? K2HFT_RULEDIR_SEC_STR : K2HFT_RULE_SEC_STR));
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in rule section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), (is_dir_rule ? K2HFT_RULEDIR_SEC_STR : K2HFT_RULE_SEC_STR));
 					}
 				}else{
 					WAN_K2HFTPRN("Found unexpected key(%s) in %s section, thus skip this key and value.", key.c_str(), (is_dir_rule ? K2HFT_RULEDIR_SEC_STR : K2HFT_RULE_SEC_STR));
@@ -1924,7 +1924,7 @@ bool K2hFtInfo::LoadYamlRuleSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 			ERR_K2HFTPRN("Could not initialize(make) some rule output file or directory.");
 			Clean();
 		}else{
-			// check binrary mode
+			// check binary mode
 			CheckBinaryMode();
 		}
 	}else{
@@ -1990,7 +1990,7 @@ bool K2hFtInfo::LoadYamlAclPart(yaml_parser_t& yparser, k2hftmatchlist_t& Matchs
 						result = false;
 					}else{
 						if(YAML_SEQUENCE_END_EVENT != yevent.type){
-							ERR_K2HFTPRN("Could not find end of sequence for allo(or deny) one value.");
+							ERR_K2HFTPRN("Could not find end of sequence for allow(or deny) one value.");
 							result = false;
 						}
 						yaml_event_delete(&yevent);
@@ -2071,7 +2071,7 @@ bool K2hFtInfo::LoadYamlAclOneValue(yaml_parser_t& yparser, k2hftmatchlist_t& Ma
 bool K2hFtInfo::Dump(void) const
 {
 	if(Config.empty()){
-		ERR_K2HFTPRN("Does not load configration file yet.");
+		ERR_K2HFTPRN("Does not load configuration file yet.");
 		return false;
 	}
 
@@ -2094,7 +2094,7 @@ bool K2hFtInfo::Dump(void) const
 	}
 
 	// common
-	K2HFTPRN("Configration(file or json) : %s",	Config.c_str());
+	K2HFTPRN("Configuration(file or json): %s",	Config.c_str());
 	K2HFTPRN("K2hash = {");
 	K2HFTPRN("  type                     : %s",	strtype.c_str());
 	K2HFTPRN("  Initialize file(memory)  : %s", IsInitialize ? "yes" : "no");
@@ -2185,7 +2185,7 @@ bool K2hFtInfo::FindPath(const char* path, struct stat& stbuf) const
 	}
 
 	if(!IsLoad()){
-		ERR_K2HFTPRN("Not load configration file.");
+		ERR_K2HFTPRN("Not load configuration file.");
 		return false;
 	}
 
@@ -2251,7 +2251,7 @@ uint64_t K2hFtInfo::GetFileHandle(const char* path) const
 		++path;				// skip first '/'
 	}
 	if(!IsLoad()){
-		ERR_K2HFTPRN("Not load configration file.");
+		ERR_K2HFTPRN("Not load configuration file.");
 		return 0;
 	}
 
@@ -2393,7 +2393,7 @@ bool K2hFtInfo::TruncateZero(const char* path)
 		++path;				// skip first '/'
 	}
 	if(!IsLoad()){
-		ERR_K2HFTPRN("Not load configration file.");
+		ERR_K2HFTPRN("Not load configuration file.");
 		return false;
 	}
 
@@ -2439,7 +2439,7 @@ bool K2hFtInfo::SetOwner(const char* path, uid_t uid, gid_t gid)
 		++path;				// skip first '/'
 	}
 	if(!IsLoad()){
-		ERR_K2HFTPRN("Not load configration file.");
+		ERR_K2HFTPRN("Not load configuration file.");
 		return false;
 	}
 
@@ -2490,7 +2490,7 @@ bool K2hFtInfo::SetMode(const char* path, mode_t mode)
 		++path;				// skip first '/'
 	}
 	if(!IsLoad()){
-		ERR_K2HFTPRN("Not load configration file.");
+		ERR_K2HFTPRN("Not load configuration file.");
 		return false;
 	}
 
@@ -2538,7 +2538,7 @@ bool K2hFtInfo::SetTimespec(const char* path, const struct timespec& ts)
 		++path;				// skip first '/'
 	}
 	if(!IsLoad()){
-		ERR_K2HFTPRN("Not load configration file.");
+		ERR_K2HFTPRN("Not load configuration file.");
 		return false;
 	}
 
@@ -2576,7 +2576,7 @@ bool K2hFtInfo::CreateFile(const char* path, mode_t mode, uid_t uid, gid_t gid, 
 		++path;				// skip first '/'
 	}
 	if(!IsLoad()){
-		ERR_K2HFTPRN("Not load configration file.");
+		ERR_K2HFTPRN("Not load configuration file.");
 		return false;
 	}
 
@@ -2819,7 +2819,7 @@ bool K2hFtInfo::Processing(K2HShm* pk2hash, PK2HFTVALUE pValue, uint64_t filehan
 		// [NOTE]
 		// AccumSize is not original data size, it is converted output data size and do not care for null byte at not binary mode.
 		// It should be original size with be care for binary mode, but now logic does not support it.
-		// Thus AccumSize means transfered byte data.
+		// Thus AccumSize means transferred byte data.
 		//
 		pRule->AccumSize += GetK2hFtValueSize(pValue);
 		if(!set_now_timespec(pRule->LastTime)){

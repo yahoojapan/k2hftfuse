@@ -67,7 +67,7 @@ bool K2hFtBinBuff::AppendStringBuff(const unsigned char* data, size_t length, bo
 		memcpy(&CacheBuff[CacheBuffPos], data, length);
 		CacheBuffPos += length;
 	}
-	// check last charactor 
+	// check last character 
 	if(check_last_char && '\0' != CacheBuff[CacheBuffPos - 1]){
 		CacheBuff[CacheBuffPos++] = '\0';						// add '\0'
 	}
@@ -175,7 +175,7 @@ bool K2hFtWriteBuff::StringPush(K2hFtBinBuff* pBuff, const unsigned char* data, 
 
 		if(found){
 			// append
-			if(!pBuff->AppendStringBuff(&data[start], (pos - start + 1), true)){	// with checking last charactor
+			if(!pBuff->AppendStringBuff(&data[start], (pos - start + 1), true)){	// with checking last character
 				ERR_K2HFTPRN("Failed to append binary data to internal buffer.");
 				return false;
 			}
@@ -200,7 +200,7 @@ bool K2hFtWriteBuff::StringPush(K2hFtBinBuff* pBuff, const unsigned char* data, 
 
 	// lest
 	if(start < length){
-		if(!pBuff->AppendStringBuff(&data[start], (length - start), false)){				// without checking last charactor
+		if(!pBuff->AppendStringBuff(&data[start], (length - start), false)){				// without checking last character
 			ERR_K2HFTPRN("Failed to append binary data to internal buffer.");
 			return false;
 		}
@@ -208,8 +208,8 @@ bool K2hFtWriteBuff::StringPush(K2hFtBinBuff* pBuff, const unsigned char* data, 
 
 	// force
 	if(force_eol && !pBuff->IsEmpty()){
-		// append last charactor
-		if(!pBuff->AppendStringBuff(NULL, 0, true)){								// with checking last charactor
+		// append last character
+		if(!pBuff->AppendStringBuff(NULL, 0, true)){								// with checking last character
 			ERR_K2HFTPRN("Failed to append binary data to internal buffer.");
 			return false;
 		}
@@ -246,7 +246,7 @@ bool K2hFtWriteBuff::BinaryPush(K2hFtBinBuff* pBuff, const unsigned char* data, 
 		size_t	setsize = min(maxsize, (length - pos));
 
 		// append
-		if(!pBuff->AppendStringBuff(&data[pos], setsize, false)){		// without checking last charactor
+		if(!pBuff->AppendStringBuff(&data[pos], setsize, false)){		// without checking last character
 			ERR_K2HFTPRN("Failed to append binary data to internal buffer.");
 			return false;
 		}
@@ -303,7 +303,7 @@ bool K2hFtWriteBuff::StackPush(unsigned char* data, size_t length, pid_t pid)
 
 	// check limit
 	if(K2hFtWriteBuff::DEFAULT_LINE_LIMIT != K2hFtWriteBuff::LineByteLimit && K2hFtWriteBuff::LineByteLimit < cvtlength){
-		MSG_K2HFTPRN("data length(%zu) after converting is over line byte limie(%zu), so this data is not processed.", cvtlength, K2hFtWriteBuff::LineByteLimit);
+		MSG_K2HFTPRN("data length(%zu) after converting is over line byte limit(%zu), so this data is not processed.", cvtlength, K2hFtWriteBuff::LineByteLimit);
 
 		if(pOutput != data){		// [NOTICE]
 			K2HFT_FREE(pOutput);

@@ -122,7 +122,7 @@ inline bool make_time_output_string(string& strtime, const k2hftsvrtplist_t& lis
 
 	// make time string
 	szbuff[0] = '\0';
-	strftime(szbuff, sizeof(szbuff), timeform.c_str(), tm);		// if return 0, we could not diside error or no-error.
+	strftime(szbuff, sizeof(szbuff), timeform.c_str(), tm);		// if return 0, we could not decide error or no-error.
 	strtime = szbuff;
 
 	return true;
@@ -408,13 +408,13 @@ bool K2hFtSvrInfo::Load(const char* config, K2hFtPluginMan& pluginman)
 {
 	if(K2HFT_ISEMPTYSTR(config)){
 		// [NOTE]
-		// If using environemnts for configuration, the caller must set this parameter.
+		// If using environments for configuration, the caller must set this parameter.
 		//
 		ERR_K2HFTPRN("config parameter is wrong.");
 		return false;
 	}
 	if(IsLoad()){
-		ERR_K2HFTPRN("Already load configration file, so could not load %s file.", config ? config : "null");
+		ERR_K2HFTPRN("Already load configuration file, so could not load %s file.", config ? config : "null");
 		return false;
 	}
 
@@ -449,7 +449,7 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 	strlst_t	lines;
 	strlst_t	files;
 	if(!read_ini_file_contents(conffile, lines, files)){
-		ERR_K2HFTPRN("Failed to load oncfigration ini file(%s)", conffile);
+		ERR_K2HFTPRN("Failed to load configuration ini file(%s)", conffile);
 		return false;
 	}
 
@@ -488,7 +488,7 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 					}else if(INI_K2HFTSVR_BOTH1_VAL_STR == value || INI_K2HFTSVR_BOTH2_VAL_STR == value){
 						OutputType = K2HFTFSVR_BOTH_TYPE;
 					}else{
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
 						Clean();
 						return false;
 					}
@@ -497,7 +497,7 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 					// OutputBaseDir
 					OutputBaseDir = "";
 					if(!mkdir_by_abs_path(value.c_str(), OutputBaseDir)){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s), could not make directory by something error.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s), could not make directory by something error.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
 						Clean();
 						return false;
 					}
@@ -517,7 +517,7 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 				}else if(INI_K2HFTSVR_PLUGIN_STR == key){
 					// Plugin
 					if(pPlugin){
-						WAN_K2HFTPRN("keyworad(%s) in rule section(%s) is already set, then it is over wrote by new value(%s),", key.c_str(), INI_K2HFTSVR_MAIN_SEC_STR, value.c_str());
+						WAN_K2HFTPRN("keyword(%s) in rule section(%s) is already set, then it is over wrote by new value(%s),", key.c_str(), INI_K2HFTSVR_MAIN_SEC_STR, value.c_str());
 						K2HFT_DELETE(pPlugin);
 					}
 					pPlugin				= new K2HFT_PLUGIN;
@@ -535,7 +535,7 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						IsBinaryMode = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
 					}
 
 				}else if(INI_K2HFTSVR_TRANSCONF_STR == key){
@@ -547,7 +547,7 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 					}else{
 						// not json string, thus it is a file
 						if(!check_path_real_path(value.c_str(), TransConfig)){
-							ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
+							ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
 							Clean();
 							return false;
 						}
@@ -563,14 +563,14 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 					}else if(INI_K2HFT_FILE1_VAL_STR == value || INI_K2HFT_FILE2_VAL_STR == value){
 						IsTransK2hMemType	= false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
 					}
 
 				}else if(INI_K2HFTSVR_K2HFILE_STR == key){
 					// TransK2hFilePath
 					TransK2hFilePath = "";
 					if(!check_path_real_path(value.c_str(), TransK2hFilePath)){
-						MSG_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
+						MSG_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
 						// not abspath.
 						TransK2hFilePath = value;
 					}
@@ -583,7 +583,7 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						IsTransK2hFullmap = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
 					}
 
 				}else if(INI_K2HFTSVR_K2HINIT_STR == key){
@@ -594,7 +594,7 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						IsTransK2hInit = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
 					}
 
 				}else if(INI_K2HFTSVR_K2HMASKBIT_STR == key){
@@ -617,7 +617,7 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 					// TransK2hThreadCnt
 					int	nTmp = atoi(value.c_str());
 					if(0 >= nTmp){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) must be over 0.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) must be over 0.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
 						Clean();
 						return false;
 					}
@@ -627,13 +627,13 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 					// DtorCtpPath
 					DtorCtpPath = K2HFT_K2HTPDTOR;
 					if(!check_path_real_path(value.c_str(), DtorCtpPath)){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), value.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
 						Clean();
 						return false;
 					}
 
 				}else{
-					WAN_K2HFTPRN("Unknown keyworad(%s) in main section(%s), so skip it and continue...", key.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
+					WAN_K2HFTPRN("Unknown keyword(%s) in main section(%s), so skip it and continue...", key.c_str(), INI_K2HFTSVR_MAIN_SEC_STR);
 				}
 			}
 		}else if(INI_SEC_START_CHAR == (*iter)[0] && INI_SEC_END_CHAR == (*iter)[iter->length() - 1]){
@@ -655,16 +655,16 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 		// double check
 		if(!IS_K2HFTFSVR_TRANS_TYPE(OutputType)){
 			if(!TransConfig.empty()){
-				WAN_K2HFTPRN("Specified Output file type, but keyworad(%s) was specified.", INI_K2HFTSVR_TRANSCONF_STR);
+				WAN_K2HFTPRN("Specified Output file type, but keyword(%s) was specified.", INI_K2HFTSVR_TRANSCONF_STR);
 				TransConfig = "";
 			}
 			if(!TransK2hFilePath.empty()){
-				WAN_K2HFTPRN("Specified Output file type, but keyworad(%s) was specified.", INI_K2HFTSVR_K2HFILE_STR);
+				WAN_K2HFTPRN("Specified Output file type, but keyword(%s) was specified.", INI_K2HFTSVR_K2HFILE_STR);
 				TransK2hFilePath = "";
 			}
 		}
 		if(OutputBaseDir.empty()){
-			ERR_K2HFTPRN("Specified Output file type, but keyworad(%s) was not specified. It must be set.", INI_K2HFTSVR_FILE_BASEDIR_STR);
+			ERR_K2HFTPRN("Specified Output file type, but keyword(%s) was not specified. It must be set.", INI_K2HFTSVR_FILE_BASEDIR_STR);
 			Clean();
 			return false;
 		}
@@ -673,7 +673,7 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 			string	tmp		= OutputBaseDir + UnifyFilePath;
 			UnifyFilePath	= "";
 			if(!make_file_by_abs_path(tmp.c_str(), (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH), UnifyFilePath, true)){
-				ERR_K2HFTPRN("Specified Output file type, and keyworad(%s) set output unify file path(%s). but could not make file.", INI_K2HFTSVR_FILE_UNIFY_STR, tmp.c_str());
+				ERR_K2HFTPRN("Specified Output file type, and keyword(%s) set output unify file path(%s). but could not make file.", INI_K2HFTSVR_FILE_UNIFY_STR, tmp.c_str());
 				Clean();
 				return false;
 			}
@@ -710,7 +710,7 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 
 			// add plugin to manager
 			if(!pluginman.AddPluginInfo(pPlugin)){
-				ERR_K2HFTPRN("keyworad(%s) in rule section(%s) is specified, but failed to adding it to plugin manager.", INI_K2HFTSVR_PLUGIN_STR, INI_K2HFTSVR_MAIN_SEC_STR);
+				ERR_K2HFTPRN("keyword(%s) in rule section(%s) is specified, but failed to adding it to plugin manager.", INI_K2HFTSVR_PLUGIN_STR, INI_K2HFTSVR_MAIN_SEC_STR);
 				Clean();
 				return false;
 			}
@@ -723,40 +723,40 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 		// double check
 		if(!IS_K2HFTFSVR_FILE_TYPE(OutputType)){
 			if(pPlugin){
-				WAN_K2HFTPRN("Specified keyworad(%s) in rule section(%s), but transfer mode is enabled. so plugin is ignored.", INI_K2HFTSVR_PLUGIN_STR, INI_K2HFTSVR_MAIN_SEC_STR);
+				WAN_K2HFTPRN("Specified keyword(%s) in rule section(%s), but transfer mode is enabled. so plugin is ignored.", INI_K2HFTSVR_PLUGIN_STR, INI_K2HFTSVR_MAIN_SEC_STR);
 				K2HFT_DELETE(pPlugin);
 			}
 			// transfer type
 			if(!OutputBaseDir.empty()){
-				WAN_K2HFTPRN("Specified Output file type, but keyworad(%s) was specified.", INI_K2HFTSVR_FILE_BASEDIR_STR);
+				WAN_K2HFTPRN("Specified Output file type, but keyword(%s) was specified.", INI_K2HFTSVR_FILE_BASEDIR_STR);
 				OutputBaseDir = "";
 			}
 			if(!UnifyFilePath.empty()){
-				WAN_K2HFTPRN("Specified Output file type, but keyworad(%s) was specified.", INI_K2HFTSVR_FILE_UNIFY_STR);
+				WAN_K2HFTPRN("Specified Output file type, but keyword(%s) was specified.", INI_K2HFTSVR_FILE_UNIFY_STR);
 				UnifyFilePath = "";
 			}
 			if(0 != TimeFormat.size()){
-				WAN_K2HFTPRN("Specified Output file type, but keyworad(%s) was specified.", INI_K2HFTSVR_FILE_TIMEFORM_STR);
+				WAN_K2HFTPRN("Specified Output file type, but keyword(%s) was specified.", INI_K2HFTSVR_FILE_TIMEFORM_STR);
 				TimeFormat.clear();
 			}
 			if(0 != OutputFormat.size()){
-				WAN_K2HFTPRN("Specified Output file type, but keyworad(%s) was specified.", INI_K2HFTSVR_FORMAT_STR);
+				WAN_K2HFTPRN("Specified Output file type, but keyword(%s) was specified.", INI_K2HFTSVR_FORMAT_STR);
 				OutputFormat.clear();
 			}
 		}
 		if(TransConfig.empty()){
-			MSG_K2HFTPRN("Specified Transfer type, but keyworad(%s) was not specified. You must set environemnts for transfer configuration", INI_K2HFTSVR_TRANSCONF_STR);
+			MSG_K2HFTPRN("Specified Transfer type, but keyword(%s) was not specified. You must set environments for transfer configuration", INI_K2HFTSVR_TRANSCONF_STR);
 		}
 		if(IsTransK2hMemType && !TransK2hFilePath.empty()){
-			WAN_K2HFTPRN("Specified Transfer type and k2hash is memory tyoe, but keyworad(%s) was specified. So it is ignored.", INI_K2HFTSVR_K2HFILE_STR);
+			WAN_K2HFTPRN("Specified Transfer type and k2hash is memory type, but keyword(%s) was specified. So it is ignored.", INI_K2HFTSVR_K2HFILE_STR);
 			TransK2hFilePath = "";
 		}else if(!IsTransK2hMemType && TransK2hFilePath.empty()){
-			ERR_K2HFTPRN("Specified Transfer type and k2hash is file tyoe, but keyworad(%s) was not specified. It must be set.", INI_K2HFTSVR_K2HFILE_STR);
+			ERR_K2HFTPRN("Specified Transfer type and k2hash is file type, but keyword(%s) was not specified. It must be set.", INI_K2HFTSVR_K2HFILE_STR);
 			Clean();
 			return false;
 		}
 		if(IsTransK2hMemType && !IsTransK2hInit){
-			WAN_K2HFTPRN("Specified Transfer type and k2hash is memory tyoe, but keyworad(%s) was \"no\". So it is ignored(must be initializing).", INI_K2HFTSVR_K2HINIT_STR);
+			WAN_K2HFTPRN("Specified Transfer type and k2hash is memory type, but keyword(%s) was \"no\". So it is ignored(must be initializing).", INI_K2HFTSVR_K2HINIT_STR);
 			IsTransK2hInit = true;
 		}
 	}
@@ -989,7 +989,7 @@ bool K2hFtSvrInfo::LoadYamlTopLevel(yaml_parser_t& yparser, K2hFtPluginMan& plug
 						result = false;
 					}
 				}else{
-					// Found Top Level Keywards, start to loading
+					// Found Top Level Keywords, start to loading
 					if(0 == strcasecmp(K2HFTSVR_MAIN_SEC_STR, reinterpret_cast<const char*>(yevent.data.scalar.value))){
 						if(is_set_main){
 							MSG_K2HFTPRN("Got yaml scalar event in loop, but already loading %s. Thus stacks this event.", K2HFTSVR_MAIN_SEC_STR);
@@ -1004,7 +1004,7 @@ bool K2hFtSvrInfo::LoadYamlTopLevel(yaml_parser_t& yparser, K2hFtPluginMan& plug
 							}
 						}
 					}else{
-						MSG_K2HFTPRN("Got yaml scalar event in loop, but unknown keyward(%s) for me. Thus stacks this event.", reinterpret_cast<const char*>(yevent.data.scalar.value));
+						MSG_K2HFTPRN("Got yaml scalar event in loop, but unknown keyword(%s) for me. Thus stacks this event.", reinterpret_cast<const char*>(yevent.data.scalar.value));
 						if(!other_stack.add(yevent.type)){
 							result = false;
 						}
@@ -1076,7 +1076,7 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 					}else if(INI_K2HFTSVR_BOTH1_VAL_STR == value || INI_K2HFTSVR_BOTH2_VAL_STR == value){
 						OutputType = K2HFTFSVR_BOTH_TYPE;
 					}else{
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
 						result = false;
 					}
 
@@ -1084,7 +1084,7 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 					// OutputBaseDir
 					OutputBaseDir = "";
 					if(!mkdir_by_abs_path(reinterpret_cast<const char*>(yevent.data.scalar.value), OutputBaseDir)){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s), could not make directory by something error.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s), could not make directory by something error.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
 						result = false;
 					}else{
 						OutputBaseDir += '/';			// terminated '/'
@@ -1104,7 +1104,7 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 				}else if(0 == strcasecmp(INI_K2HFTSVR_PLUGIN_STR, key.c_str())){
 					// Plugin
 					if(pPlugin){
-						WAN_K2HFTPRN("keyworad(%s) in rule section(%s) is already set, then it is over wrote by new value(%s),", key.c_str(), K2HFTSVR_MAIN_SEC_STR, reinterpret_cast<const char*>(yevent.data.scalar.value));
+						WAN_K2HFTPRN("keyword(%s) in rule section(%s) is already set, then it is over wrote by new value(%s),", key.c_str(), K2HFTSVR_MAIN_SEC_STR, reinterpret_cast<const char*>(yevent.data.scalar.value));
 						K2HFT_DELETE(pPlugin);
 					}
 					pPlugin				= new K2HFT_PLUGIN;
@@ -1122,7 +1122,7 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						IsBinaryMode = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
 					}
 
 				}else if(0 == strcasecmp(INI_K2HFTSVR_TRANSCONF_STR, key.c_str())){
@@ -1134,7 +1134,7 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 					}else{
 						// not json string, thus it is a file
 						if(!check_path_real_path(reinterpret_cast<const char*>(yevent.data.scalar.value), TransConfig)){
-							ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), INI_K2HFTSVR_MAIN_SEC_STR);
+							ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), INI_K2HFTSVR_MAIN_SEC_STR);
 							result = false;
 						}
 					}
@@ -1149,14 +1149,14 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 					}else if(INI_K2HFT_FILE1_VAL_STR == value || INI_K2HFT_FILE2_VAL_STR == value){
 						IsTransK2hMemType	= false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
 					}
 
 				}else if(0 == strcasecmp(INI_K2HFTSVR_K2HFILE_STR, key.c_str())){
 					// TransK2hFilePath
 					TransK2hFilePath = "";
 					if(!check_path_real_path(reinterpret_cast<const char*>(yevent.data.scalar.value), TransK2hFilePath)){
-						MSG_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), INI_K2HFTSVR_MAIN_SEC_STR);
+						MSG_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), INI_K2HFTSVR_MAIN_SEC_STR);
 						// not abspath.
 						TransK2hFilePath = reinterpret_cast<const char*>(yevent.data.scalar.value);
 					}
@@ -1169,7 +1169,7 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						IsTransK2hFullmap = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
 					}
 
 				}else if(0 == strcasecmp(INI_K2HFTSVR_K2HINIT_STR, key.c_str())){
@@ -1180,7 +1180,7 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 					}else if(INI_K2HFT_NO1_VAL_STR == value || INI_K2HFT_NO2_VAL_STR == value || INI_K2HFT_OFF_VAL_STR == value){
 						IsTransK2hInit = false;
 					}else{
-						WAN_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
+						WAN_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) is unknown value, so skip it.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
 					}
 
 				}else if(0 == strcasecmp(INI_K2HFTSVR_K2HMASKBIT_STR, key.c_str())){
@@ -1203,7 +1203,7 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 					// TransK2hThreadCnt
 					int	nTmp = atoi(reinterpret_cast<const char*>(yevent.data.scalar.value));
 					if(0 >= nTmp){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) must be over 0.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) must be over 0.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
 						result = false;
 					}else{
 						TransK2hThreadCnt = nTmp;
@@ -1213,7 +1213,7 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 					// DtorCtpPath
 					DtorCtpPath = K2HFT_K2HTPDTOR;
 					if(!check_path_real_path(reinterpret_cast<const char*>(yevent.data.scalar.value), DtorCtpPath)){
-						ERR_K2HFTPRN("keyworad(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
+						ERR_K2HFTPRN("keyword(%s)'s value(%s) in main section(%s) does not exist.", key.c_str(), reinterpret_cast<const char*>(yevent.data.scalar.value), K2HFTSVR_MAIN_SEC_STR);
 						result = false;
 					}
 				}else{
@@ -1242,16 +1242,16 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 			// double check
 			if(!IS_K2HFTFSVR_TRANS_TYPE(OutputType)){
 				if(!TransConfig.empty()){
-					WAN_K2HFTPRN("Specified Output file type, but keyworad(%s) was specified.", INI_K2HFTSVR_TRANSCONF_STR);
+					WAN_K2HFTPRN("Specified Output file type, but keyword(%s) was specified.", INI_K2HFTSVR_TRANSCONF_STR);
 					TransConfig = "";
 				}
 				if(!TransK2hFilePath.empty()){
-					WAN_K2HFTPRN("Specified Output file type, but keyworad(%s) was specified.", INI_K2HFTSVR_K2HFILE_STR);
+					WAN_K2HFTPRN("Specified Output file type, but keyword(%s) was specified.", INI_K2HFTSVR_K2HFILE_STR);
 					TransK2hFilePath = "";
 				}
 			}
 			if(OutputBaseDir.empty()){
-				ERR_K2HFTPRN("Specified Output file type, but keyworad(%s) was not specified. It must be set.", INI_K2HFTSVR_FILE_BASEDIR_STR);
+				ERR_K2HFTPRN("Specified Output file type, but keyword(%s) was not specified. It must be set.", INI_K2HFTSVR_FILE_BASEDIR_STR);
 				Clean();
 				return false;
 			}
@@ -1260,7 +1260,7 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 				string	tmp		= OutputBaseDir + UnifyFilePath;
 				UnifyFilePath	= "";
 				if(!make_file_by_abs_path(tmp.c_str(), (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH), UnifyFilePath, true)){
-					ERR_K2HFTPRN("Specified Output file type, and keyworad(%s) set output unify file path(%s). but could not make file.", INI_K2HFTSVR_FILE_UNIFY_STR, tmp.c_str());
+					ERR_K2HFTPRN("Specified Output file type, and keyword(%s) set output unify file path(%s). but could not make file.", INI_K2HFTSVR_FILE_UNIFY_STR, tmp.c_str());
 					Clean();
 					return false;
 				}
@@ -1297,7 +1297,7 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 
 				// add plugin to manager
 				if(!pluginman.AddPluginInfo(pPlugin)){
-					ERR_K2HFTPRN("keyworad(%s) in rule section(%s) is specified, but failed to adding it to plugin manager.", INI_K2HFTSVR_PLUGIN_STR, K2HFTSVR_MAIN_SEC_STR);
+					ERR_K2HFTPRN("keyword(%s) in rule section(%s) is specified, but failed to adding it to plugin manager.", INI_K2HFTSVR_PLUGIN_STR, K2HFTSVR_MAIN_SEC_STR);
 					Clean();
 					return false;
 				}
@@ -1310,40 +1310,40 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 			// double check
 			if(!IS_K2HFTFSVR_FILE_TYPE(OutputType)){
 				if(pPlugin){
-					WAN_K2HFTPRN("Specified keyworad(%s) in rule section(%s), but transfer mode is enabled. so plugin is ignored.", INI_K2HFTSVR_PLUGIN_STR, K2HFTSVR_MAIN_SEC_STR);
+					WAN_K2HFTPRN("Specified keyword(%s) in rule section(%s), but transfer mode is enabled. so plugin is ignored.", INI_K2HFTSVR_PLUGIN_STR, K2HFTSVR_MAIN_SEC_STR);
 					K2HFT_DELETE(pPlugin);
 				}
 				// transfer type
 				if(!OutputBaseDir.empty()){
-					WAN_K2HFTPRN("Specified Output file type, but keyworad(%s) was specified.", INI_K2HFTSVR_FILE_BASEDIR_STR);
+					WAN_K2HFTPRN("Specified Output file type, but keyword(%s) was specified.", INI_K2HFTSVR_FILE_BASEDIR_STR);
 					OutputBaseDir = "";
 				}
 				if(!UnifyFilePath.empty()){
-					WAN_K2HFTPRN("Specified Output file type, but keyworad(%s) was specified.", INI_K2HFTSVR_FILE_UNIFY_STR);
+					WAN_K2HFTPRN("Specified Output file type, but keyword(%s) was specified.", INI_K2HFTSVR_FILE_UNIFY_STR);
 					UnifyFilePath = "";
 				}
 				if(0 != TimeFormat.size()){
-					WAN_K2HFTPRN("Specified Output file type, but keyworad(%s) was specified.", INI_K2HFTSVR_FILE_TIMEFORM_STR);
+					WAN_K2HFTPRN("Specified Output file type, but keyword(%s) was specified.", INI_K2HFTSVR_FILE_TIMEFORM_STR);
 					TimeFormat.clear();
 				}
 				if(0 != OutputFormat.size()){
-					WAN_K2HFTPRN("Specified Output file type, but keyworad(%s) was specified.", INI_K2HFTSVR_FORMAT_STR);
+					WAN_K2HFTPRN("Specified Output file type, but keyword(%s) was specified.", INI_K2HFTSVR_FORMAT_STR);
 					OutputFormat.clear();
 				}
 			}
 			if(TransConfig.empty()){
-				MSG_K2HFTPRN("Specified Transfer type, but keyworad(%s) was not specified. You must set environemnts for transfer configuration", INI_K2HFTSVR_TRANSCONF_STR);
+				MSG_K2HFTPRN("Specified Transfer type, but keyword(%s) was not specified. You must set environments for transfer configuration", INI_K2HFTSVR_TRANSCONF_STR);
 			}
 			if(IsTransK2hMemType && !TransK2hFilePath.empty()){
-				WAN_K2HFTPRN("Specified Transfer type and k2hash is memory tyoe, but keyworad(%s) was specified. So it is ignored.", INI_K2HFTSVR_K2HFILE_STR);
+				WAN_K2HFTPRN("Specified Transfer type and k2hash is memory type, but keyword(%s) was specified. So it is ignored.", INI_K2HFTSVR_K2HFILE_STR);
 				TransK2hFilePath = "";
 			}else if(!IsTransK2hMemType && TransK2hFilePath.empty()){
-				ERR_K2HFTPRN("Specified Transfer type and k2hash is file tyoe, but keyworad(%s) was not specified. It must be set.", INI_K2HFTSVR_K2HFILE_STR);
+				ERR_K2HFTPRN("Specified Transfer type and k2hash is file type, but keyword(%s) was not specified. It must be set.", INI_K2HFTSVR_K2HFILE_STR);
 				Clean();
 				return false;
 			}
 			if(IsTransK2hMemType && !IsTransK2hInit){
-				WAN_K2HFTPRN("Specified Transfer type and k2hash is memory tyoe, but keyworad(%s) was \"no\". So it is ignored(must be initializing).", INI_K2HFTSVR_K2HINIT_STR);
+				WAN_K2HFTPRN("Specified Transfer type and k2hash is memory type, but keyword(%s) was \"no\". So it is ignored(must be initializing).", INI_K2HFTSVR_K2HINIT_STR);
 				IsTransK2hInit = true;
 			}
 		}
@@ -1356,7 +1356,7 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 bool K2hFtSvrInfo::Dump(void) const
 {
 	if(!IsLoad()){
-		MSG_K2HFTPRN("Not load Configration yet.");
+		MSG_K2HFTPRN("Not load Configuration yet.");
 		return false;
 	}
 
@@ -1388,7 +1388,7 @@ bool K2hFtSvrInfo::Dump(void) const
 	}
 
 	// common
-	K2HFTPRN("Configration(file or json)   : %s",	Config.c_str());
+	K2HFTPRN("Configuration(file or json)  : %s",	Config.c_str());
 
 	K2HFTPRN("k2hftfuisesvr = {");
 	K2HFTPRN("  type                       : %s",	STR_K2HFTFSVR_TYPE(OutputType));
@@ -1415,7 +1415,7 @@ bool K2hFtSvrInfo::Dump(void) const
 }
 
 // [NOTE]
-// If IsNoConvert is true, chould not call this method.
+// If IsNoConvert is true, should not call this method.
 // You can get output data which is as same as content, use content instead of converted stroutput.
 //
 bool K2hFtSvrInfo::ConvertOutput(string& stroutput, const char* hostname, pid_t pid, const char* filepath, const struct timespec* ts, const char* content) const

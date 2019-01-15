@@ -104,13 +104,13 @@ static void k2hftfusesvr_print_usage(FILE* stream)
 					" * k2hftfusesvr options:\n"
 					"     -h(help)                     print help\n"
 					"     -v(version)                  print version\n"
-					"     -conf <configration file>    specify configration file(.ini .yaml .json) for k2hftfusesvr and all sub system\n"
-					"     -json <json string>          specify configration json string for k2hftfusesvr and all sub system\n"
+					"     -conf <configuration file>   specify configuration file(.ini .yaml .json) for k2hftfusesvr and all sub system\n"
+					"     -json <json string>          specify configuration json string for k2hftfusesvr and all sub system\n"
 					"     -d(g) {err|wan|msg|silent}   set debug level affect only k2hftfusesvr\n"
 					"\n"
 					" * k2hftfusesvr environments:\n"
-					"     K2HFTSVRCONFFILE             specify configration file(.ini .yaml .json) instead of conf option.\n"
-					"     K2HFTSVRJSONCONF             specify json string as configration instead of json option.\n"
+					"     K2HFTSVRCONFFILE             specify configuration file(.ini .yaml .json) instead of conf option.\n"
+					"     K2HFTSVRJSONCONF             specify json string as configuration instead of json option.\n"
 					"\n"
 					" Please see man page - k2hftfusesvr(1) for more details.\n"
 					"\n"	);
@@ -178,7 +178,7 @@ static bool ParseBinCom(PBCOM pBinCom, unsigned char** ppKey, size_t& keylen, un
 	// check type
 	if(SCOM_SET_ALL != pBinCom->scom.type && SCOM_REPLACE_VAL != pBinCom->scom.type && SCOM_OW_VAL != pBinCom->scom.type){
 		// [NOTE]
-		// Often come here because removing key makes DEL_KEY tansaction.
+		// Often come here because removing key makes DEL_KEY transaction.
 		// REP_ATTRS should not occur, because attributes are not changed on this system.
 		//
 		//MSG_K2HFTPRN("pBinCom data type(%ld: %s) is not k2hftfusesvr target type.", pBinCom->scom.type, pBinCom->scom.szCommand);
@@ -290,12 +290,12 @@ bool Processing(K2hFtSvrInfo& confinfo, K2hFtPluginMan& pluginman, K2HShm* pTran
 	{
 		PBCOM	pBinCom = reinterpret_cast<PBCOM>(pbody);
 		if(length != scom_total_length(pBinCom->scom)){
-			ERR_K2HFTPRN("Length(%zu) of recieved message body is wrong(should be %zu).", length, scom_total_length(pBinCom->scom));
+			ERR_K2HFTPRN("Length(%zu) of received message body is wrong(should be %zu).", length, scom_total_length(pBinCom->scom));
 			return false;
 		}
 		if(!ParseBinCom(pBinCom, &pKey, keylen, &pVal, vallen)){
 			// [NOTE]
-			// Often come here because removing key makes DEL_KEY tansaction.
+			// Often come here because removing key makes DEL_KEY transaction.
 			// Because of the suppression of the output of the error message, returns true.
 			//
 			//MSG_K2HFTPRN("Received data is not target type, or does not have key or value, or something wrong occurred.");
@@ -331,7 +331,7 @@ bool Processing(K2hFtSvrInfo& confinfo, K2hFtPluginMan& pluginman, K2HShm* pTran
 			for(size_t cnt = 0; cnt < count && pLines; ++cnt){
 				PK2HFTLINE		pNextLines	= GetNextK2hFtLine(pLines);
 
-				// perse
+				// parse
 				unsigned char*	data		= NULL;
 				size_t			datalength	= 0;
 				char*			hostname	= NULL;
@@ -435,7 +435,7 @@ bool Processing(K2hFtSvrInfo& confinfo, K2hFtPluginMan& pluginman, K2HShm* pTran
 //---------------------------------------------------------
 int main(int argc, char** argv)
 {
-	// always forgroud mode
+	// always foreground mode
 	k2hft_foreground_mode = true;
 
 	// parse parameter
@@ -459,7 +459,7 @@ int main(int argc, char** argv)
 	optparams_t::const_iterator	paramiter;
 	if(optparams.end() != (paramiter = optparams.find("-g")) || optparams.end() != (paramiter = optparams.find("-d")) || optparams.end() != (paramiter = optparams.find("-dbg"))){
 		if(!SetK2hFtDbgModeByString(paramiter->second.rawstring.c_str())){
-			K2HFTERR("Option \"-d(-g)\" has wrong paramter(%s)", paramiter->second.rawstring.c_str());
+			K2HFTERR("Option \"-d(-g)\" has wrong parameter(%s)", paramiter->second.rawstring.c_str());
 			exit(EXIT_FAILURE);
 		}
 	}else{
@@ -475,7 +475,7 @@ int main(int argc, char** argv)
 	}else{
 		CHMCONFTYPE	conftye = check_chmconf_type_ex(NULL, K2HFTSVR_CONFFILE_ENV_NAME, K2HFTSVR_JSONCONF_ENV_NAME, &config);
 		if(CHMCONF_TYPE_UNKNOWN == conftye || CHMCONF_TYPE_NULL == conftye){
-			K2HFTERR("Option \"-conf\" or \"-json\" or environments for configurarion must specify for configuration.");
+			K2HFTERR("Option \"-conf\" or \"-json\" or environments for configuration must specify for configuration.");
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -497,7 +497,7 @@ int main(int argc, char** argv)
 	// load
 	K2hFtSvrInfo	confinfo;
 	if(!confinfo.Load(config.c_str(), pluginman)){
-		K2HFTERR("Faild to load configuration(%s), somethig wrong in file.", config.c_str());
+		K2HFTERR("Failed to load configuration(%s), something wrong in file.", config.c_str());
 		exit(EXIT_FAILURE);
 	}
 
@@ -513,14 +513,14 @@ int main(int argc, char** argv)
 	sa.sa_flags		= 0;
 	sa.sa_handler	= SigHuphandler;
 	if(0 > sigaction(SIGHUP, &sa, NULL)){
-		K2HFTERR("Faild to set signal HUP handler, errno(%d)", errno);
+		K2HFTERR("Failed to set signal HUP handler, errno(%d)", errno);
 		exit(EXIT_FAILURE);
 	}
 
 	// join chmpx(server mode for receiving)
 	ChmCntrl	ChmpxServer;
-	if(!ChmpxServer.InitializeOnServer(confinfo.GetConfigration(), false)){
-		K2HFTERR("Could not join chmpx server, configuration file is %s.", confinfo.GetConfigration());
+	if(!ChmpxServer.InitializeOnServer(confinfo.GetConfiguration(), false)){
+		K2HFTERR("Could not join chmpx server, configuration file is %s.", confinfo.GetConfiguration());
 		exit(EXIT_FAILURE);
 	}
 
@@ -535,7 +535,7 @@ int main(int argc, char** argv)
 	// run plugin
 	if(!pluginman.IsEmpty()){
 		if(!pluginman.RunPlugins()){
-			K2HFTERR("Could not join chmpx server, configuration file is %s.", confinfo.GetConfigration());
+			K2HFTERR("Could not join chmpx server, configuration file is %s.", confinfo.GetConfiguration());
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -566,7 +566,7 @@ int main(int argc, char** argv)
 		}
 
 		if(!pbody){
-			MSG_K2HFTPRN("NULL body data recieved.");
+			MSG_K2HFTPRN("NULL body data received.");
 			K2HFT_FREE(pComPkt);
 			continue;
 		}

@@ -126,14 +126,14 @@ IS_SAFE_TEST=1
 which fusermount >/dev/null 2>&1
 if [ $? -ne 0 ]; then
 	echo ""
-	echo "[WARNNING] not found fusermount command or not allow permission, then this test is going to fail."
+	echo "[WARNING] not found fusermount command or not allow permission, then this test is going to fail."
 	echo ""
 	IS_SAFE_TEST=1
 else
 	ls /dev/fuse >/dev/null 2>&1
 	if [ $? -ne 0 ]; then
 		echo ""
-		echo "[WARNNING] not found /dev/fuse or not allow permission, then this test is going to fail."
+		echo "[WARNING] not found /dev/fuse or not allow permission, then this test is going to fail."
 		echo ""
 		IS_SAFE_TEST=1
 	else
@@ -156,7 +156,7 @@ else
 		fi
 		if [ $? -ne 0 ]; then
 			echo ""
-			echo "[WARNNING] not found user_allow_other in /etc/fuse.conf, then this test is going to fail."
+			echo "[WARNING] not found user_allow_other in /etc/fuse.conf, then this test is going to fail."
 			echo ""
 			IS_SAFE_TEST=1
 		fi
@@ -168,7 +168,7 @@ if [ ${IS_SAFE_TEST} -ne 1 ]; then
 	echo ""
 	echo "This test is going to fail, because this environment is not allowed"
 	echo "to use FUSE for me."
-	echo "But this script returns SUCESS, if it reason is not using FUSE."
+	echo "But this script returns SUCCESS, if it reason is not using FUSE."
 	echo ""
 	echo "PLEASE CHECK YOUR FUSE ENVIRONMENT."
 	echo ""
@@ -221,7 +221,7 @@ TESTSUBRESULT=0
 ${K2HFUSEBIN} -v
 
 #
-# Cleanning
+# Cleaning
 #
 rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 if [ $? -ne 0 ]; then
@@ -417,7 +417,7 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 		echo ""
 	else
 		#
-		# cleanning
+		# cleaning
 		#
 		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
@@ -630,7 +630,7 @@ if [ "X${DO_INI_CONF}" = "Xyes" ]; then
 		echo ""
 	else
 		#
-		# cleanning
+		# cleaning
 		#
 		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
@@ -816,7 +816,7 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 		echo ""
 	else
 		#
-		# cleanning
+		# cleaning
 		#
 		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
@@ -1029,7 +1029,7 @@ if [ "X${DO_YAML_CONF}" = "Xyes" ]; then
 		echo ""
 	else
 		#
-		# cleanning
+		# cleaning
 		#
 		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
@@ -1215,7 +1215,7 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 		echo ""
 	else
 		#
-		# cleanning
+		# cleaning
 		#
 		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
@@ -1428,7 +1428,7 @@ if [ "X${DO_JSON_CONF}" = "Xyes" ]; then
 		echo ""
 	else
 		#
-		# cleanning
+		# cleaning
 		#
 		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
@@ -1613,7 +1613,7 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 		echo ""
 	else
 		#
-		# cleanning
+		# cleaning
 		#
 		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
@@ -1826,7 +1826,7 @@ if [ "X${DO_JSON_STRING}" = "Xyes" ]; then
 		echo ""
 	else
 		#
-		# cleanning
+		# cleaning
 		#
 		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
@@ -2011,7 +2011,7 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 		echo ""
 	else
 		#
-		# cleanning
+		# cleaning
 		#
 		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then
@@ -2224,7 +2224,7 @@ if [ "X${DO_JSON_ENV}" = "Xyes" ]; then
 		echo ""
 	else
 		#
-		# cleanning
+		# cleaning
 		#
 		rm -f /tmp/mnt/k2hftfusesvr/log/unify.log
 		if [ $? -ne 0 ]; then

@@ -46,7 +46,7 @@ typedef	std::map<std::string, PK2HFTFW>		k2hftfwmap_t;
 // [NOTE]
 //
 // This class is watching file which is removed or moved by inotify.
-// So this does not support for the files on netwrok device, special
+// So this does not support for the files on network device, special
 // drive(/proc, etc), and fuse drive.
 // 
 // inotify man page:

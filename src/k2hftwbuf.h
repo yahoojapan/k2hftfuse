@@ -74,8 +74,8 @@ class K2hFtWriteBuff
 
 		const K2hFtManage*	pK2hFtMan;
 		uint64_t			filehandle;
-		volatile int		inputbuf_lockval;		// like mutex for valiables
-		volatile int		stack_lockval;			// like mutex for valiables
+		volatile int		inputbuf_lockval;		// like mutex for variables
+		volatile int		stack_lockval;			// like mutex for variables
 		k2hftbinbufmap_t	InputBuffMap;			// raw binary data map by pid before stacking
 		k2hftlinelist_t		Stack;					// stacked binary data, each data has timestamp and hostname in it.
 

@@ -44,7 +44,7 @@ k2hftfuse (1.0.24) trusty; urgency=low
 
 k2hftfuse (1.0.23) trusty; urgency=low
 
-  * Supported trimed contents format keyword
+  * Supported trimmed contents format keyword
   * Added lib_version_for_link option to make_valiables.sh
   * Updated submodule dependency for k2htp_dtor/chmpx/k2hash/fullock
 

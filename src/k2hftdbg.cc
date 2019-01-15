@@ -80,7 +80,7 @@ class K2hFtDbgCtrl
 };
 
 //
-// Class valiables
+// Class variables
 //
 const char*		K2hFtDbgCtrl::DBGENVNAME = "K2HFTDBGMODE";
 const char*		K2hFtDbgCtrl::DBGENVFILE = "K2HFTDBGFILE";

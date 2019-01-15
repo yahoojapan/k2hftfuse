@@ -123,7 +123,7 @@ class K2hFtSvrInfo
 		virtual ~K2hFtSvrInfo(void);
 
 		inline bool IsLoad(void) const { return !Config.empty(); }
-		inline const char* GetConfigration(void) const { return Config.c_str(); }
+		inline const char* GetConfiguration(void) const { return Config.c_str(); }
 		inline bool IsOutputFileMode(void) const { return IS_K2HFTFSVR_FILE_TYPE(OutputType); }
 		inline bool IsTransMode(void) const { return IS_K2HFTFSVR_TRANS_TYPE(OutputType); }
 		inline bool IsBinMode(void) const { return IsBinaryMode; }

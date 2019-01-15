@@ -68,7 +68,7 @@ const char* K2hFtManage::GetMountPoint(void)
 bool K2hFtManage::SetMountPoint(const char* path)
 {
 	if(K2HFT_ISEMPTYSTR(path) || '/' != path[0]){
-		ERR_K2HFTPRN("path(%s) does not maount point.", path ? path : "null");
+		ERR_K2HFTPRN("path(%s) does not mount point.", path ? path : "null");
 		return false;
 	}
 	K2hFtManage::GetMountPointString() = path;
@@ -155,7 +155,7 @@ K2hFtManage::~K2hFtManage(void)
 bool K2hFtManage::Clean(void)
 {
 	// [NOTE]
-	// When we caught many signal at exiging, this method deadlocks by conf_lockval.
+	// When we caught many signal at exiting, this method deadlocks by conf_lockval.
 	// Thus this method must be called only one.
 	//
 	if(!fullock::flck_trylock_noshared_mutex(&exit_lockval)){
@@ -196,7 +196,7 @@ bool K2hFtManage::Clean(void)
 	// are freed in K2hFtInfo class.
 	//
 	if(!pluginman.StopPlugins(true)){
-		ERR_K2HFTPRN("Failed to sto plugins, but continue...");
+		ERR_K2HFTPRN("Failed to stop plugins, but continue...");
 		result = false;
 	}
 	// remove temporary directory
@@ -226,7 +226,7 @@ bool K2hFtManage::Clean(void)
 		result = false;
 	}
 
-	// clean configration information
+	// clean configuration information
 	confinfo.Clean();
 
 	is_load_tp	= false;
@@ -313,9 +313,9 @@ bool K2hFtManage::Initialize(const char* config, bool is_run_chmpx, const char* 
 		return false;
 	}
 
-	// load configration file and build internal settings.
+	// load configuration file and build internal settings.
 	if(!confinfo.Load(config, base_mode, base_dmode, base_uid, base_gid, pluginman)){
-		ERR_K2HFTPRN("Something error occurred in loading configration(%s).", config);
+		ERR_K2HFTPRN("Something error occurred in loading configuration(%s).", config);
 		fullock::flck_unlock_noshared_mutex(&conf_lockval);		// Unlock
 		return false;
 	}
@@ -344,7 +344,7 @@ bool K2hFtManage::Initialize(const char* config, bool is_run_chmpx, const char* 
 	// run CHMPX
 	if(is_run_chmpx){
 		// [NOTICE]
-		// We do not check sub process as chmpx runnning because of using system function.
+		// We do not check sub process as chmpx running because of using system function.
 		// And we run chmpx on background, so we can not check it's status(result).
 		// Then we sleep 1 second here, if chmpx could not be run, k2hftfuse process would
 		// not run with error.

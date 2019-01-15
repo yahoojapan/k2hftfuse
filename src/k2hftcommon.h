@@ -10,6 +10,7 @@
  * the license file that was distributed with this source code.
  *
  * AUTHOR:   Takeshi Nakatani
+ * AUTHOR:   nakatani@yahoo-corp.jp
  * CREATE:   Wed Sep 2 2015
  * REVISION:
  *
@@ -56,7 +57,7 @@
 #define	K2HFT_INVALID_HANDLE			(-1)
 #define	K2HFT_INVALID_PID				(-1)
 
-// deafult dtor
+// default dtor
 #define	K2HFT_K2HTPDTOR					"libk2htpdtor.so.1"
 
 //---------------------------------------------------------
