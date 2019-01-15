@@ -51,7 +51,7 @@ bool check_mountpoint_attr(const char* path);
 bool check_path_real_path(const char* path, std::string& abspath);
 bool mkdir_by_abs_path(const char* path, std::string& abspath);
 bool make_file_by_abs_path(const char* path, mode_t mode, std::string& abspath, bool is_make_path = false);
-bool is_file_charactor_device(const char* path);
+bool is_file_character_device(const char* path);
 bool remove_exist_file(const char* path);
 
 size_t get_system_pagesize(void);

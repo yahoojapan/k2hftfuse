@@ -66,7 +66,7 @@ typedef union k2hft_value{
 // Symbols
 //---------------------------------------------------------
 #define	K2HFT_KEY_SUFFIX_FORM			"%d"
-#define	K2HFT_KEY_BUFF_TID_MAXSIZE		32						// enough by 32 charactor string length
+#define	K2HFT_KEY_BUFF_TID_MAXSIZE		32						// enough by 32 character string length
 #define	K2HFT_LINE_BODY_START_POS		sizeof(K2HFTLINEHEAD)
 #define	K2HFT_VALUE_BODY_START_POS		sizeof(K2HFTVHEAD)
 
@@ -75,7 +75,7 @@ typedef union k2hft_value{
 //---------------------------------------------------------
 //
 // Key format :	"<file path char array>\0<pid decimal char array>\0"
-//				(file path and pid string sepalated by '\0')
+//				(file path and pid string separated by '\0')
 //
 inline unsigned char* BuildK2hFtKey(size_t& length, const char* path, pid_t pid)
 {
@@ -151,7 +151,7 @@ inline PK2HFTVALUE BuildK2hFtValue(const k2hftlinelist_t& lines)
 		return NULL;
 	}
 
-	// calac binary data length
+	// calc binary data length
 	size_t	totallen = 0;
 	for(k2hftlinelist_t::const_iterator iter = lines.begin(); iter != lines.end(); ++iter){
 		const PK2HFTLINE	pline = *iter;

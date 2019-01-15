@@ -249,7 +249,7 @@ bool make_file_by_abs_path(const char* path, mode_t mode, string& abspath, bool 
 	struct stat	st;
 	if(0 == stat(path, &st)){
 		// exist
-		if(!S_ISREG(st.st_mode) && !S_ISCHR(st.st_mode)){	// allow charactor device(ex. /dev/null)
+		if(!S_ISREG(st.st_mode) && !S_ISCHR(st.st_mode)){	// allow character device(ex. /dev/null)
 			ERR_K2HFTPRN("path(%s) already exists, but it is not regular file.", path);
 			return false;
 		}
@@ -288,7 +288,7 @@ bool make_file_by_abs_path(const char* path, mode_t mode, string& abspath, bool 
 	return check_path_real_path(path, abspath);
 }
 
-bool is_file_charactor_device(const char* path)
+bool is_file_character_device(const char* path)
 {
 	if(K2HFT_ISEMPTYSTR(path)){
 		ERR_K2HFTPRN("path is NULL.");

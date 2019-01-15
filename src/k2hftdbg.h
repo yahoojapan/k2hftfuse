@@ -56,7 +56,7 @@ bool SetK2hFtSignalUser1(void);
 										K2HFTDBG_MSG	== mode ? "MSG" : \
 										K2HFTDBG_DUMP	== mode ? "DMP" : "")
 
-// Convert dbgmode to sysylog level(without SILENT)
+// Convert dbgmode to syslog level(without SILENT)
 #define	CVT_K2HFTDBGMODE_SYSLOGLEVEL(mode) \
 		(	K2HFTDBG_MSG	== (mode & K2HFTDBG_MSG)	? LOG_INFO		: \
 			K2HFTDBG_WARN	== (mode & K2HFTDBG_WARN)	? LOG_WARNING	: \

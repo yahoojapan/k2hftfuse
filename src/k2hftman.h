@@ -30,15 +30,15 @@
 //---------------------------------------------------------
 // [NOTE]
 // wbstackmap mapping will grow only, does not reduce.
-// Thus we only lock wbstackmap for seaching by file handle,
+// Thus we only lock wbstackmap for searching by file handle,
 // and we do not have to lock it after searching.
 //
 class K2hFtManage
 {
 	protected:
-		volatile int		conf_lockval;			// like mutex for valiables
-		volatile int		wstack_lockval;			// like mutex for valiables
-		volatile int		exit_lockval;			// like mutex for valiables
+		volatile int		conf_lockval;			// like mutex for variables
+		volatile int		wstack_lockval;			// like mutex for variables
+		volatile int		exit_lockval;			// like mutex for variables
 		bool				is_load_tp;				// transaction plugin(dtor) load flag
 		bool				is_init_perm;			// initialize base_*** permission flag
 

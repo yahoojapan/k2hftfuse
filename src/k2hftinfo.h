@@ -68,7 +68,7 @@ inline void free_k2hftldlist(k2hftldlist_t& list)
 // replacing pattern structure for Regex
 //
 typedef struct k2hft_replace_pattern{
-	int					matchno;			// -1 means static string, 0 is all, 1... is match posision.
+	int					matchno;			// -1 means static string, 0 is all, 1... is match position.
 	std::string			substring;
 
 	k2hft_replace_pattern(void) : matchno(-1), substring("") {}
@@ -102,7 +102,7 @@ typedef struct k2hft_match_pattern{
 	bool				IsRegex;
 	std::string			BaseString;
 	regex_t				RegexBuffer;
-	k2hftreplist_t		ReplaceList;		// if regex but this list is empty, so all of line should be transfered.
+	k2hftreplist_t		ReplaceList;		// if regex but this list is empty, so all of line should be transferred.
 
 	k2hft_match_pattern(void) : IsRegex(false), BaseString("") {}
 	~k2hft_match_pattern(void)
@@ -139,7 +139,7 @@ inline bool duplicate_match_list(const k2hftmatchlist_t& src, k2hftmatchlist_t& 
 				errbuf[0] = '\0';
 				regerror(regresult, &(ptmp->RegexBuffer), errbuf, REGEX_ERROR_BUFF_SIZE);
 
-				ERR_K2HFTPRN("Failed to complie compptn(%s) regex, error is %s(%d)", ptmp->BaseString.c_str(), errbuf, regresult);
+				ERR_K2HFTPRN("Failed to compile compptn(%s) regex, error is %s(%d)", ptmp->BaseString.c_str(), errbuf, regresult);
 				K2HFT_DELETE(ptmp);
 				return false;
 			}
@@ -163,9 +163,9 @@ typedef struct k2hft_rule{
 	mode_t				Mode;
 	uid_t				Uid;
 	gid_t				Gid;
-	off_t				AccumSize;			// accumulate transfered data size
+	off_t				AccumSize;			// accumulate transferred data size
 	struct timespec		StartTime;			// start time of up
-	struct timespec		LastTime;			// last time of transfering
+	struct timespec		LastTime;			// last time of transferring
 	k2hftmatchlist_t	MatchingList;		// matching pattern list
 
 	k2hft_rule(void) :	TargetPath(""), IsTransfer(false), OutputPath(""), pPlugin(NULL), DefaultDenyAll(true),
@@ -191,7 +191,7 @@ class K2hFtInfo
 	friend class K2hFtManage;
 
 	protected:
-		int*			prule_lockval;		// like mutex for valiables
+		int*			prule_lockval;		// like mutex for variables
 		std::string		Config;
 		bool			IsMemType;			// memory type k2hash
 		std::string		K2hFilePath;		// not empty for only file type

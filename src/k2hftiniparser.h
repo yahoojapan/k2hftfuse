@@ -92,7 +92,7 @@
 #define	INI_K2HFT_ALLOW_VAL_STR			"ALLOW"
 #define	INI_K2HFT_DENY_VAL_STR			"DENY"
 
-// Muximum replace placement number for regex
+// Maximum replace placement number for regex
 #define	INI_K2HFT_MAX_REPLACE_NUMBER	9
 
 //---------------------------------------------------------

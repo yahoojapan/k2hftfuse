@@ -122,7 +122,7 @@ void parse_ini_value(const string& value, strlst_t& values)
 		return;
 
 	}else if(INI_VALUE_AREA_CHAR != value[0]){
-		// value does not start (") charactor, it could not parse any.
+		// value does not start (") character, it could not parse any.
 		values.push_back(value);
 
 	}else{
@@ -130,10 +130,10 @@ void parse_ini_value(const string& value, strlst_t& values)
 		string::size_type	pos;
 		for(string tempval = value; 0 < tempval.length(); ){
 			if(string::npos != (pos = tempval.find(INI_VALUE_SEP_CHAR))){
-				// found "," charactor
+				// found "," character
 				string	temptrimval = rtrim(tempval.substr(0, pos));
 				if(0 < temptrimval.length() && INI_VALUE_AREA_CHAR == temptrimval[temptrimval.length() - 1]){
-					// string end charactor before "," is ("), it is OK.
+					// string end character before "," is ("), it is OK.
 					tempstack	+= temptrimval;
 					values.push_back(tempstack);
 					tempstack	= "";
@@ -141,18 +141,18 @@ void parse_ini_value(const string& value, strlst_t& values)
 					// lest string
 					tempval = ltrim(tempval.substr(pos + 1));
 					if(0 < tempval.length() && INI_VALUE_AREA_CHAR != tempval[0]){
-						// lest string does not start (") charactor.
+						// lest string does not start (") character.
 						values.push_back(tempval);
 						tempval = "";
 					}
 
 				}else{
-					// string end charactor before "," is not ("), so skip these string(stack)
+					// string end character before "," is not ("), so skip these string(stack)
 					tempstack	+= tempval.substr(0, pos + 1);
 					tempval		=  tempval.substr(pos + 1);
 				}
 			}else{
-				// not found "," charactor
+				// not found "," character
 				tempstack	+= tempval;
 				tempval		= "";
 				values.push_back(tempstack);

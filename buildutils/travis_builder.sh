@@ -39,7 +39,7 @@ func_usage()
 	echo "        -h                 print help"
 	echo "Environments"
 	echo "        BUILD_NUMBER       specify build number for packaging(default 1)"
-	echo "        TRAVIS_TAG         if the current build is for a git tag, this variable is set to the tag‚Äôs name"
+	echo "        TRAVIS_TAG         if the current build is for a git tag, this variable is set to the tagÅfs name"
 	echo "        FORCE_BUILD_PKG    if this env is 'true', force packaging anytime"
 	echo "        USE_PC_REPO        if this env is 'true', use packagecloud.io repository"
 	echo "        CONFIGUREOPT       specify extra configure option."
@@ -288,7 +288,7 @@ if [ "X${USE_PC_REPO}" = "Xtrue" -o "X${USE_PC_REPO}" = "XTRUE" ]; then
 	fi
 
 	#
-	# Download and set pckagecloud.io repository
+	# Download and set packagecloud.io repository
 	#
 	if [ ${IS_CENTOS} -eq 1 -o ${IS_FEDORA} -eq 1 ]; then
 		PC_REPO_ADD_SH="script.rpm.sh"
@@ -328,7 +328,7 @@ else
 fi
 
 #
-# Start bulding ( build under /tmp )
+# Start building ( build under /tmp )
 #
 run_cmd cp -rp ${SRCTOP} /tmp
 TMPSRCTOP=`basename ${SRCTOP}`

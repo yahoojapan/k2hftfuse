@@ -142,15 +142,15 @@ static void k2hftfuse_print_usage(FILE* stream)
 					"     -o uid=<number>              set uid with FUSE\n"
 					"     -o gid=<number>              set gid with FUSE\n"
 					"     -o dbglevel={err|wan|msg}    set debug level affect only k2hftfuse\n"
-					"     -o conf=<configration file>  specify configration file(.ini .yaml .json) for k2hftfuse and all sub system\n"
-					"     -o json=<json string>        specify json string as configration for k2hftfuse and all sub system\n"
+					"     -o conf=<configuration file> specify configuration file(.ini .yaml .json) for k2hftfuse and all sub system\n"
+					"     -o json=<json string>        specify json string as configuration for k2hftfuse and all sub system\n"
 					"     -o enable_run_chmpx          run chmpx slave process\n"
 					"     -o disable_run_chmpx         do not run chmpx slave process(default)\n"
 					"     -o chmpxlog=<log file path>  chmpx log file path when k2hftfuse run chmpx\n"
 					"\n"
 					" * k2hftfuse environments:\n"
-					"     K2HFTCONFFILE                specify configration file(.ini .yaml .json) instead of conf option.\n"
-					"     K2HFTJSONCONF                specify json string as configration instead of json option.\n"
+					"     K2HFTCONFFILE                specify configuration file(.ini .yaml .json) instead of conf option.\n"
+					"     K2HFTJSONCONF                specify json string as configuration instead of json option.\n"
 					"\n"
 					" Please see man page - k2hftfuse(1) for more details.\n"
 					"\n"	);
@@ -313,7 +313,7 @@ static int k2hft_opt_proc(void* data, const char* arg, int key, struct fuse_args
 		}
 		// check mount point
 		if(!check_path_directory_type(arg)){
-			K2HFTERR("The mount point option(%s) is somthing wrong.", arg);
+			K2HFTERR("The mount point option(%s) is something wrong.", arg);
 			return -1;
 		}
 		// check mount point attributes
@@ -347,7 +347,7 @@ static int k2hft_opt_proc(void* data, const char* arg, int key, struct fuse_args
 			// -o umask=XXX
 			const char*	pparam = strchr(arg, '=') + sizeof(char);
 			if(!cvt_mode_string(pparam, opt_umask)){
-				K2HFTERR("Option umask has wrong paramter(%s)", pparam);
+				K2HFTERR("Option umask has wrong parameter(%s)", pparam);
 				return -1;
 			}
 			// set umask
@@ -370,7 +370,7 @@ static int k2hft_opt_proc(void* data, const char* arg, int key, struct fuse_args
 			// -o dbglevel=XXX
 			const char*	pparam = strchr(arg, '=') + sizeof(char);
 			if(!SetK2hFtDbgModeByString(pparam)){
-				K2HFTERR("Option dbglevel has wrong paramter(%s)", pparam);
+				K2HFTERR("Option dbglevel has wrong parameter(%s)", pparam);
 				return -1;
 			}
 			return 0;	// stop extraditing
@@ -383,7 +383,7 @@ static int k2hft_opt_proc(void* data, const char* arg, int key, struct fuse_args
 			}
 			const char*	pparam = strchr(arg, '=') + sizeof(char);
 			if(!check_path_real_path(pparam, GetConfig())){
-				K2HFTERR("Option conf has wrong paramter(%s)", pparam);
+				K2HFTERR("Option conf has wrong parameter(%s)", pparam);
 				return -1;
 			}
 			return 0;	// stop extraditing
@@ -840,7 +840,7 @@ static int h2htpfs_opendir(const char* path, struct fuse_file_info* fi)
 static int h2htpfs_readdir(const char* path, void* buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info* fi)
 {
 	// [NOTE]
-	// offset anf fi are not used in this function.
+	// 'offset' and 'fi' are not used in this function.
 	//
 	K2hFtManage*	pk2hftman	= get_k2hftman_from_context();
 	k2hftldlist_t	list;
@@ -1071,7 +1071,7 @@ int main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 	if(!pK2hFtMan->Initialize(GetConfig().c_str(), is_run_chmpx, GetChmpxLog().c_str())){
-		K2HFTERR("Something error occurred in initializing internal data from configration(%s).", GetConfig().c_str());
+		K2HFTERR("Something error occurred in initializing internal data from configuration(%s).", GetConfig().c_str());
 		K2HFT_DELETE(pK2hFtMan);
 		exit(EXIT_FAILURE);
 	}

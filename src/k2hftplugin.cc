@@ -57,7 +57,7 @@ volatile bool	K2hFtPluginMan::is_run_thread		= false;
 pthread_t		K2hFtPluginMan::watch_thread_tid;
 
 //---------------------------------------------------------
-// Class methos
+// Class methods
 //---------------------------------------------------------
 bool K2hFtPluginMan::BlockSignal(int sig)
 {
@@ -202,7 +202,7 @@ bool K2hFtPluginMan::CleanupChildExit(K2hFtPluginMan* pMan, pid_t childpid, int 
 	// run all stopping plugins(run as soon as possible)
 	if(do_restart){
 		if(!pMan->RunPlugins()){
-			ERR_K2HFTPRN("Somwthing error occurred during restarting plugins");
+			ERR_K2HFTPRN("Something error occurred during restarting plugins");
 			return false;
 		}
 	}
@@ -349,12 +349,12 @@ pid_t K2hFtPluginMan::RunPluginProcess(const char* pluginparam, const char* outp
 			strlst_t	argvlist;
 			strlst_t	envlist;
 			if(!K2hFtPluginMan::ParseExecParam(pluginparam, filename, argvlist, envlist)){
-				ERR_K2HFTPRN("could not parse base paraemter for \"%s\" plugin.", pluginparam);
+				ERR_K2HFTPRN("could not parse base parameter for \"%s\" plugin.", pluginparam);
 				K2HFT_CLOSE(child_input_pipe);
 				exit(EXIT_FAILURE);
 			}
 			if(NULL == (argvs = convert_strlst_to_chararray(argvlist)) || NULL == (envs = convert_strlst_to_chararray(envlist))){
-				ERR_K2HFTPRN("could not parse base paraemter for \"%s\" plugin.", pluginparam);
+				ERR_K2HFTPRN("could not parse base parameter for \"%s\" plugin.", pluginparam);
 				free_chararray(argvs);
 				free_chararray(envs);
 				K2HFT_CLOSE(child_input_pipe);
@@ -420,7 +420,7 @@ pid_t K2hFtPluginMan::RunPluginProcess(const char* pluginparam, const char* outp
 		}
 
 		// open output file
-		int	noatime_flag = is_file_charactor_device(ofile.c_str()) ? 0 : O_NOATIME;		// must not set noatime for charactor device
+		int	noatime_flag = is_file_character_device(ofile.c_str()) ? 0 : O_NOATIME;		// must not set noatime for character device
 		int	fd;
 		if(-1 == (fd = open(ofile.c_str(), O_WRONLY | O_CREAT | O_APPEND | noatime_flag, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH))){
 			//
@@ -480,7 +480,7 @@ pid_t K2hFtPluginMan::RunPluginProcess(const char* pluginparam, const char* outp
 }
 
 //---------------------------------------------------------
-// Methos
+// Methods
 //---------------------------------------------------------
 K2hFtPluginMan::K2hFtPluginMan(void) : pfdcache(NULL), mountpoint(""), condname(""), mutexname(""), lockval(FLCK_NOSHARED_MUTEX_VAL_UNLOCKED)
 {
@@ -697,7 +697,7 @@ bool K2hFtPluginMan::RunPlugin(PK2HFT_PLUGIN pplugin, bool is_wait_cond)
 
 	// do run
 	if(K2HFT_INVALID_PID == (pplugin->pid = K2hFtPluginMan::RunPluginProcess(pplugin->BaseParam.c_str(), pplugin->OutputPath.c_str(), pplugin->PipeFilePath.c_str(), pplugin->pipe_input, (is_wait_cond ? condname.c_str() : NULL), (is_wait_cond ? mutexname.c_str() : NULL)))){
-		ERR_K2HFTPRN("Could not run plgin.");
+		ERR_K2HFTPRN("Could not run plugin.");
 		pplugin->exit_count++;
 		return false;
 	}
@@ -710,16 +710,16 @@ bool K2hFtPluginMan::RunAddPlugin(PK2HFT_PLUGIN pplugin)
 {
 	// do run
 	if(!RunPlugin(pplugin, false)){
-		ERR_K2HFTPRN("Could not run plgin.");
+		ERR_K2HFTPRN("Could not run plugin.");
 		pplugin->exit_count++;
 		return false;
 	}
 
 	while(!fullock::flck_trylock_noshared_mutex(&lockval));		// MUTEX LOCK
 
-	// set running plguins list
+	// set running plugins list
 	if(run_plugin.find(pplugin->pid) != run_plugin.end()){
-		WAN_K2HFTPRN("Found pid(%d) in running plgins list, but continue...", pplugin->pid);
+		WAN_K2HFTPRN("Found pid(%d) in running plugins list, but continue...", pplugin->pid);
 	}
 	run_plugin[pplugin->pid] = pplugin;
 
@@ -731,7 +731,7 @@ bool K2hFtPluginMan::RunAddPlugin(PK2HFT_PLUGIN pplugin)
 // [NOTICE]
 // If call this method after running FUSE main function(call in FUSE handler),
 // Never set is_wait_cond=true.
-// Probabry there is possibility as deadlock.(fork in multi thread)
+// Probably there is possibility as deadlock.(fork in multi thread)
 // So if you call with is_wait_cond=true, you must call from single thread.
 //
 bool K2hFtPluginMan::RunPlugins(bool is_wait_cond)
@@ -748,19 +748,19 @@ bool K2hFtPluginMan::RunPlugins(bool is_wait_cond)
 		}else if(!pplugin->not_execute && pplugin->auto_restart){
 			// do run
 			if(!RunPlugin(pplugin, is_wait_cond)){
-				ERR_K2HFTPRN("Could not run plgin.");
+				ERR_K2HFTPRN("Could not run plugin.");
 				pplugin->exit_count++;
 				++iter;
 				result = false;
 				continue;
 			}
-			// set running plguins list
+			// set running plugins list
 			if(run_plugin.find(pplugin->pid) != run_plugin.end()){
-				WAN_K2HFTPRN("Found pid(%d) in running plgins list, but continue...", pplugin->pid);
+				WAN_K2HFTPRN("Found pid(%d) in running plugins list, but continue...", pplugin->pid);
 			}
 			run_plugin[pplugin->pid] = pplugin;
 
-			// remove from stoping plugin list
+			// remove from stopping plugin list
 			iter = stop_plugin.erase(iter);
 		}else{
 			++iter;
@@ -839,7 +839,7 @@ bool K2hFtPluginMan::StopPlugin(PK2HFT_PLUGIN pplugin)
 		return false;
 	}
 	if(K2HFT_INVALID_PID == pplugin->pid){
-		WAN_K2HFTPRN("pplugin->pid is not runnning status, so already stop.");
+		WAN_K2HFTPRN("pplugin->pid is not running status, so already stop.");
 		return true;
 	}
 
@@ -856,7 +856,7 @@ bool K2hFtPluginMan::StopPlugin(PK2HFT_PLUGIN pplugin)
 	fullock::flck_unlock_noshared_mutex(&lockval);				// MUTEX UNLOCK
 
 	if(!is_found){
-		WAN_K2HFTPRN("pplugin->pid is not runnning status, so already stop.");
+		WAN_K2HFTPRN("pplugin->pid is not running status, so already stop.");
 		return true;
 	}
 
@@ -864,7 +864,7 @@ bool K2hFtPluginMan::StopPlugin(PK2HFT_PLUGIN pplugin)
 	if(!KillPlugin(pplugin)){
 		ERR_K2HFTPRN("could not stop(kill) process(%d), but continue...", pplugin->pid);
 	}else{
-		MSG_K2HFTPRN("Scceed stopping plugin([%s] %s)", pplugin->OutputPath.empty() ? "empty" : pplugin->OutputPath.c_str(), pplugin->BaseParam.c_str());
+		MSG_K2HFTPRN("Succeed stopping plugin([%s] %s)", pplugin->OutputPath.empty() ? "empty" : pplugin->OutputPath.c_str(), pplugin->BaseParam.c_str());
 	}
 
 	return true;
@@ -914,7 +914,7 @@ bool K2hFtPluginMan::StopPlugins(bool force)
 		K2HFT_CLOSE(pplugin->pipe_input);
 	}
 
-	// check run plugin list if error is ccurred.
+	// check run plugin list if error is occurred.
 	if(is_error){
 		while(!fullock::flck_trylock_noshared_mutex(&lockval));	// MUTEX LOCK
 
@@ -951,15 +951,15 @@ bool K2hFtPluginMan::Write(PK2HFT_PLUGIN pplugin, unsigned char* pdata, size_t l
 
 			// run plugin
 			if(!RunPlugin(pplugin, false)){
-				ERR_K2HFTPRN("Could not run plgin.");
+				ERR_K2HFTPRN("Could not run plugin.");
 				return false;
 			}
 
-			// set running plguins list
+			// set running plugins list
 			while(!fullock::flck_trylock_noshared_mutex(&lockval));	// MUTEX LOCK
 
 			if(run_plugin.end() != run_plugin.find(pplugin->pid)){
-				WAN_K2HFTPRN("Found pid(%d) in running plgins list, but continue...", pplugin->pid);
+				WAN_K2HFTPRN("Found pid(%d) in running plugins list, but continue...", pplugin->pid);
 			}
 			run_plugin[pplugin->pid] = pplugin;
 
@@ -969,7 +969,7 @@ bool K2hFtPluginMan::Write(PK2HFT_PLUGIN pplugin, unsigned char* pdata, size_t l
 
 	// check input pipe
 	if(K2HFT_INVALID_HANDLE == pplugin->pipe_input){
-		ERR_K2HFTPRN("The input pipe for plugin is invaid, could not write data to plugin.");
+		ERR_K2HFTPRN("The input pipe for plugin is invalid, could not write data to plugin.");
 		return false;
 	}
 

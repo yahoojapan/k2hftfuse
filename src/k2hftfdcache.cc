@@ -124,7 +124,7 @@ void* K2hFtFdCache::WorkerThread(void* param)
 {
 	K2hFtFdCache*	pFdCache = reinterpret_cast<K2hFtFdCache*>(param);
 	if(!pFdCache){
-		ERR_K2HFTPRN("paraemter is wrong.");
+		ERR_K2HFTPRN("parameter is wrong.");
 		pthread_exit(NULL);
 	}
 
@@ -207,7 +207,7 @@ void* K2hFtFdCache::WorkerThread(void* param)
 
 	// remove signal fd
 	if(-1 == epoll_ctl(pFdCache->epollfd, EPOLL_CTL_DEL, sigfd, NULL)){
-		ERR_K2HFTPRN("Fialed to remove signal fd(%d) from epoll fd(%d) by errno(%d), but continue...", sigfd, pFdCache->epollfd, errno);
+		ERR_K2HFTPRN("Failed to remove signal fd(%d) from epoll fd(%d) by errno(%d), but continue...", sigfd, pFdCache->epollfd, errno);
 	}
 	K2HFT_CLOSE(sigfd);
 
@@ -295,12 +295,12 @@ bool K2hFtFdCache::DeleteFileWatchEpoll(PK2HFTFW pfw)
 
 	if(K2HFT_INVALID_HANDLE != epollfd && K2HFT_INVALID_HANDLE != pfw->inotify_fd){
 		if(-1 == epoll_ctl(epollfd, EPOLL_CTL_DEL, pfw->inotify_fd, NULL)){
-			ERR_K2HFTPRN("Fialed to remove inotify fd(%d) from epoll fd(%d) by errno(%d), but continue...", pfw->inotify_fd, epollfd, errno);
+			ERR_K2HFTPRN("Failed to remove inotify fd(%d) from epoll fd(%d) by errno(%d), but continue...", pfw->inotify_fd, epollfd, errno);
 		}
 	}
 	if(K2HFT_INVALID_HANDLE != pfw->inotify_fd && K2HFT_INVALID_HANDLE != pfw->watch_fd){
 		if(-1 == inotify_rm_watch(pfw->inotify_fd, pfw->watch_fd)){
-			ERR_K2HFTPRN("Fialed to remove watch fd(%d) from inotify fd(%d) by errno(%d), but continue...", pfw->watch_fd, pfw->inotify_fd, errno);
+			ERR_K2HFTPRN("Failed to remove watch fd(%d) from inotify fd(%d) by errno(%d), but continue...", pfw->watch_fd, pfw->inotify_fd, errno);
 		}
 	}
 	FLCK_CLOSE(pfw->watch_fd);
@@ -339,7 +339,7 @@ bool K2hFtFdCache::AddFileWatchEpoll(PK2HFTFW pfw)
 	// add watching path
 	//
 	// [NOTE]
-	// IN_DELETE(_SELF) does not occur if the file is removied. :-(
+	// IN_DELETE(_SELF) does not occur if the file is removed. :-(
 	// So we use IN_ATTRIB instead of it.
 	//
 	if(K2HFT_INVALID_HANDLE == (pfw->watch_fd = inotify_add_watch(pfw->inotify_fd, pfw->filepath.c_str(), IN_DELETE | IN_MOVE | IN_DELETE_SELF | IN_MOVE_SELF | IN_ATTRIB))){
@@ -358,7 +358,7 @@ bool K2hFtFdCache::AddFileWatchEpoll(PK2HFTFW pfw)
 		ERR_K2HFTPRN("Could not add inotify fd(%d) and watch fd(%d) to epoll fd(%d) for %s by errno(%d).", pfw->inotify_fd, pfw->watch_fd, epollfd, pfw->filepath.c_str(), errno);
 
 		if(-1 == inotify_rm_watch(pfw->inotify_fd, pfw->watch_fd)){
-			ERR_K2HFTPRN("Fialed to remove watch fd(%d) from inotify fd(%d) by errno(%d), but continue...", pfw->watch_fd, pfw->inotify_fd, errno);
+			ERR_K2HFTPRN("Failed to remove watch fd(%d) from inotify fd(%d) by errno(%d), but continue...", pfw->watch_fd, pfw->inotify_fd, errno);
 		}
 		K2HFT_CLOSE(pfw->watch_fd);
 		K2HFT_CLOSE(pfw->inotify_fd);
@@ -390,7 +390,7 @@ bool K2hFtFdCache::AddAllFileWatchEpoll(void)
 
 		// add events
 		if(!AddFileWatchEpoll(pfw)){							// NOTICE: not care for lockval
-			ERR_K2HFTPRN("Fialed to add epoll event, but continue...");
+			ERR_K2HFTPRN("Failed to add epoll event, but continue...");
 		}
 	}
 	fullock::flck_unlock_noshared_mutex(&lockval);				// MUTEX UNLOCK
