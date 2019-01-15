@@ -518,6 +518,9 @@ K2hFtInfo::K2hFtInfo(const char* conffile, mode_t init_mode, mode_t init_dmode, 
 		MaskBitCnt(8), CMaskBitCnt(4), MaxElementCnt(32), PageSize(128), DtorThreadCnt(1), DtorCtpPath(K2HFT_K2HTPDTOR),
 		IsBinaryMode(false), ExpireTime(0), DirMode(0), DirUid(0), DirGid(0), InitTime(common_init_time)
 {
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress noOperatorEq
+	// cppcheck-suppress noCopyConstructor
 	prule_lockval	= new int;
 	*prule_lockval	= FLCK_NOSHARED_MUTEX_VAL_UNLOCKED;
 
@@ -578,6 +581,8 @@ bool K2hFtInfo::InitializeOutputFiles(void) const
 			// found output path
 			if(S_ISDIR(pRule->Mode) && '/' == pRule->OutputPath[pRule->OutputPath.length() - 1]){
 				// output path is directory
+				// cppcheck-suppress unmatchedSuppression
+				// cppcheck-suppress stlIfStrFind
 				if('/' == pRule->OutputPath[0] && 0 != pRule->OutputPath.find(K2hFtManage::GetMountPoint())){
 					// directory is not under mount point
 
@@ -655,6 +660,8 @@ bool K2hFtInfo::InitializeOutputFiles(void) const
 
 			}else{
 				// output path is file
+				// cppcheck-suppress unmatchedSuppression
+				// cppcheck-suppress stlIfStrFind
 				if('/' == pRule->OutputPath[0] && 0 != pRule->OutputPath.find(K2hFtManage::GetMountPoint())){
 					// file is not under mount point
 					if('/' == pRule->OutputPath[pRule->OutputPath.length() - 1]){
@@ -704,6 +711,7 @@ bool K2hFtInfo::InitializeOutputFiles(void) const
 							}
 						}else{
 							// need to same directory
+							// cppcheck-suppress stlIfStrFind
 							if(pRule2->TargetPath != tmppath && 0 == tmppath.find(pRule2->TargetPath) && '/' == tmppath[pRule2->TargetPath.length()]){
 								// same directory
 								string	tmpfile = tmppath.substr(pRule2->TargetPath.length() + 1);
@@ -1029,6 +1037,9 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					}
 					strlst_t	values;
 					parse_ini_value(value, values);
+
+					// cppcheck-suppress unmatchedSuppression
+					// cppcheck-suppress stlSize
 					if(0 == values.size()){
 						// any pattern
 						MSG_K2HFTPRN("keyword(%s)'s value(%s) in rule section(%s) has nothing, this is any pattern hits.", key.c_str(), value.c_str(), (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
@@ -1047,6 +1058,9 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 					}else{
 						string			strcompptn	= values.front();
 						values.pop_front();
+
+						// cppcheck-suppress unmatchedSuppression
+						// cppcheck-suppress stlSize
 						string			strrepptn	= 0 < values.size() ? values.front() : "";
 						PK2HFTMATCHPTN	pMatchPtn	= build_k2hft_match_pattern(strcompptn.c_str(), strrepptn.c_str());
 						if(!pMatchPtn){
@@ -1071,14 +1085,14 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 				if(0 < DenyMatchs.size()){
 					WAN_K2HFTPRN("rule section(%s) is Default Deny from All, but it has some DENY keywords, so skip those and continue...", (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
 
-					for(k2hftmatchlist_t::iterator iter = DenyMatchs.begin(); iter != DenyMatchs.end(); ++iter){
-						K2HFT_DELETE(*iter);
+					for(k2hftmatchlist_t::iterator iter2 = DenyMatchs.begin(); iter2 != DenyMatchs.end(); ++iter2){
+						K2HFT_DELETE(*iter2);
 					}
 					DenyMatchs.clear();
 				}
 				// copy allow list
-				for(k2hftmatchlist_t::iterator iter = AllowMatchs.begin(); iter != AllowMatchs.end(); ++iter){
-					pTmpRule->MatchingList.push_back(*iter);
+				for(k2hftmatchlist_t::iterator iter3 = AllowMatchs.begin(); iter3 != AllowMatchs.end(); ++iter3){
+					pTmpRule->MatchingList.push_back(*iter3);
 				}
 				AllowMatchs.clear();
 
@@ -1087,14 +1101,14 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 				if(0 < AllowMatchs.size()){
 					WAN_K2HFTPRN("rule section(%s) is Default Deny from All, but it has some DENY keywords, so skip those and continue...", (is_dir_rule ? INI_K2HFT_RULEDIR_SEC_STR : INI_K2HFT_RULE_SEC_STR));
 
-					for(k2hftmatchlist_t::iterator iter = AllowMatchs.begin(); iter != AllowMatchs.end(); ++iter){
-						K2HFT_DELETE(*iter);
+					for(k2hftmatchlist_t::iterator iter2 = AllowMatchs.begin(); iter2 != AllowMatchs.end(); ++iter2){
+						K2HFT_DELETE(*iter2);
 					}
 					AllowMatchs.clear();
 				}
 				// copy deny list
-				for(k2hftmatchlist_t::iterator iter = DenyMatchs.begin(); iter != DenyMatchs.end(); ++iter){
-					pTmpRule->MatchingList.push_back(*iter);
+				for(k2hftmatchlist_t::iterator iter3 = DenyMatchs.begin(); iter3 != DenyMatchs.end(); ++iter3){
+					pTmpRule->MatchingList.push_back(*iter3);
 				}
 				DenyMatchs.clear();
 			}
@@ -1702,8 +1716,6 @@ bool K2hFtInfo::LoadYamlRuleSec(yaml_parser_t& yparser, mode_t init_mode, mode_t
 
 	// Loading
 	string	key("");
-	string	strcompptn("");
-	string	strrepptn("");
 	bool	result				= true;
 	bool	need_delete_event	= false;
 	for(bool is_loop = true, in_mapping = false; is_loop && result; ){

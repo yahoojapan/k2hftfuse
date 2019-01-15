@@ -127,8 +127,7 @@ void* K2hFtManage::TimeupWorkerProc(void* param)
 			uint64_t	filehandle	= iter->first;
 			PK2HFTVALUE	pValue		= iter->second;
 
-			bool	result;
-			if(false == (result = pFtMan->confinfo.Processing(&(pFtMan->k2hash), pValue, filehandle, pFtMan->fdcache, pFtMan->pluginman))){
+			if(false == pFtMan->confinfo.Processing(&(pFtMan->k2hash), pValue, filehandle, pFtMan->fdcache, pFtMan->pluginman)){
 				ERR_K2HFTPRN("Something error occurred during processing in timeup thread, skip it.");
 			}
 			K2HFT_FREE(pValue);

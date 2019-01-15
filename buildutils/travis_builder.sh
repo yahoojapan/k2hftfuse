@@ -39,7 +39,7 @@ func_usage()
 	echo "        -h                 print help"
 	echo "Environments"
 	echo "        BUILD_NUMBER       specify build number for packaging(default 1)"
-	echo "        TRAVIS_TAG         if the current build is for a git tag, this variable is set to the tagÅfs name"
+	echo "        TRAVIS_TAG         if the current build is for a git tag, this variable is set to the tag‚Äôs name"
 	echo "        FORCE_BUILD_PKG    if this env is 'true', force packaging anytime"
 	echo "        USE_PC_REPO        if this env is 'true', use packagecloud.io repository"
 	echo "        CONFIGUREOPT       specify extra configure option."
@@ -321,10 +321,27 @@ else
 	#
 	# Using RHSCL because centos has older ruby
 	#
-	run_cmd yum install -y -qq centos-release-scl
-	run_cmd yum install -y -qq rh-ruby23 rh-ruby23-ruby-devel rh-ruby23-rubygem-rake
+	run_cmd ${INSTALLER_BIN} install -y -qq centos-release-scl
+	run_cmd ${INSTALLER_BIN} install -y -qq rh-ruby23 rh-ruby23-ruby-devel rh-ruby23-rubygem-rake
 	source /opt/rh/rh-ruby23/enable
 	run_cmd ${GEM_BIN} install rubocop package_cloud
+fi
+
+#
+# For cppcheck
+#
+if [ ${IS_CENTOS} -eq 1 ]; then
+	#
+	# For CentOS, it need to allow EPEL(with setting disable)
+	#
+	run_cmd ${INSTALLER_BIN} install -y -qq epel-release
+	run_cmd yum-config-manager --disable epel
+	run_cmd ${INSTALLER_BIN} --enablerepo=epel install -y -qq cppcheck
+else
+	#
+	# Fedora, Ubuntu...
+	#
+	run_cmd ${INSTALLER_BIN} install -y -qq cppcheck
 fi
 
 #
@@ -337,6 +354,7 @@ SRCTOP="/tmp/${TMPSRCTOP}"
 run_cmd cd ${SRCTOP}
 run_cmd ./autogen.sh
 run_cmd ./configure --prefix=/usr ${CONFIGUREOPT}
+run_cmd make cppcheck
 run_cmd make
 run_cmd make check
 
