@@ -559,7 +559,7 @@ PK2HFTFW K2hFtFdCache::GetFileWatch(const string& filepath, int openflags, mode_
 	return pfw;
 }
 
-bool K2hFtFdCache::Regist(const string& filepath, int openflags, mode_t openmode, dev_t& st_dev, ino_t& st_ino)
+bool K2hFtFdCache::Register(const string& filepath, int openflags, mode_t openmode, dev_t& st_dev, ino_t& st_ino)
 {
 	PK2HFTFW	pfw;
 	if(NULL == (pfw = GetFileWatch(filepath, openflags, openmode))){

@@ -694,7 +694,7 @@ bool K2hFtPluginMan::RunPlugin(PK2HFT_PLUGIN pplugin, bool is_wait_cond)
 				return false;
 			}
 			// add file watch
-			if(!pfdcache->Regist(pplugin->OutputPath, O_WRONLY | O_APPEND | O_CREAT, pplugin->mode, pplugin->st_dev, pplugin->st_ino)){
+			if(!pfdcache->Register(pplugin->OutputPath, O_WRONLY | O_APPEND | O_CREAT, pplugin->mode, pplugin->st_dev, pplugin->st_ino)){
 				ERR_K2HFTPRN("could not add watching file for output file(%s).", pplugin->OutputPath.c_str());
 				return false;
 			}
