@@ -46,8 +46,8 @@ License: @PKGLICENSE@
 @RPMPKG_GROUP@
 URL: https://@GIT_DOMAIN@/@GIT_ORG@/@PACKAGE_NAME@
 Source0: https://@GIT_DOMAIN@/@GIT_ORG@/@PACKAGE_NAME@/archive/%{gittag}/%{name}-%{version}.tar.gz
-Requires: libfullock%{?_isa} >= 1.0.33, k2hash%{?_isa} >= 1.0.68, chmpx%{?_isa} >= 1.0.65, k2htpdtor%{?_isa} >= 1.0.26
-BuildRequires: git-core gcc-c++ make libtool libfullock-devel%{?_isa} >= 1.0.33, k2hash-devel%{?_isa} >= 1.0.68, chmpx-devel%{?_isa} >= 1.0.65, k2htpdtor%{?_isa} >= 1.0.26
+Requires: libfullock%{?_isa} >= 1.0.35, k2hash%{?_isa} >= 1.0.69, chmpx%{?_isa} >= 1.0.67, k2htpdtor%{?_isa} >= 1.0.28
+BuildRequires: git-core gcc-c++ make libtool libfullock-devel >= 1.0.35, k2hash-devel >= 1.0.69, chmpx-devel >= 1.0.67, k2htpdtor >= 1.0.28
 
 %description
 @LONGDESC@
@@ -97,7 +97,7 @@ rm -rf %{buildroot}
 #
 %package devel
 Summary: @SHORTDESC@ (development)
-Requires: %{name}%{?_isa} = %{version}-%{release}, libfullock-devel%{?_isa} >= 1.0.33, k2hash-devel%{?_isa} >= 1.0.68, chmpx-devel%{?_isa} >= 1.0.65, k2htpdtor%{?_isa} >= 1.0.26
+Requires: %{name}%{?_isa} = %{version}-%{release}, libfullock-devel%{?_isa} >= 1.0.35, k2hash-devel%{?_isa} >= 1.0.69, chmpx-devel%{?_isa} >= 1.0.67, k2htpdtor%{?_isa} >= 1.0.28
 
 %description devel
 Development package for building with @PACKAGE_NAME@ shared library.
