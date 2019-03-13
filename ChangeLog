@@ -1,3 +1,9 @@
+k2hftfuse (1.0.32) trusty; urgency=low
+
+  * Fixed codes for cppcheck 1.87 - #22
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Wed, 13 Mar 2019 13:33:39 +0900
+
 k2hftfuse (1.0.31) trusty; urgency=low
 
   * Fixed misspelling, and etc - #19
