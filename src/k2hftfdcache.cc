@@ -630,6 +630,7 @@ bool K2hFtFdCache::Write(const string& filepath, int openflags, mode_t openmode,
 	fullock_rwlock_unlock(fd, 0, 1);					// UNLOCK
 
 	if(K2HFT_INVALID_HANDLE != direct_fd){
+		// cppcheck-suppress unmatchedSuppression
 		// cppcheck-suppress unreadVariable
 		K2HFT_CLOSE(direct_fd);
 	}

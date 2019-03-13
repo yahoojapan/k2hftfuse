@@ -155,6 +155,8 @@ static bool parse_parameter(int argc, char** argv, optparams_t& optparams)
 						break;
 					}
 				}
+				// cppcheck-suppress unmatchedSuppression
+				// cppcheck-suppress knownConditionTrueFalse
 				if(param.is_number){
 					param.num_value = atoi(pparam);
 				}
