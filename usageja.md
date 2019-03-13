@@ -270,7 +270,7 @@ K2HTPDTOR:
 # EXPIRE        grant the expiration date to transfer
 # TRANSLINECNT  transfer line count limit at one time(default 0)
 # TRANSTIMEUP   transfer timeup limit(default 0)
-# BYTELIMIT     muxium bytes for one data length(default 0, means no limit)
+# BYTELIMIT     maximum bytes for one data length(default 0, means no limit)
 #
 K2HFTFUSE:
     {
@@ -282,7 +282,7 @@ K2HFTFUSE:
         #
         # K2HFTFUSE_RULE_DIR( K2HFTFUSE sub rule )
         #
-        # TARGET        traget directory path
+        # TARGET        target directory path
         # TRUNS         enable/disable flag for transfer
         # OUTPUTFILE    enable/disable flag for put file
         # PLUGIN        plugin program path
@@ -303,7 +303,7 @@ K2HFTFUSE:
         #
         # K2HFTFUSE_RULE( K2HFTFUSE sub rule )
         #
-        # TARGET        traget file path
+        # TARGET        target file path
         # TRUNS         enable/disable flag for transfer
         # OUTPUTFILE    enable/disable flag for put file
         # PLUGIN        plugin program path

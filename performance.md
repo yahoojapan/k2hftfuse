@@ -30,10 +30,10 @@ next_string:
 ### [Comparison with other products Measurement results](#resultothers)
 - [Performance measurement result](#result004)
 
-### [Summary](#matome)
-- [On the performance of K2HFTFUSE](#matome01)
-- [Effective usecase with K2HFTFUSE](#matome03)
-- [in conclusion](#matome04)
+### [Summary](#summary)
+- [On the performance of K2HFTFUSE](#summary01)
+- [Effective use case with K2HFTFUSE](#summary03)
+- [in conclusion](#summary04)
   
 ### [Appendix](#appendix00)
 - [About determining how to measure](#pretest)
@@ -231,15 +231,15 @@ This is the product and version which measured the performance this time.
 <!-- ---------------------------------------------------------------------------------- -->
 <!-- ---------------------------------------------------------------------------------- -->
 
-### <a name="matome">Summary</a>
+### <a name="summary">Summary</a>
 
-#### <a name="matome01">On the performance of K2HFTFUSE</a>
+#### <a name="summary01">On the performance of K2HFTFUSE</a>
 
 The performance of K2HFTFUSE has reached the limit until 10 Gbps network and high-speed storage are prepared.
 When using it in the environment below that, the network and disk writing speed reaches the upper limit before the limit of K2HFTFUSE.
 Therefore, it can be used effectively without concern about the limit of K2HFTFUSE on the majority of existing systems.
 
-#### <a name="matome03">Effective usecase with K2HFTFUSE</a>
+#### <a name="summary03">Effective use case with K2HFTFUSE</a>
 This time, we investigated the performance mainly for log transfer which is one of the assumed use cases of K2HFTFUSE.
 As a result, we were able to confirm performance beyond our expectation in log transfer.  
   
@@ -256,7 +256,7 @@ Moreover, We think that there are many scenes that can take advantage of the fol
 - Take over to the system operation team with minimal manual.
   
 
-#### <a name="matome04">in conclusion</a>
+#### <a name="summary04">in conclusion</a>
 We compared this with fluentd and kafka which have similar functions as comparison objects, but We are not a professional of these two products.
 Therefore, We think that better results will be obtained if you are familiar with these products tuning and measuring.
 If there is a result of tuning with the same use case We think that you should publish it by all means.

@@ -14,7 +14,9 @@ arrow_link_build: <a href="buildja.html" class="link-title"><span class="arrow-b
 
 # **K2HFTFUSE**
 **K2HFTFUSE**（**F**ile **T**ransaction by **FUSE** based file system）とは、[FUSE（Filesystem in Userspace）](https://github.com/libfuse/libfuse)によるユーザースペースでのマウント機能を利用したファイル/メッセージ転送システムです。  
-**K2HFTFUSE** は、Yahoo! JAPANがオープンソースとして公開するプロダクト [AntPickax](https://antpick.ax/indexja.html) のひとつです。
+**K2HFTFUSE** は、Yahoo! JAPANがオープンソースとして公開するプロダクト [AntPickax](https://antpick.ax/indexja.html) のひとつです。  
+
+![K2HFTFUSE](images/top_k2hftfuse.png)
 
 ## {{ page.arrow_link_overview }}
 **K2HFTFUSE** の[概要](homeja.html)について説明します。  
