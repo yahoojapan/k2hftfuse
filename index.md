@@ -14,7 +14,9 @@ arrow_link_build: <a href="build.html" class="link-title"><span class="arrow-bas
 
 # **K2HFTFUSE**
 **K2HFTFUSE** (**F**ile **T**ransaction by **FUSE** based file system) is a system that realizes safe and fast files and messages transfer at low cost.  
-**K2HFTFUSE** is one of [AntPickax](https://antpick.ax/)'s open source product by Yahoo! JAPAN.
+**K2HFTFUSE** is one of [AntPickax](https://antpick.ax/)'s open source product by Yahoo! JAPAN.  
+
+![K2HFTFUSE](images/top_k2hftfuse.png)
 
 ## {{ page.arrow_link_overview }}
 [Overview](home.html) about **K2HFTFUSE** components.

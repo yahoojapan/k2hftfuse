@@ -157,6 +157,11 @@ a {
   margin-top: 0;
   margin-bottom: 0.1rem; }
 
+.sns-buttons {
+  margin-top: 0;
+  margin-bottom: 0;
+  text-align: right; }
+
 @media screen and (min-width: 64em) {
   .project-name {
     font-size: 3.25rem; } }
