@@ -702,6 +702,8 @@ bool K2hFtPluginMan::RunPlugin(PK2HFT_PLUGIN pplugin, bool is_wait_cond)
 	}
 
 	// do run
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress redundantAssignment
 	if(K2HFT_INVALID_PID == (pplugin->pid = K2hFtPluginMan::RunPluginProcess(pplugin->BaseParam.c_str(), pplugin->OutputPath.c_str(), pplugin->PipeFilePath.c_str(), pplugin->pipe_input, (is_wait_cond ? condname.c_str() : NULL), (is_wait_cond ? mutexname.c_str() : NULL)))){
 		ERR_K2HFTPRN("Could not run plugin.");
 		pplugin->exit_count++;

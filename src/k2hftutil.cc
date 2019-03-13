@@ -283,6 +283,7 @@ bool make_file_by_abs_path(const char* path, mode_t mode, string& abspath, bool 
 				return false;
 			}
 		}
+		// cppcheck-suppress unmatchedSuppression
 		// cppcheck-suppress unreadVariable
 		K2HFT_CLOSE(fd);
 	}
