@@ -31,7 +31,7 @@ K2HFTFUSE program can be launched with two types of startup in the background(da
 The startup option of the K2HFTFUSE program inherits the same startup option (-o <option> = <option value>) as the mount command.
 
 #### -h(--help)
-display help for the optsions of K2HFTFUSE program
+display help for the options of K2HFTFUSE program
 #### -v(--version)
 display version of K2HFTFUSE program
 #### -d(--debug)
@@ -49,12 +49,12 @@ Specify the gid under the mount point. Please refer to man mount page.
 #### -o dbglevel={err|wan|msg}
 Specify the output level of K2HFTFUSE message. Levels can be silent, err (error), wan (warning), msg (message).  
 If K2HFTFUSE is started in the background, it is output as syslog.
-#### -o conf=<configration file>
+#### -o conf=<configuration file>
 Specify the configuration file(formatted by INI, YAML, JSON). This option is exclusive with the json option.
 #### -o json=<json string>
 Specify the configuration by string of JSON. This option is exclusive with the conf option.
 #### -o enable_run_chmpx
-You need to start [CHMPX](https://chmpx.antpick.ax/) before launching the K2HFTUSE program.  
+You need to start [CHMPX](https://chmpx.antpick.ax/) before launching the K2HFTFUSE program.  
 CHMPX is a communication middleware program, which is necessary program for K2HFTFUSE.  
 If this option is specified, the K2HFTFUSE program will start the CHMPX program before initializing itself.  
 Therefore, you do not need to manually start the CHMPX program.
@@ -100,7 +100,7 @@ or
 $ fusermount -d /mnt/k2hfs
 ```
 
-### K2HFTFUSE Environemnts
+### K2HFTFUSE Environments
 The K2HFTFUSE program can load the following environment variables.
 #### K2HFTCONFFILE
 as same as conf option.
@@ -131,17 +131,17 @@ $ k2hftfusesvr -conf /etc/k2hftfusesvr.conf
 The startup option of the K2HFTFUSESVR program.
 
 #### -h(help)
-display help for the optsions of K2HFTFUSESVR program
+display help for the options of K2HFTFUSESVR program
 #### -v(version)
 display version of K2HFTFUSESVR program
-#### -conf <configration file>
+#### -conf <configuration file>
 Specify the configuration file(formatted by INI, YAML, JSON). This option is exclusive with the -json option.
 #### -json <json string>
 Specify the configuration by string of JSON. This option is exclusive with the -conf option.
 #### -d(g) {err|wan|msg|silent}
 Specify the level of output message. The level value is silent, err, wan, msg. as default silent.
 
-### K2HFTFUSESVR Environemnts
+### K2HFTFUSESVR Environments
 #### K2HFTSVRCONFFILE
 as same as -conf option.
 #### K2HFTSVRJSONCONF

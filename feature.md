@@ -44,7 +44,7 @@ If it can not communicate with the transfer destination host, transfer of the qu
 
 ![Queuing](images/k2hftfuse_queue.png)
 
-If the mount point by K2HFTFUSE is umounted, it will be output to the local file below the mount point.  
+If the mount point by K2HFTFUSE is unmounted, it will be output to the local file below the mount point.  
 By preparing the output file in advance below the mount point you can also correspond at umount.  
 You can send this local file manually before re-mount by K2HFTFUSE.
 

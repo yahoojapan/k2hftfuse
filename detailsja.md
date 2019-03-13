@@ -48,13 +48,13 @@ K2HFTFUSEをフォアグラウンドで起動します。このオプション�
 マウントポイント以下のgidを指定します。man mountなどを参考にしてください。
 #### -o dbglevel={err|wan|msg}
 K2HFTFUSEのデバッグメッセージの出力レベルを指定します。出力レベルは、silent、err(error)、wan(warning)、msg(message)を指定できます。K2HFTFUSEがバックグラウンドで起動されている場合には、syslogとして出力されます。
-#### -o conf=<configration file>
+#### -o conf=<configuration file>
 K2HFTFUSEの詳細なオプションを指定したコンフィグレーションファイル（INI形式、YAML形式、JSON形式）を指定します。このオプションは、jsonオプションと排他です。
 #### -o json=<json string>
 K2HFTFUSEの詳細なオプションをJSON形式の文字列として指定します。このオプションは、confオプションと排他です。
 #### -o enable_run_chmpx
 このオプションを指定した場合には、[CHMPX](https://chmpx.antpick.ax/indexja.html) プログラムを起動してから、K2HFTFUSEプログラムの初期化を行います。  
-K2HFTUSEプログラムを起動する前に、CHMPXを起動している必要があります。  
+K2HFTFUSEプログラムを起動する前に、CHMPXを起動している必要があります。  
 CHMPXは、通信ミドルウエアプログラムであり、K2HFTFUSEで利用することが前提となっています。  
 このオプションを指定した場合には、CHMPXプログラムをK2HFTFUSEプログラムが起動しますので、あらかじめCHMPXプログラムを起動しておく必要はありません。
 #### -o disable_run_chmpx
@@ -137,7 +137,7 @@ K2HFTFUSESVRプログラムの起動オプションについて以下にまと�
 ヘルプを表示します
 #### -v(version)
 バージョン情報を表示します
-#### -conf <configration file>
+#### -conf <configuration file>
 K2HFTFUSESVRの詳細なオプションを指定したコンフィグレーションファイル（INI形式、YAML形式、JSON形式）を指定します。このオプションは、jsonオプションと排他です。
 #### -json <json string>
 K2HFTFUSESVRの詳細なオプションをJSON形式の文字列として指定します。このオプションは、confオプションと排他です。

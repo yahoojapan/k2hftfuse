@@ -113,15 +113,15 @@ $ k2hftfuse -h
      -o uid=<number>              set uid with FUSE
      -o gid=<number>              set gid with FUSE
      -o dbglevel={err|wan|msg}    set debug level affect only k2hftfuse
-     -o conf=<configration file>  specify configration file(.ini .yaml .json) for k2hftfuse and all sub system
-     -o json=<json string>        specify json string as configration for k2hftfuse and all sub system
+     -o conf=<configuration file> specify configuration file(.ini .yaml .json) for k2hftfuse and all sub system
+     -o json=<json string>        specify json string as configuration for k2hftfuse and all sub system
      -o enable_run_chmpx          run chmpx slave process
      -o disable_run_chmpx         do not run chmpx slave process(default)
      -o chmpxlog=<log file path>  chmpx log file path when k2hftfuse run chmpx
 
  * k2hftfuse environments:
-     K2HFTCONFFILE                specify configration file(.ini .yaml .json) instead of conf option.
-     K2HFTJSONCONF                specify json string as configration instead of json option.
+     K2HFTCONFFILE                specify configuration file(.ini .yaml .json) instead of conf option.
+     K2HFTJSONCONF                specify json string as configuration instead of json option.
 
  Please see man page - k2hftfuse(1) for more details.
  ```

@@ -139,7 +139,7 @@ It is the same configuration as K2HFTFUSE, and you need to start CHMPX before K2
 - Configuration by string of JSON  
 The character string after "K2HFTFUSE_TEST_TRANS_SERVER_JSON=" in the [test_json_string.data]({{ site.github.repository_url }}/blob/master/tests/test_json_string.data) file
 
-##### CHMPX srever node to connect from source host
+##### CHMPX server node to connect from source host
 It is the same configuration as K2HFTFUSESVR, and you need to start CHMPX before K2HFTFUSESVR starting.
 
 ##### CHMPX slave node to connect to terminating host
@@ -265,7 +265,7 @@ K2HTPDTOR:
 # EXPIRE        grant the expiration date to transfer
 # TRANSLINECNT  transfer line count limit at one time(default 0)
 # TRANSTIMEUP   transfer timeup limit(default 0)
-# BYTELIMIT     muxium bytes for one data length(default 0, means no limit)
+# BYTELIMIT     maximum bytes for one data length(default 0, means no limit)
 #
 K2HFTFUSE:
     {
@@ -277,7 +277,7 @@ K2HFTFUSE:
         #
         # K2HFTFUSE_RULE_DIR( K2HFTFUSE sub rule )
         #
-        # TARGET        traget directory path
+        # TARGET        target directory path
         # TRUNS         enable/disable flag for transfer
         # OUTPUTFILE    enable/disable flag for put file
         # PLUGIN        plugin program path
@@ -298,7 +298,7 @@ K2HFTFUSE:
         #
         # K2HFTFUSE_RULE( K2HFTFUSE sub rule )
         #
-        # TARGET        traget file path
+        # TARGET        target file path
         # TRUNS         enable/disable flag for transfer
         # OUTPUTFILE    enable/disable flag for put file
         # PLUGIN        plugin program path
