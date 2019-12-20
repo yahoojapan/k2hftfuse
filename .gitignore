@@ -137,6 +137,9 @@ src/k2hftfuse
 src/k2hftfusesvr
 tests/k2hftfusetest
 tests/results.xml
+tests/test-suite.log
+tests/test.sh.log
+tests/test.sh.trs
 
 #
 # VIM modelines

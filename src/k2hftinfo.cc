@@ -711,6 +711,7 @@ bool K2hFtInfo::InitializeOutputFiles(void) const
 							}
 						}else{
 							// need to same directory
+							// cppcheck-suppress unmatchedSuppression
 							// cppcheck-suppress stlIfStrFind
 							if(pRule2->TargetPath != tmppath && 0 == tmppath.find(pRule2->TargetPath) && '/' == tmppath[pRule2->TargetPath.length()]){
 								// same directory
