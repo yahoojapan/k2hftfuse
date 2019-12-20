@@ -1,3 +1,9 @@
+2hftfuse (1.0.33) trusty; urgency=low
+
+  * Fixed bugs and updated version of dependency packages - #25
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Fri, 20 Dec 2019 15:04:45 +0900
+
 k2hftfuse (1.0.32) trusty; urgency=low
 
   * Fixed codes for cppcheck 1.87 - #22
