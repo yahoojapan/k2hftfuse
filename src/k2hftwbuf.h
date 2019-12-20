@@ -43,7 +43,7 @@ class K2hFtBinBuff
 		bool AppendStringBuff(const unsigned char* data, size_t length, bool check_last_char);
 		bool TakeoutBuff(unsigned char** data, size_t* length);
 		bool IsEmpty(void) const { return (0 == CacheBuffPos); }
-		bool Size(void) const { return CacheBuffPos; }
+		size_t Size(void) const { return CacheBuffPos; }
 };
 
 typedef std::map<pid_t, K2hFtBinBuff*>			k2hftbinbufmap_t;
