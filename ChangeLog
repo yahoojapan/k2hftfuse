@@ -1,4 +1,4 @@
-2hftfuse (1.0.33) trusty; urgency=low
+k2hftfuse (1.0.33) trusty; urgency=low
 
   * Fixed bugs and updated version of dependency packages - #25
 
