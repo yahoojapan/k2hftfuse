@@ -1,6 +1,6 @@
 k2hftfuse
 ---------
-[![Build Status](https://travis-ci.org/yahoojapan/k2hftfuse.svg?branch=master)](https://travis-ci.org/yahoojapan/k2hftfuse)
+[![C/C++ AntPickax CI](https://github.com/yahoojapan/k2hftfuse/workflows/C/C++%20AntPickax%20CI/badge.svg)](https://github.com/yahoojapan/k2hftfuse/actions)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/yahoojapan/k2hftfuse/master/COPYING)
 [![GitHub forks](https://img.shields.io/github/forks/yahoojapan/k2hftfuse.svg)](https://github.com/yahoojapan/k2hftfuse/network)
 [![GitHub stars](https://img.shields.io/github/stars/yahoojapan/k2hftfuse.svg)](https://github.com/yahoojapan/k2hftfuse/stargazers)
