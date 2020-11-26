@@ -202,7 +202,7 @@ static bool ParseBinCom(PBCOM pBinCom, unsigned char** ppKey, size_t& keylen, un
 //---------------------------------------------------------
 // Utility
 //---------------------------------------------------------
-static K2HShm* MakeTransK2h(K2hFtSvrInfo& confinfo)
+static K2HShm* MakeTransK2h(const K2hFtSvrInfo& confinfo)
 {
 	if(!confinfo.IsTransMode()){
 		ERR_K2HFTPRN("ConfInfo does not transfer mode.");

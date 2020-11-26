@@ -2732,10 +2732,6 @@ unsigned char* K2hFtInfo::CvtPushData(const unsigned char* data, size_t length, 
 	}
 	// get Rule
 	PK2HFTRULE	pRule = reinterpret_cast<PK2HFTRULE>(filehandle);
-	if(!pRule){
-		ERR_K2HFTPRN("file handle is NULL.");
-		return NULL;
-	}
 
 	// Make output data
 	//
@@ -2761,10 +2757,6 @@ bool K2hFtInfo::Processing(K2HShm* pk2hash, PK2HFTVALUE pValue, uint64_t filehan
 
 	// get Rule
 	PK2HFTRULE	pRule = reinterpret_cast<PK2HFTRULE>(filehandle);
-	if(!pRule){
-		ERR_K2HFTPRN("file handle is NULL.");
-		return false;
-	}
 
 	// check
 	if(!pRule->IsTransfer && !pRule->pPlugin && pRule->OutputPath.empty()){
