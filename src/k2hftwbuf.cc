@@ -343,15 +343,15 @@ bool K2hFtWriteBuff::Push(const unsigned char* data, size_t length, bool is_bina
 		while(!fullock::flck_trylock_noshared_mutex(&inputbuf_lockval));		// LOCK
 
 		for(k2hftbinbufmap_t::iterator iter = InputBuffMap.begin(); iter != InputBuffMap.end(); InputBuffMap.erase(iter++)){
-			pid_t			pid		= iter->first;
+			pid_t			pid_map	= iter->first;
 			K2hFtBinBuff*	pBuff	= iter->second;
 			if(pBuff){
 				if(is_binary_mode){
-					if(!BinaryPush(pBuff, data, length, pid)){
+					if(!BinaryPush(pBuff, data, length, pid_map)){
 						result = false;
 					}
 				}else{
-					if(!StringPush(pBuff, data, length, pid)){
+					if(!StringPush(pBuff, data, length, pid_map)){
 						result = false;
 					}
 				}
