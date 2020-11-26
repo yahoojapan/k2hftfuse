@@ -1,3 +1,10 @@
+k2hftfuse (1.0.35) trusty; urgency=low
+
+  * Switched Travis CI to Github actions and extended supported OS - #30
+  * Fixed a error by cppcheck - #29
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Thu, 26 Nov 2020 10:49:52 +0900
+
 k2hftfuse (1.0.34) trusty; urgency=low
 
   * Fixed misspellings in ChangeLog - #27
