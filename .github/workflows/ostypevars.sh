@@ -147,25 +147,13 @@ elif [ "X${CI_OSTYPE}" = "Xcentos:8" -o "X${CI_OSTYPE}" = "Xcentos:centos8" ]; t
 	IS_OS_CENTOS=1
 
 	# [NOTE]
-	# For CentOS8, installing libyaml-devel from PowerTools
+	# For CentOS8, installing libyaml-devel from PowerTools( PwoerTools -> powertools at 2020/12 )
 	#
 	dnf update -y -qq
-	dnf --enablerepo=PowerTools install -y libyaml-devel
+	dnf --enablerepo=powertools install -y libyaml-devel
 
 elif [ "X${CI_OSTYPE}" = "Xcentos:7" -o "X${CI_OSTYPE}" = "Xcentos:centos7" ]; then
 	DIST_TAG="el/7"
-	INSTALL_PKG_LIST="git autoconf automake gcc gcc-c++ gdb make libtool pkgconfig redhat-rpm-config rpm-build ruby-devel rubygems procps libyaml-devel fuse fuse-devel k2htpdtor chmpx-devel"
-	CONFIGURE_EXT_OPT=""
-	INSTALLER_BIN="yum"
-	INSTALL_QUIET_ARG=""
-	PKG_TYPE_DEB=0
-	PKG_TYPE_RPM=1
-	PKG_OUTPUT_DIR="."
-	PKG_EXT="rpm"
-	IS_OS_CENTOS=1
-
-elif [ "X${CI_OSTYPE}" = "Xcentos:6" -o "X${CI_OSTYPE}" = "Xcentos:centos6" ]; then
-	DIST_TAG="el/6"
 	INSTALL_PKG_LIST="git autoconf automake gcc gcc-c++ gdb make libtool pkgconfig redhat-rpm-config rpm-build ruby-devel rubygems procps libyaml-devel fuse fuse-devel k2htpdtor chmpx-devel"
 	CONFIGURE_EXT_OPT=""
 	INSTALLER_BIN="yum"
