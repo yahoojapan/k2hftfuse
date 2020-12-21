@@ -43,7 +43,7 @@ This section instructs how to install each dependent library and the header file
 
 **Note**: Skip reading this section if you have installed each dependent library and the header files from [GitHub](https://github.com/yahoojapan) in the previous section.
 
-For DebianStretch or Ubuntu(Bionic Beaver) users, follow the steps below:
+For recent Debian-based Linux distributions users, follow the steps below:
 ```bash
 $ sudo apt-get update -y
 $ sudo apt-get install curl -y
@@ -54,7 +54,18 @@ $ sudo apt-get install autoconf autotools-dev gcc g++ make gdb libtool pkg-confi
 $ sudo apt-get install git -y
 ```
 
-For Fedora28 or CentOS7.x(6.x) users, follow the steps below:
+For users who use supported Fedora other than latest version, follow the steps below:
+```bash
+$ sudo dnf makecache
+$ sudo dnf install curl -y
+$ curl -s https://packagecloud.io/install/repositories/antpickax/stable/script.rpm.sh \
+    | sudo bash
+$ sudo dnf install autoconf automake gcc gcc-c++ gdb make libtool pkgconfig \
+    libyaml-devel libfullock-devel k2hash-devel chmpx-devel fuse fuse-devel -y
+$ sudo dnf install git -y
+```
+
+For other recent RPM-based Linux distributions users, follow the steps below:
 ```bash
 $ sudo yum makecache
 $ sudo yum install curl -y

@@ -45,7 +45,7 @@ K2HFTFUSEとK2HFTFUSESVRは、主に[FULLOCK](https://fullock.antpick.ax/indexja
 
 注：前のセクションで各依存ライブラリと[GitHub](https://github.com/yahoojapan)  からのヘッダーファイルをインストールした場合は、このセクションを読み飛ばしてください。
 
-DebianStretchまたはUbuntu（Bionic Beaver）をお使いの場合は、以下の手順に従ってください。
+最近のDebianベースLinuxの利用者は、以下の手順に従ってください。
 ```bash
 $ sudo apt-get update -y
 $ sudo apt-get install curl -y
@@ -56,13 +56,24 @@ $ sudo apt-get install autoconf autotools-dev gcc g++ make gdb libtool pkg-confi
 $ sudo apt-get install git -y
 ```
 
-Fedora28またはCentOS7.x（6.x）ユーザーの場合は、以下の手順に従ってください。
+Fedoraの利用者は、以下の手順に従ってください。
+```bash
+$ sudo dnf makecache
+$ sudo dnf install curl -y
+$ curl -s https://packagecloud.io/install/repositories/antpickax/stable/script.rpm.sh \
+    | sudo bash
+$ sudo dnf install autoconf automake gcc gcc-c ++ gdb make libtool pkgconfig \
+    libyaml-devel libfullock-devel k2ハッシュ-devel chmpx-devel fuse fuse-devel -y
+$ sudo dnf install git -y
+```
+
+その他最近のRPMベースのLinuxの場合は、以下の手順に従ってください。
 ```bash
 $ sudo yum makecache
 $ sudo yum install curl -y
 $ curl -s https://packagecloud.io/install/repositories/antpickax/stable/script.rpm.sh \
-    |スードバッシュ
-$ sudo yumインストールautoconf automake gcc gcc-c ++ gdb make libtool pkgconfig \
+    | sudo bash
+$ sudo yum install autoconf automake gcc gcc-c ++ gdb make libtool pkgconfig \
     libyaml-devel libfullock-devel k2ハッシュ-devel chmpx-devel fuse fuse-devel -y
 $ sudo yum install git -y
 ```

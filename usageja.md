@@ -29,7 +29,7 @@ next_string: Build
 **K2HFTFUSE** のパッケージは、Debianパッケージ、RPMパッケージの形式で公開しています。  
 お使いのOSによりインストール方法が異なりますので、以下の手順を確認してインストールしてください。  
 
-#### Debian(Stretch) / Ubuntu(Bionic Beaver)
+#### 最近のDebianベースLinuxの利用者は、以下の手順に従ってください。
 ```
 $ sudo apt-get update -y
 $ sudo apt-get install curl -y
@@ -41,7 +41,19 @@ $ sudo apt-get install k2hftfuse
 $ sudo apt-get install k2hftfuse-dev
 ```
 
-#### Fedora28 / CentOS7.x(6.x)
+#### Fedoraの利用者は、以下の手順に従ってください。
+```
+$ sudo dnf makecache
+$ sudo dnf install curl -y
+$ curl -s https://packagecloud.io/install/repositories/antpickax/stable/script.rpm.sh | sudo bash
+$ sudo dnf install k2hftfuse
+```
+開発者向けパッケージをインストールする場合は、以下のパッケージをインストールしてください。
+```
+$ sudo dnf install k2hftfuse-devel
+```
+
+#### その他最近のRPMベースのLinuxの場合は、以下の手順に従ってください。
 ```
 $ sudo yum makecache
 $ sudo yum install curl -y

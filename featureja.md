@@ -15,6 +15,9 @@ next_string: Details
 
 # 特徴
 
+## 柔軟なインストール
+K2HFTFUSEは、あなたのOSに応じて、柔軟にインストールが可能です。あなたのOSが、Ubuntu、CentOS、Fedora、Debianなら、[packagecloud.io](https://packagecloud.io/antpickax/stable)からソースコードをビルドすることなく、簡単にインストールできます。それ以外のOSであっても、自身で[ビルド](https://k2hftfuse.antpick.ax/buildja.html)して使うことができます。
+
 ## 転送元/転送先の構成
 転送元と転送先の構成は、上述したとおりCHMPXというプログラムに任せています。  
 簡単な説明として、このCHMPXはSocketによるサーバー間の常時接続を提供し、サーバー上のプログラム同士の透過的なコミュニケーションを提供する通信ミドルウエアです。  

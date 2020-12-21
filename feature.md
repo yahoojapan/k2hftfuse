@@ -15,6 +15,9 @@ next_string: Details
 
 # Feature
 
+## Flexible installation
+We provide suitable K2HFTFUSE installation for your OS. If you use Ubuntu, CentOS, Fedora or Debian, you can easily install it from [packagecloud.io] (https://packagecloud.io/antpickax/stable). Even if you use none of them, you can use it by [Build] (https://k2hftfuse.antpick.ax/build.html) by yourself.
+
 ## Source and Destination Components
 Connection management between the transfer source and transfer destination is managed by CHMPX as described above.  
 CHMPX is communication middleware that provides connections between hosts using Socket and provides transparent communication between programs on the host.  
