@@ -70,7 +70,7 @@ class K2hFtManage
 		virtual ~K2hFtManage(void);
 
 		bool Clean(void);
-		bool Initialize(mode_t* pset_umask, uid_t* pset_uid, gid_t* pset_gid);
+		bool Initialize(const mode_t* pset_umask, const uid_t* pset_uid, const gid_t* pset_gid);
 		bool Initialize(const char* config, bool is_run_chmpx = false, const char* chmpxlog = NULL);
 
 		bool IsBinMode(void) const { return confinfo.IsBinMode(); }
