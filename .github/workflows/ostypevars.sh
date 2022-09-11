@@ -146,6 +146,11 @@ elif [ "X${CI_OSTYPE}" = "Xcentos:8" -o "X${CI_OSTYPE}" = "Xcentos:centos8" ]; t
 	PKG_EXT="rpm"
 	IS_OS_CENTOS=1
 
+	#
+	# Change mirrorlist
+	#
+	sed -i -e 's|^mirrorlist|#mirrorlist|g' -e 's|^#baseurl=http://mirror|baseurl=http://vault|g' /etc/yum.repos.d/CentOS-*repo
+
 	# [NOTE]
 	# For CentOS8, installing libyaml-devel from PowerTools( PwoerTools -> powertools at 2020/12 )
 	#

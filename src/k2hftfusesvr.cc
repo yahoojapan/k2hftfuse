@@ -116,7 +116,7 @@ static void k2hftfusesvr_print_usage(FILE* stream)
 					"\n"	);
 }
 
-static bool parse_parameter(int argc, char** argv, optparams_t& optparams)
+static bool parse_parameter(int argc, const char** argv, optparams_t& optparams)
 {
 	if(argc < 2 || !argv){
 		ERR_K2HFTPRN("no parameters.");
@@ -131,7 +131,7 @@ static bool parse_parameter(int argc, char** argv, optparams_t& optparams)
 		param.num_value = 0;
 
 		// get option name
-		char*	popt = argv[cnt];
+		const char*	popt = argv[cnt];
 		if(K2HFT_ISEMPTYSTR(popt)){
 			continue;		// skip
 		}
@@ -142,14 +142,14 @@ static bool parse_parameter(int argc, char** argv, optparams_t& optparams)
 
 		// check option parameter
 		if((cnt + 1) < argc && argv[cnt + 1]){
-			char*	pparam = argv[cnt + 1];
+			const char*	pparam = argv[cnt + 1];
 			if(!K2HFT_ISEMPTYSTR(pparam) && '-' != *pparam){
 				// found param
 				param.rawstring = pparam;
 
 				// check number
 				param.is_number = true;
-				for(char* ptmp = pparam; *ptmp; ++ptmp){
+				for(const char* ptmp = pparam; *ptmp; ++ptmp){
 					if(0 == isdigit(*ptmp)){
 						param.is_number = false;
 						break;
@@ -436,7 +436,7 @@ bool Processing(K2hFtSvrInfo& confinfo, K2hFtPluginMan& pluginman, K2HShm* pTran
 //---------------------------------------------------------
 // Main
 //---------------------------------------------------------
-int main(int argc, char** argv)
+int main(int argc, const char** argv)
 {
 	// always foreground mode
 	k2hft_foreground_mode = true;

@@ -100,6 +100,8 @@ void* K2hFtManage::TimeupWorkerProc(void* param)
 		for(size_t cnt = 0; cnt < sleepcnt && pFtMan->run_thread; ++cnt){
 			nanosleep(&sleeptime, NULL);
 		}
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress knownConditionTrueFalse
 		if(!pFtMan->run_thread){
 			break;
 		}
@@ -241,7 +243,7 @@ bool K2hFtManage::Clean(void)
 	return result;
 }
 
-bool K2hFtManage::Initialize(mode_t* pset_umask, uid_t* pset_uid, gid_t* pset_gid)
+bool K2hFtManage::Initialize(const mode_t* pset_umask, const uid_t* pset_uid, const gid_t* pset_gid)
 {
 	// Lock
 	while(!fullock::flck_trylock_noshared_mutex(&conf_lockval));
