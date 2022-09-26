@@ -119,7 +119,7 @@ class K2hFtSvrInfo
 		bool LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& pluginman);
 
 	public:
-		K2hFtSvrInfo(const char* path = NULL, K2hFtPluginMan* ppluginman = NULL);
+		explicit K2hFtSvrInfo(const char* path = NULL, K2hFtPluginMan* ppluginman = NULL);
 		virtual ~K2hFtSvrInfo(void);
 
 		inline bool IsLoad(void) const { return !Config.empty(); }

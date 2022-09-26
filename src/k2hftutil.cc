@@ -219,7 +219,7 @@ bool mkdir_by_abs_path(const char* path, string& abspath)
 		ERR_K2HFTPRN("Not found \"/\" separator in path(%s).", path);
 		return false;
 	}
-	tmppath	= tmppath.substr(0, pos);
+	tmppath.resize(pos);
 	if(!mkdir_by_abs_path(tmppath.c_str(), abspath)){
 		ERR_K2HFTPRN("could not make directory path(%s/..).", path);
 		return false;
@@ -268,7 +268,7 @@ bool make_file_by_abs_path(const char* path, mode_t mode, string& abspath, bool 
 				ERR_K2HFTPRN("Could not make file(%s) by errno(%d).", path, errno);
 				return false;
 			}
-			strtmp = strtmp.substr(0, pos);
+			strtmp.resize(pos);
 			if(strtmp.empty()){
 				ERR_K2HFTPRN("Could not make file(%s) by errno(%d).", path, errno);
 				return false;

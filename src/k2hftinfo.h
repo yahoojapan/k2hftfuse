@@ -227,7 +227,7 @@ class K2hFtInfo
 		bool LoadYamlAclOneValue(yaml_parser_t& yparser, k2hftmatchlist_t& Matchs);
 
 	public:
-		K2hFtInfo(const char* conffile = NULL, mode_t init_mode = 0, mode_t init_dmode = 0, uid_t init_uid = 0, gid_t init_gid = 0, K2hFtPluginMan* ppluginman = NULL);
+		explicit K2hFtInfo(const char* conffile = NULL, mode_t init_mode = 0, mode_t init_dmode = 0, uid_t init_uid = 0, gid_t init_gid = 0, K2hFtPluginMan* ppluginman = NULL);
 		virtual ~K2hFtInfo(void);
 
 		inline bool IsLoad(void) const { return !Config.empty(); }
