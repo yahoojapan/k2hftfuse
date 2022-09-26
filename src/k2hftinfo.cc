@@ -2326,8 +2326,8 @@ bool K2hFtInfo::ReadDir(const char* path, k2hftldlist_t& list) const
 		if(K2HFT_ISEMPTYSTR(path)){
 			basename = (iter->first);							// "xxx/yyy/..." --> "xxx/yyy..."
 			if(string::npos != (pos = basename.find("/"))){
-				is_middle_dir	= true;
-				basename		= basename.substr(0, pos);
+				is_middle_dir = true;
+				basename.resize(pos);
 			}
 		}else{
 			if(0 != (iter->first).find(path)){
@@ -2346,8 +2346,8 @@ bool K2hFtInfo::ReadDir(const char* path, k2hftldlist_t& list) const
 			// found directory path
 			basename = (iter->first).substr(strlen(path) + 1);	// "path/xxx/yyy/..." --> "xxx/yyy..."
 			if(string::npos != (pos = basename.find("/"))){
-				is_middle_dir	= true;
-				basename		= basename.substr(0, pos);
+				is_middle_dir = true;
+				basename.resize(pos);
 			}
 		}
 		if(basename.empty()){

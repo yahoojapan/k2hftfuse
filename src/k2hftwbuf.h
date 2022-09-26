@@ -98,7 +98,7 @@ class K2hFtWriteBuff
 		static void SetStackTimeup(time_t timeup) { K2hFtWriteBuff::StackTimeup = timeup; }
 		static time_t GetStackTimeup(void) { return K2hFtWriteBuff::StackTimeup; }
 
-		K2hFtWriteBuff(const K2hFtManage* pman = NULL, uint64_t fhandle = 0);
+		explicit K2hFtWriteBuff(const K2hFtManage* pman = NULL, uint64_t fhandle = 0);
 		virtual ~K2hFtWriteBuff(void);
 
 		void Clean(void);

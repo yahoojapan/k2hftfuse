@@ -348,7 +348,7 @@ bool Processing(K2hFtSvrInfo& confinfo, K2hFtPluginMan& pluginman, K2HShm* pTran
 				// for debugging
 				if(IS_K2HFTDBG_DUMP()){
 					K2HFTPRN("Received data = {");
-					K2HFTPRN("  file path         : %s",	filepath ? filepath : "null");
+					K2HFTPRN("  file path         : %s",	filepath);
 					K2HFTPRN("  fuse pid          : %s",	pfusepid);
 					K2HFTPRN("  data = {");
 					K2HFTPRN("    %s",						reinterpret_cast<char*>(data));
