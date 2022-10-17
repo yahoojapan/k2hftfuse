@@ -196,6 +196,7 @@ AC_CONFIG_FILES([Makefile
 				buildutils/Makefile
 				buildutils/control
 				buildutils/copyright
+				buildutils/rules
 				buildutils/k2hftfuse.spec])
 
 AC_OUTPUT
