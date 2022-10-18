@@ -1,0 +1,58 @@
+#!/usr/bin/make -f
+#
+# k2hftfuse for file transaction by FUSE-based file system
+#
+# Copyright 2022 Yahoo Japan Corporation.
+#
+# k2hftfuse is file transaction system on FUSE file system with
+# K2HASH and K2HASH TRANSACTION PLUGIN, CHMPX.
+#
+# For the full copyright and license information, please view
+# the license file that was distributed with this source code.
+#
+#
+# AUTHOR:   Takeshi Nakatani
+# CREATE:   Mon, Oct 17 2022
+# REVISION:
+#
+
+#---------------------------------------------------------------
+# @PACKAGE_NAME@ / @PACKAGE_NAME@-dev packages
+#---------------------------------------------------------------
+%:
+	dh $@
+
+override_dh_auto_install:
+	dh_auto_install --destdir=debian/@PACKAGE_NAME@
+	dh_auto_install --destdir=debian/@PACKAGE_NAME@-dev
+	rm -rf debian/@PACKAGE_NAME@/usr/include
+	rm -rf debian/@PACKAGE_NAME@/usr/lib/x86_64-linux-gnu/pkgconfig
+	rm -rf debian/@PACKAGE_NAME@-dev/usr/bin
+	rm -rf debian/@PACKAGE_NAME@-dev/usr/share/man
+	rm -rf debian/@PACKAGE_NAME@/usr/lib/x86_64-linux-gnu/*.a
+	rm -rf debian/@PACKAGE_NAME@/usr/lib/x86_64-linux-gnu/*.la
+	rm -rf debian/@PACKAGE_NAME@/usr/lib/x86_64-linux-gnu/*.so
+	rm -rf debian/@PACKAGE_NAME@-dev/usr/lib/x86_64-linux-gnu/*.a
+	rm -rf debian/@PACKAGE_NAME@-dev/usr/lib/x86_64-linux-gnu/*.la
+	rm -rf debian/@PACKAGE_NAME@-dev/usr/lib/x86_64-linux-gnu/*.so.*
+
+#
+# Placefolder for configure options
+#
+# [NOTE]
+# If an option is required for running configure, the placeholder will be rewritten as follows.
+# -------------------------------------------------
+# override_dh_auto_configure:
+#     dh_auto_configure -- <configure options>
+# -------------------------------------------------
+#
+# [PLACEFOLDER CONFIGURE OPTION]
+
+#
+# Local variables:
+# tab-width: 4
+# c-basic-offset: 4
+# End:
+# vim600: noexpandtab sw=4 ts=4 fdm=marker
+# vim<600: noexpandtab sw=4 ts=4
+#

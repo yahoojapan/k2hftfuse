@@ -331,12 +331,15 @@ elif [ "X${OPT_IS_FORCE_PUBLISH}" = "Xtrue" ]; then
 	# FORCE PUBLISH
 	#
 	if [ ${IN_SCHEDULE_PROCESS} -ne 1 ]; then
-		if [ "X${PUBLISH_TAG_NAME}" ! "X" ]; then
-			echo "[INFO] ${PRGNAME} : specified \"--use-packagecloudio-repo(-usepc)\" option, then forcibly publish"
+		if [ "X${PUBLISH_TAG_NAME}" != "X" ]; then
+			echo "[INFO] ${PRGNAME} : specified \"--force-publish(-p)\" option, then forcibly publish"
+			IS_PUBLISH=1
+		else
+			echo "[WARNING] ${PRGNAME} : specified \"--force-publish(-p)\" option, but not find relase tag."
+			IS_PUBLISH=0
 		fi
-		IS_PUBLISH=1
 	else
-		echo "[WARNING] ${PRGNAME} : specified \"--use-packagecloudio-repo(-usepc)\" option, but not publish because this process is kicked by scheduler."
+		echo "[WARNING] ${PRGNAME} : specified \"--force-publish(-p)\" option, but not publish because this process is kicked by scheduler."
 		IS_PUBLISH=0
 	fi
 else
@@ -350,7 +353,7 @@ fi
 # Set variables for packaging
 #
 if [ "X${OPT_BUILD_NUMBER}" != "X" ]; then
-	BUILD_NUMBER=${BUILD_NUMBER}
+	BUILD_NUMBER=${OPT_BUILD_NUMBER}
 else
 	BUILD_NUMBER=1
 fi
@@ -576,18 +579,14 @@ if [ ${PKG_TYPE_RPM} -eq 1 ]; then
 	#
 	# Create rpm packages
 	#
-	prn_cmd ./buildutils/rpm_build.sh -buildnum ${BUILD_NUMBER} -y
-	./buildutils/rpm_build.sh -buildnum ${BUILD_NUMBER} -y
+	prn_cmd CONFIGUREOPT=${CONFIGURE_EXT_OPT} ./buildutils/rpm_build.sh --buildnum ${BUILD_NUMBER} -y
+	CONFIGUREOPT=${CONFIGURE_EXT_OPT} ./buildutils/rpm_build.sh --buildnum ${BUILD_NUMBER} -y
 else
 	#
 	# Create debian packages
 	#
-	DEBUILD_OPT=""
-	if [ ${IS_PUBLISH} -ne 1 ]; then
-		DEBUILD_OPT="-nodebuild"
-	fi
-	prn_cmd CONFIGUREOPT=${CONFIGURE_EXT_OPT} ./buildutils/debian_build.sh -buildnum ${BUILD_NUMBER} -disttype ${DIST_TAG} ${DEBUILD_OPT} -y
-	CONFIGUREOPT=${CONFIGURE_EXT_OPT} ./buildutils/debian_build.sh -buildnum ${BUILD_NUMBER} -disttype ${DIST_TAG} ${DEBUILD_OPT} -y
+	prn_cmd CONFIGUREOPT=${CONFIGURE_EXT_OPT} ./buildutils/debian_build.sh --buildnum ${BUILD_NUMBER} --disttype ${DIST_TAG} -y
+	CONFIGUREOPT=${CONFIGURE_EXT_OPT} ./buildutils/debian_build.sh --buildnum ${BUILD_NUMBER} --disttype ${DIST_TAG} -y
 fi
 if [ $? -ne 0 ]; then
 	echo "[ERROR] ${PRGNAME} : Failed to build packages"
