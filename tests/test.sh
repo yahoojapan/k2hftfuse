@@ -123,30 +123,26 @@ fi
 # without error.
 #
 IS_SAFE_TEST=1
-which fusermount >/dev/null 2>&1
-if [ $? -ne 0 ]; then
+if ! command -v fusermount >/dev/null 2>&1; then
 	echo ""
 	echo "[WARNING] not found fusermount command or not allow permission, then this test is going to fail."
 	echo ""
 	IS_SAFE_TEST=1
 else
-	ls /dev/fuse >/dev/null 2>&1
-	if [ $? -ne 0 ]; then
+	if [ ! -f /dev/fuse ]; then
 		echo ""
 		echo "[WARNING] not found /dev/fuse or not allow permission, then this test is going to fail."
 		echo ""
 		IS_SAFE_TEST=1
 	else
-		ls /etc/fuse.conf >/dev/null 2>&1
-		if [ $? -ne 0 ]; then
+		if [ ! -f /etc/fuse.conf ]; then
 			echo "[MESSAGE] not found /etc/fuse.conf, try to set up by preinst script."
 
 			# setup
 			/bin/sh ${SRCTOP}/buildutils/k2hftfuse.preinst install
 		fi
 
-		grep user_allow_other /etc/fuse.conf >/dev/null 2>&1
-		if [ $? -ne 0 ]; then
+		if ! grep user_allow_other /etc/fuse.conf >/dev/null 2>&1; then
 			echo "[MESSAGE] not found user_allow_other in /etc/fuse.conf, try to set up by preinst script."
 			# setup
 			/bin/sh ${SRCTOP}/buildutils/k2hftfuse.preinst install
@@ -2264,7 +2260,10 @@ echo "====== Finish all =========================================="
 exit 0
 
 #
-# VIM modelines
-#
-# vim:set ts=4 fenc=utf-8:
+# Local variables:
+# tab-width: 4
+# c-basic-offset: 4
+# End:
+# vim600: noexpandtab sw=4 ts=4 fdm=marker
+# vim<600: noexpandtab sw=4 ts=4
 #
