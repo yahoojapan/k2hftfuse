@@ -1,8 +1,6 @@
 #!/bin/sh
 #
-# k2hftfuse for file transaction by FUSE-based file system
-#
-# Utility tools for building configure/packages by AntPickax
+# Utility helper tools for Github Actions by AntPickax
 #
 # Copyright 2018 Yahoo Japan Corporation.
 #
