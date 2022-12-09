@@ -31,43 +31,63 @@ set -e
 # the debian-policy package
 #
 case "$1" in
-	install|upgrade)
+	'install' | 'upgrade')
 		if [ -f /etc/fuse.conf ]; then
-			set +e
-			grep '^[[:space:]]*user_allow_other[[:space:]]*$' /etc/fuse.conf > /dev/null 2>&1
-			if [ $? != 0 ]; then
-				set -e
-				chmod -f 644 /etc/fuse.conf > /dev/null 2>&1
-				echo ""                     >> /etc/fuse.conf
-				echo "### add by k2hftfuse" >> /etc/fuse.conf
-				echo "user_allow_other"     >> /etc/fuse.conf
-			else
-				set -e
+			if ! grep -q '^[[:space:]]*user_allow_other[[:space:]]*$' /etc/fuse.conf; then
+				if ! chmod -f 0644 /etc/fuse.conf > /dev/null 2>&1; then
+					echo "[ERROR] could not set permisstion to /etc/fuse.conf" >&2
+					exit 1
+				fi
+				{
+					echo ""
+					echo "### Added by k2hftfuse"
+					echo "user_allow_other"
+				} >> /etc/fuse.conf
 			fi
 		else
-			touch /etc/fuse.conf
-			chmod -f 644 /etc/fuse.conf > /dev/null 2>&1
-			echo "### add by k2hftfuse" >> /etc/fuse.conf
-			echo "user_allow_other"     >> /etc/fuse.conf
+			if ! touch /etc/fuse.conf; then
+				echo "[ERROR] could not create /etc/fuse.conf file"
+				exit 1
+			fi
+			if ! chmod -f 0644 /etc/fuse.conf > /dev/null 2>&1; then
+				echo "[ERROR] could not set permisstion to /etc/fuse.conf" >&2
+				exit 1
+			fi
+			{
+				echo "### Added by k2hftfuse"
+				echo "user_allow_other"
+			} >> /etc/fuse.conf
 		fi
-
 		if [ -c /dev/fuse ]; then
-			chmod -f a+rw /dev/fuse > /dev/null 2>&1
+			_PERM_OWN=$(stat --format='%a' /dev/fuse | cut -b 1)
+			_PERM_GRP=$(stat --format='%a' /dev/fuse | cut -b 2)
+			_PERM_OTH=$(stat --format='%a' /dev/fuse | cut -b 3)
+			if [ -z "${_PERM_OWN}" ] || [ -z "${_PERM_GRP}" ] || [ -z "${_PERM_OTH}" ] || [ "${_PERM_OWN}" -lt 6 ] || [ "${_PERM_GRP}" -lt 6 ] || [ "${_PERM_OTH}" -lt 6 ]; then
+				if ! chmod -f a+rw /dev/fuse > /dev/null 2>&1; then
+					echo "[ERROR] could not set permisstion to /dev/fuse" >&2
+					exit 1
+				fi
+			fi
 		fi
-
 		if [ -f /bin/fusermount ]; then
-			chmod -f o+rx /bin/fusermount > /dev/null 2>&1
+			_PERM=$(stat --format='%a' /bin/fusermount)
+			if [ -z "${_PERM}" ] || [ "${_PERM}" -le 4000 ]; then
+				if ! chmod -f o+rx /bin/fusermount > /dev/null 2>&1; then
+					echo "[ERROR] could not set permisstion to /bin/fusermount" >&2
+					exit 1
+				fi
+			fi
 		fi
-	;;
+		;;
 
-	abort-upgrade)
+	'abort-upgrade')
 		# nothing to do
-	;;
+		;;
 
 	*)
-		echo "preinst called with unknown argument \`$1'" >&2
+		echo "[WARNING] preinst called with unknown argument \"$1\"" >&2
 		exit 1
-	;;
+		;;
 esac
 
 exit 0

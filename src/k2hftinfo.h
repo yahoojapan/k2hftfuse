@@ -186,7 +186,6 @@ typedef	std::map<std::string, PK2HFTRULE>	k2hftrulemap_t;
 //---------------------------------------------------------
 class K2hFtManage;
 
-// cppcheck-suppress unmatchedSuppression
 // cppcheck-suppress noCopyConstructor
 class K2hFtInfo
 {

@@ -141,6 +141,8 @@ tests/results.xml
 tests/test-suite.log
 tests/test.sh.log
 tests/test.sh.trs
+tests/testmp
+tests/testmp/*
 
 #
 # Local variables:

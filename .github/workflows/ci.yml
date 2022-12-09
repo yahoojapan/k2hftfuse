@@ -64,9 +64,9 @@ jobs:
       # is created, including the OS that will end support soon.
       # The new version will support the following OS, and these OS list
       # will replace current matrix.
-      #    ubuntu:jammy
-      #    ubuntu:focal
-      #    ubuntu:bionic
+      #    ubuntu:22.04
+      #    ubuntu:20.04
+      #    ubuntu:18.04
       #    debian:bullseye
       #    debian:buster
       #    centos:centos7
