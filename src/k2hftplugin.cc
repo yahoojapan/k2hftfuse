@@ -338,7 +338,6 @@ pid_t K2hFtPluginMan::RunPluginProcess(const char* pluginparam, const char* outp
 				exit(EXIT_FAILURE);
 			}
 			// close writer fd
-			// cppcheck-suppress unmatchedSuppression
 			// cppcheck-suppress unreadVariable
 			K2HFT_CLOSE(child_wr_pipe);
 		}
@@ -455,10 +454,8 @@ pid_t K2hFtPluginMan::RunPluginProcess(const char* pluginparam, const char* outp
 			exit(EXIT_FAILURE);
 		}
 		// close all
-		// cppcheck-suppress unmatchedSuppression
 		// cppcheck-suppress unreadVariable
 		K2HFT_CLOSE(child_input_pipe);
-		// cppcheck-suppress unmatchedSuppression
 		// cppcheck-suppress unreadVariable
 		K2HFT_CLOSE(fd);
 
@@ -661,8 +658,7 @@ bool K2hFtPluginMan::RunPlugin(PK2HFT_PLUGIN pplugin, bool is_wait_cond)
 		pplugin->st_dev	= 0;
 		pplugin->st_ino	= 0;
 
-												// cppcheck-suppress unmatchedSuppression
-												// cppcheck-suppress stlIfStrFind
+	// cppcheck-suppress stlIfStrFind
 	}else if(!mountpoint.empty() && 0 == pplugin->OutputPath.find(mountpoint)){
 		// output directory is under mount point,
 		// so we do not need to make directory and watch it.
@@ -702,7 +698,6 @@ bool K2hFtPluginMan::RunPlugin(PK2HFT_PLUGIN pplugin, bool is_wait_cond)
 	}
 
 	// do run
-	// cppcheck-suppress unmatchedSuppression
 	// cppcheck-suppress redundantAssignment
 	if(K2HFT_INVALID_PID == (pplugin->pid = K2hFtPluginMan::RunPluginProcess(pplugin->BaseParam.c_str(), pplugin->OutputPath.c_str(), pplugin->PipeFilePath.c_str(), pplugin->pipe_input, (is_wait_cond ? condname.c_str() : NULL), (is_wait_cond ? mutexname.c_str() : NULL)))){
 		ERR_K2HFTPRN("Could not run plugin.");
@@ -947,7 +942,6 @@ bool K2hFtPluginMan::Write(PK2HFT_PLUGIN pplugin, unsigned char* pdata, size_t l
 	}
 
 	// check output
-	// cppcheck-suppress unmatchedSuppression
 	// cppcheck-suppress stlIfStrFind
 	if(!pplugin->OutputPath.empty() && (mountpoint.empty() || 0 != pplugin->OutputPath.find(mountpoint))){
 		if(!pfdcache->Find(pplugin->OutputPath, pplugin->st_dev, pplugin->st_ino)){

@@ -21,13 +21,13 @@ K2HFTFUSE_TEST_SLAVE_JSON={ 'GLOBAL': { 'FILEVERSION': '1', 'DATE': 'Thu, 03 Sep
 K2HFTFUSE_TEST_TRANS_SERVER_JSON={ 'GLOBAL': { 'FILEVERSION': '1', 'DATE': 'Thu, 24 Sep 2015 10:52:25 +0900', 'GROUP': 'K2HFUSETEST', 'MODE': 'SERVER', 'DELIVERMODE': 'random', 'MAXCHMPX': '2', 'REPLICA': '0', 'MAXMQSERVER': '2', 'MAXMQCLIENT': '2', 'MQPERATTACH': '1', 'MAXQPERSERVERMQ': '1', 'MAXQPERCLIENTMQ': '1', 'MAXMQPERCLIENT': '1', 'MAXHISTLOG': '1000', 'PORT': '8020', 'CTLPORT': '8021', 'SELFCTLPORT': '8021', 'RWTIMEOUT': '100000', 'RETRYCNT': '1000', 'CONTIMEOUT': '500000', 'MQRWTIMEOUT': '50', 'MQRETRYCNT': '100000', 'DOMERGE': 'on', 'SSL': 'no', 'K2HFULLMAP': 'on', 'K2HMASKBIT': '4', 'K2HCMASKBIT': '4', 'K2HMAXELE': '2' }, 'SVRNODE': [ { 'NAME': 'localhost', 'SSL': 'no' } ], 'SLVNODE': [ { 'NAME': '[.]*', 'CTLPORT': '8022' } ], 'K2HFTFUSESVR': { 'TYPE': 'trans', 'TRANSCONF': '{ ''GLOBAL'': { ''FILEVERSION'': ''1'', ''DATE'': ''Thu, 24 Sep 2015 10:52:25 +0900'', ''GROUP'': ''K2HFUSESVRTEST'', ''MODE'': ''SLAVE'', ''DELIVERMODE'': ''random'', ''MAXCHMPX'': ''2'', ''REPLICA'': ''0'', ''MAXMQSERVER'': ''2'', ''MAXMQCLIENT'': ''2'', ''MQPERATTACH'': ''1'', ''MAXQPERSERVERMQ'': ''1'', ''MAXQPERCLIENTMQ'': ''1'', ''MAXMQPERCLIENT'': ''1'', ''MAXHISTLOG'': ''1000'', ''PORT'': ''8030'', ''CTLPORT'': ''8032'', ''SELFCTLPORT'': ''8032'', ''RWTIMEOUT'': ''100000'', ''RETRYCNT'': ''1000'', ''CONTIMEOUT'': ''500000'', ''MQRWTIMEOUT'': ''50'', ''MQRETRYCNT'': ''100000'', ''DOMERGE'': ''on'', ''SSL'': ''no'', ''K2HFULLMAP'': ''on'', ''K2HMASKBIT'': ''4'', ''K2HCMASKBIT'': ''4'', ''K2HMAXELE'': ''2'' }, ''SVRNODE'': [ { ''NAME'': ''localhost'', ''PORT'': ''8030'', ''CTLPORT'': ''8031'', ''SSL'': ''no'' } ], ''SLVNODE'': [ { ''NAME'': ''[.]*'', ''CTLPORT'': ''8032'' } ], ''K2HTPDTOR'': { ''K2HTPDTOR_BROADCAST'': ''no'' } }', 'K2HTYPE': 'mem', 'K2HMASKBIT': '4', 'K2HCMASKBIT': '4', 'K2HMAXELE': '2', 'K2HPAGESIZE': '128' } }
 
 #
-# VIM modelines
+# Local variables:
+# tab-width: 4
+# c-basic-offset: 4
+# End:
+# vim600: noexpandtab sw=4 ts=4 fdm=marker
+# vim<600: noexpandtab sw=4 ts=4
 #
-# vim:set ts=4 fenc=utf-8:
-#
-
-
-
 
 
 

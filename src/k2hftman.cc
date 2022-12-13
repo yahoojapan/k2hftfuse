@@ -100,7 +100,6 @@ void* K2hFtManage::TimeupWorkerProc(void* param)
 		for(size_t cnt = 0; cnt < sleepcnt && pFtMan->run_thread; ++cnt){
 			nanosleep(&sleeptime, NULL);
 		}
-		// cppcheck-suppress unmatchedSuppression
 		// cppcheck-suppress knownConditionTrueFalse
 		if(!pFtMan->run_thread){
 			break;

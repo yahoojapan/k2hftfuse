@@ -283,7 +283,6 @@ bool make_file_by_abs_path(const char* path, mode_t mode, string& abspath, bool 
 				return false;
 			}
 		}
-		// cppcheck-suppress unmatchedSuppression
 		// cppcheck-suppress unreadVariable
 		K2HFT_CLOSE(fd);
 	}
@@ -528,11 +527,9 @@ char** convert_strlst_to_chararray(const strlst_t& list)
 void free_chararray(char** pparray)
 {
 	for(char** pptmp = pparray; pptmp && *pptmp; ++pptmp){
-		// cppcheck-suppress unmatchedSuppression
 		// cppcheck-suppress identicalInnerCondition
 		K2HFT_FREE(*pptmp);
 	}
-	// cppcheck-suppress unmatchedSuppression
 	// cppcheck-suppress uselessAssignmentPtrArg
 	K2HFT_FREE(pparray);
 }

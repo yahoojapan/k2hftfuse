@@ -327,7 +327,6 @@ bool K2hFtWriteBuff::StackPush(unsigned char* data, size_t length, pid_t pid)
 	if(pOutput != data){		// [NOTICE]
 		K2HFT_FREE(pOutput);
 	}
-	// cppcheck-suppress unmatchedSuppression
 	// cppcheck-suppress uselessAssignmentPtrArg
 	K2HFT_FREE(data);
 
