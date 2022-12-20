@@ -10,13 +10,13 @@ k2hftfuse
 
 k2hftfuse for file transaction by FUSE-based file system.  
 
-## Overview
+### Overview
 k2hftfuse is file transaction system on FUSE file system with K2HASH and
 K2HASH TRANSACTION PLUGIN, CHMPX.  
 
 ![K2HFTFUSE](https://k2hftfuse.antpick.ax/images/top_k2hftfuse.png)
 
-## Usage
+### Usage
 You can run k2hftfuse by manual and mount/umount system command(or fusermount command).
 If you run it manually, you can specify some following options.
 ```
@@ -33,19 +33,19 @@ k2hftfuse /mnt/k2hfs fuse allow_other,nodev,nosuid,_netdev,dbglevel=err,conf=/et
 
 Please see man k2hftfuse.
 
-## Documents
+### Documents
   - [Document top page](https://k2hftfuse.antpick.ax/)
   - [Github wiki page](https://github.com/yahoojapan/k2hftfuse/wiki)
   - [About AntPickax](https://antpick.ax/)
 
-## Packages
+### Packages
   - [RPM packages(packagecloud.io)](https://packagecloud.io/antpickax/stable)
   - [Debian packages(packagecloud.io)](https://packagecloud.io/antpickax/stable)
 
-## License
+### License
 This software is released under the MIT License, see the license file.
 
-## AntPickax
+### AntPickax
 k2hash is one of [AntPickax](https://antpick.ax/) products.
 
 Copyright(C) 2015 Yahoo Japan Corporation.
