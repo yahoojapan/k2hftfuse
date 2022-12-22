@@ -14,10 +14,6 @@ next_string:
 ---
 
 # The performance measurement result of K2HFTFUSE
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
-
 ----
 
 ## Contents
@@ -42,9 +38,7 @@ next_string:
 - [K2HFTFUSE setting file (sending side)](#appendix04)
 
 ----
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
+
 ## <a name="result">Performance measurement result</a>
 
 ### <a name="result001">Performance result (no bottleneck environment)</a>
@@ -96,7 +90,6 @@ The maximum transfer volume is 250 MB. (When sending 4096 Byte record)
 |    4096 Byte |                              64,943   |                         253.7 MB/S|
   
 ----
-<!-- ---------------------------------------------------------------------------------- -->
 
 ### <a name="result002">Measurement in 1 Gbps network (network bottleneck environment)</a>
 
@@ -129,7 +122,6 @@ As a result of checking with the monitoring tool, we were confirmed that the upp
    We think that this can be adjusted by appropriate weighting and transmission frequency.
 
 ----
-<!-- ---------------------------------------------------------------------------------- -->
 
 ### <a name="result003">Measurement in HDD use environment (bottleneck environment of file / device)</a>
 
@@ -168,9 +160,6 @@ We changed the output destination to /dev/null and looked at the usage status of
 - When using K2HFTFUSE in the HDD, it is necessary to operate with conscious of the writing speed (transfer amount). When it reaches the upper limit, there is an influence on the performance of the whole OS.
 
 ----
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
 ## <a name="resultothers">Comparison with other products Measurement results</a>
 
 We tried to compare with fluentd and kafka how to use other products in the same use case.  
@@ -227,9 +216,6 @@ This is the product and version which measured the performance this time.
 - Compared with 10 Byte records, kafka tended to have better performance for data with larger record size.
 
 ----
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
 
 ### <a name="summary">Summary</a>
 
@@ -262,8 +248,6 @@ Therefore, We think that better results will be obtained if you are familiar wit
 If there is a result of tuning with the same use case We think that you should publish it by all means.
 Also, if there are measurement results in other use cases, We would like to try measurement even with K2HFTFUSE.
 
-  
-  
 ----
 
 ## <a name="appendix00">Appendix</a>
@@ -272,9 +256,6 @@ This is the measurement method and the setting file used for measurement.
 
 ----
 
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
 ### <a name="pretest">About determining how to measure</a>
 We will briefly introduce preparation and trial and error to the measuring method.
 
@@ -305,9 +286,6 @@ Until now We measured it with a maximum of 1024 bytes, but We thought that prepa
   so We decided to set it as the measurement section from here.  
 
 ----
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
 ### <a name="appendix02">Measurement script</a>
 
 For files aggregated on the server side, the number of bytes to be written was calculated using the following script.
@@ -330,9 +308,6 @@ done
 ```
 
 ----
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
 ### <a name="appendix03">K2HFTFUSE setting file (receiving side)</a>
   
 This is the setting file used for this measurement.
@@ -402,22 +377,12 @@ FILE_TIMEFORM			= "%F %T.%-"
 #FORMAT				= "%T +0900 temotest': {'message':'%l','host':'%H'}\n" # for JSON format
 FORMAT				= "%L"
 FILE_UNIFY			= log/unify.log
-
-#
-# VIM modelines
-#
-# vim:set ts=4 fenc=utf-8:
-#
 ```
 ----
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
-<!-- ---------------------------------------------------------------------------------- -->
 ### <a name="appendix04">K2HFTFUSE setting file (sending side)</a>
   
 This is the setting file used for this measurement. 
 
-  
 ```
 # k2hftfuse slave side
 #
@@ -503,10 +468,4 @@ BYTELIMIT			= 0
 TARGET          = senddir
 TRUNS           = on
 DEFAULTALL      = ALLOW
-
-#
-# VIM modelines
-#
-# vim:set ts=4 fenc=utf-8:
-#
 ```
