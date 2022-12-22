@@ -143,7 +143,10 @@ inline void free_k2hftlinelist(k2hftlinelist_t& list)
 #endif	// K2HFTWBUF_H
 
 /*
- * VIM modelines
- *
- * vim:set ts=4 fenc=utf-8:
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim600: noexpandtab sw=4 ts=4 fdm=marker
+ * vim<600: noexpandtab sw=4 ts=4
  */

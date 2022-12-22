@@ -342,7 +342,10 @@ inline bool ParseK2hFtLine(PK2HFTLINE pk2hftline, unsigned char** data, size_t* 
 #endif	// K2HFTSTRUCTURE_H
 
 /*
- * VIM modelines
- *
- * vim:set ts=4 fenc=utf-8:
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim600: noexpandtab sw=4 ts=4 fdm=marker
+ * vim<600: noexpandtab sw=4 ts=4
  */
