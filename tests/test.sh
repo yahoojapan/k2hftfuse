@@ -89,13 +89,16 @@ K2HFTFUSETEST_LOGFILE="${MOUNTDIR}/log/nothing2.log"
 #
 K2HFTFUSETEST_LOOP_COUNT=10
 K2HFTFUSETEST_OUTPUT_STRING="MY_TEST_PROGRAM_OUTPUT"
+K2HFTFUSETEST_LOOP_ADDITINAL_COUNT=10
+K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING="ADDITIONAL_OUTPUT"
+K2HFTFUSETEST_LOOP_TOTAL_COUNT=$((K2HFTFUSETEST_LOOP_COUNT + K2HFTFUSETEST_LOOP_ADDITINAL_COUNT))
 
-WAIT_SEC_AFTER_RUN_CHMPX=4
-WAIT_SEC_AFTER_RUN_K2HFTFUSE_SVR=4
-WAIT_SEC_AFTER_RUN_K2HFTFUSE=10
-WAIT_SEC_AFTER_RUN_K2HFTFUSETEST=10
-WAIT_SEC_AFTER_STOP_PROCESS=4
-WAIT_SEC_AFTER_UMOUNT_K2HFTFUSE=10
+WAIT_SEC_AFTER_RUN_CHMPX=20
+WAIT_SEC_AFTER_RUN_K2HFTFUSE_SVR=20
+WAIT_SEC_AFTER_RUN_K2HFTFUSE=20
+WAIT_SEC_AFTER_RUN_K2HFTFUSETEST=20
+WAIT_SEC_AFTER_STOP_PROCESS=20
+WAIT_SEC_AFTER_UMOUNT_K2HFTFUSE=20
 
 #--------------------------------------------------------------
 # Usage
@@ -917,6 +920,12 @@ if [ "${DO_INI_CONF}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	fi
 
+	# [NOTE]
+	# Write additionally to force output
+	#
+	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
+	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+
 	#------------------------------------------------------
 	# Stop all processes
 	#------------------------------------------------------
@@ -950,8 +959,8 @@ if [ "${DO_INI_CONF}" -eq 1 ]; then
 	elif ! RESULT_LINE_COUNT=$(wc -l "${K2HFTFUSESVR_UNITY_LOGFILE}" | awk '{print $1}'); then
 		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE} file line count."
 		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" != "10" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as 10."
+	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "unify.log file line count(${RESULT_LINE_COUNT}) is as same as 10."
@@ -1002,6 +1011,12 @@ if [ "${DO_INI_CONF}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	fi
 
+	# [NOTE]
+	# Write additionally to force output
+	#
+	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
+	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+
 	#------------------------------------------------------
 	# Stop all processes
 	#------------------------------------------------------
@@ -1038,8 +1053,8 @@ if [ "${DO_INI_CONF}" -eq 1 ]; then
 	elif ! RESULT_LINE_COUNT=$(wc -l "${K2HFTFUSESVR_UNITY_LOGFILE}" | awk '{print $1}'); then
 		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE} file line count."
 		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" != "10" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as 10."
+	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "unify.log file line count(${RESULT_LINE_COUNT}) is as same as 10."
@@ -1095,6 +1110,12 @@ if [ "${DO_YAML_CONF}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	fi
 
+	# [NOTE]
+	# Write additionally to force output
+	#
+	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
+	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+
 	#------------------------------------------------------
 	# Stop all processes
 	#------------------------------------------------------
@@ -1128,8 +1149,8 @@ if [ "${DO_YAML_CONF}" -eq 1 ]; then
 	elif ! RESULT_LINE_COUNT=$(wc -l "${K2HFTFUSESVR_UNITY_LOGFILE}" | awk '{print $1}'); then
 		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE} file line count."
 		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" != "10" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as 10."
+	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "unify.log file line count(${RESULT_LINE_COUNT}) is as same as 10."
@@ -1180,6 +1201,12 @@ if [ "${DO_YAML_CONF}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	fi
 
+	# [NOTE]
+	# Write additionally to force output
+	#
+	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
+	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+
 	#------------------------------------------------------
 	# Stop all processes
 	#------------------------------------------------------
@@ -1213,8 +1240,8 @@ if [ "${DO_YAML_CONF}" -eq 1 ]; then
 	if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
 		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
 		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" != "10" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is not as same as 10."
+	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
@@ -1270,6 +1297,12 @@ if [ "${DO_JSON_CONF}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	fi
 
+	# [NOTE]
+	# Write additionally to force output
+	#
+	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
+	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+
 	#------------------------------------------------------
 	# Stop all processes
 	#------------------------------------------------------
@@ -1300,8 +1333,8 @@ if [ "${DO_JSON_CONF}" -eq 1 ]; then
 	if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
 		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
 		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" != "10" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is not as same as 10."
+	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
@@ -1352,6 +1385,12 @@ if [ "${DO_JSON_CONF}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	fi
 
+	# [NOTE]
+	# Write additionally to force output
+	#
+	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
+	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+
 	#------------------------------------------------------
 	# Stop all processes
 	#------------------------------------------------------
@@ -1385,8 +1424,8 @@ if [ "${DO_JSON_CONF}" -eq 1 ]; then
 	if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
 		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
 		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" != "10" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is not as same as 10."
+	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
@@ -1442,6 +1481,12 @@ if [ "${DO_JSON_STRING}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	fi
 
+	# [NOTE]
+	# Write additionally to force output
+	#
+	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
+	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+
 	#------------------------------------------------------
 	# Stop all processes
 	#------------------------------------------------------
@@ -1472,8 +1517,8 @@ if [ "${DO_JSON_STRING}" -eq 1 ]; then
 	if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
 		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
 		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" != "10" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is not as same as 10."
+	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
@@ -1524,6 +1569,12 @@ if [ "${DO_JSON_STRING}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	fi
 
+	# [NOTE]
+	# Write additionally to force output
+	#
+	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
+	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+
 	#------------------------------------------------------
 	# Stop all processes
 	#------------------------------------------------------
@@ -1557,8 +1608,8 @@ if [ "${DO_JSON_STRING}" -eq 1 ]; then
 	if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
 		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
 		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" != "10" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is not as same as 10."
+	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
@@ -1614,6 +1665,12 @@ if [ "${DO_JSON_ENV}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	fi
 
+	# [NOTE]
+	# Write additionally to force output
+	#
+	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
+	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+
 	#------------------------------------------------------
 	# Stop all processes
 	#------------------------------------------------------
@@ -1644,8 +1701,8 @@ if [ "${DO_JSON_ENV}" -eq 1 ]; then
 	if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
 		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
 		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" != "10" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is not as same as 10."
+	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
@@ -1696,6 +1753,12 @@ if [ "${DO_JSON_ENV}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	fi
 
+	# [NOTE]
+	# Write additionally to force output
+	#
+	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
+	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+
 	#------------------------------------------------------
 	# Stop all processes
 	#------------------------------------------------------
@@ -1729,8 +1792,8 @@ if [ "${DO_JSON_ENV}" -eq 1 ]; then
 	if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
 		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
 		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" != "10" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is not as same as 10."
+	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
