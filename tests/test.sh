@@ -405,6 +405,7 @@ run_all_processes()
 #
 # Stop processes
 #
+# shellcheck disable=SC2317
 stop_process()
 {
 	if [ $# -eq 0 ]; then

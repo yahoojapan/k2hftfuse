@@ -365,7 +365,7 @@ static char* append_substring(char* tgdata, size_t& tgoffset, size_t& tglength, 
 	// check
 	if(length < static_cast<size_t>(match.rm_so) || length < static_cast<size_t>(match.rm_eo)){
 		// why?
-		ERR_K2HFTPRN("Match data start position(%d) or end position(%d) is over data length(%zu).", match.rm_so, match.rm_eo, length);
+		ERR_K2HFTPRN("Match data start position(%zu) or end position(%zu) is over data length(%zu).", static_cast<size_t>(match.rm_so), static_cast<size_t>(match.rm_eo), length);
 		return NULL;
 	}
 

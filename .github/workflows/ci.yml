@@ -59,33 +59,19 @@ jobs:
       #
       # matrix for containers
       #
-      # [NOTICE]
-      # The current matrix(OS) will be used until launching a new version
-      # is created, including the OS that will end support soon.
-      # The new version will support the following OS, and these OS list
-      # will replace current matrix.
-      #    ubuntu:22.04
-      #    ubuntu:20.04
-      #    ubuntu:18.04
-      #    debian:bullseye
-      #    debian:buster
-      #    centos:centos7
-      #    rockylinux:9
-      #    rockylinux:8
-      #    fedora:36
-      #    fedora:35
-      #
       matrix:
         container:
+          - ubuntu:22.04
           - ubuntu:20.04
           - ubuntu:18.04
-          - ubuntu:16.04
+          - debian:bullseye
           - debian:buster
-          - debian:stretch
           - centos:centos7
-          - fedora:32
-          - fedora:31
-          - fedora:30
+          - rockylinux:9
+          - rockylinux:8
+          - fedora:37
+          - fedora:36
+          - alpine:3.17
 
     container:
       image: ${{ matrix.container }}
@@ -115,9 +101,9 @@ jobs:
       #    FORCE_PUBLISH              : true means force to publish packages, false means never publish
       #    USE_PACKAGECLOUD_REPO      : true means using pacakgecloud.io repo, false is not using
       #  * PACKAGECLOUD_TOKEN         : The token for publishing to packagcloud.io
-      #    PACKAGECLOUD_OWNER         : owner name as a pat of path to packagcloud.io for publishing/downloading
-      #    PACKAGECLOUD_PUBLISH_REPO  : repo name as a pat of path to packagcloud.io for publishing
-      #    PACKAGECLOUD_DOWNLOAD_REPO : repo name as a pat of path to packagcloud.io for downloading
+      #    PACKAGECLOUD_OWNER         : owner name as a part of path to packagcloud.io for publishing/downloading
+      #    PACKAGECLOUD_PUBLISH_REPO  : repo name as a part of path to packagcloud.io for publishing
+      #    PACKAGECLOUD_DOWNLOAD_REPO : repo name as a part of path to packagcloud.io for downloading
       #
       # "PACKAGECLOUD_TOKEN" is a required variable to publish the
       # package.
