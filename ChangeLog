@@ -1,3 +1,22 @@
+k2hftfuse (1.0.37) unstable; urgency=low
+
+  * Adjusted the waiting time during test execution - #48
+  * Changed CI OSs and added Alpine OS - #47
+  * Updated header and footer in comment lines - #46
+  * Updated issue/pullrequest templates and README.md - #44
+  * Added ShellCheck processing and reviewed cppcheck - #43
+  * Eliminated unnecessary copies in build_helper.sh - #42
+  * Updated github actions process and support os, and fixed bugs - #41
+  * Updated scripts for adding grep params and replacing which to command - #40
+  * Updated common build scripts - #39
+  * Updated Antpickax common scripts and tools under the buildutils directory - #38
+  * Fixed errors reported by cppcheck 2.9 - #37
+  * Enabled external customization of configure.ac and fixed for building - #36
+  * Fixes markup syntax errors - #35
+  * Drops Fedora28 and CentOS6.x from our support OS - #34
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Sat, 11 Feb 2023 18:41:00 +0900
+
 k2hftfuse (1.0.36) unstable; urgency=low
 
   * Fixed centos8 build and removed centos6 build - #32
