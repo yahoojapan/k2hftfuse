@@ -1,3 +1,9 @@
+k2hftfuse (1.0.38) unstable; urgency=low
+
+  * Updated building/packaging logic for ALPINE - #50
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Mon, 06 Mar 2023 08:41:39 +0900
+
 k2hftfuse (1.0.37) unstable; urgency=low
 
   * Adjusted the waiting time during test execution - #48
