@@ -29,8 +29,9 @@ SRCTOP=$(cd "${SCRIPTDIR}/.." || exit 1; pwd)
 SRCDIR="${SRCTOP}/src"
 TESTDIR="${SRCTOP}/tests"
 
-MOUNTDIR=$(cd -P "${HOME}" || exit 1; pwd)
-MOUNTDIR="${MOUNTDIR}/k2htpfs"
+OS_ID_NAME=$(grep '^ID=' /etc/os-release | sed -e 's#"##g' -e 's#ID=##g' | tr -d '\n')
+MOUTDIRNAME="k2htpfs"
+MOUNTDIR="/tmp/mnt_${OS_ID_NAME}/${MOUTDIRNAME}"
 
 TEST_LOG_TOPDIR="/tmp/test"
 TEST_SUBPROC_TOPDIR="/tmp/mnt"
@@ -41,7 +42,8 @@ K2HFTFUSESVR_FILES_TOPDIR="${TEST_SUBPROC_TOPDIR}/k2hftfusesvr"
 #
 # Binary files
 #
-K2HFUSEBIN="${SRCDIR}/k2hftfuse"
+K2HFUSEBINNAME="k2hftfuse"
+K2HFUSEBIN="${SRCDIR}/${K2HFUSEBINNAME}"
 K2HFUSESVRBIN="${SRCDIR}/k2hftfusesvr"
 K2HFUSETESTBIN="${TESTDIR}/k2hftfusetest"
 K2HFTFUSE_PREINST="${SRCTOP}/buildutils/k2hftfuse.preinst"
@@ -89,24 +91,32 @@ K2HFTFUSETEST_LOGFILE="${MOUNTDIR}/log/nothing2.log"
 #
 K2HFTFUSETEST_LOOP_COUNT=10
 K2HFTFUSETEST_OUTPUT_STRING="MY_TEST_PROGRAM_OUTPUT"
-K2HFTFUSETEST_LOOP_ADDITINAL_COUNT=10
+K2HFTFUSETEST_LOOP_ADDITINAL_COUNT=30
 K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING="ADDITIONAL_OUTPUT"
 K2HFTFUSETEST_LOOP_TOTAL_COUNT=$((K2HFTFUSETEST_LOOP_COUNT + K2HFTFUSETEST_LOOP_ADDITINAL_COUNT))
 
-WAIT_SEC_AFTER_RUN_CHMPX=20
-WAIT_SEC_AFTER_RUN_K2HFTFUSE_SVR=20
-WAIT_SEC_AFTER_RUN_K2HFTFUSE=20
+RETRY_COUNT_AFTER_RUN_K2HFTFUSE=10
+CHECK_COUNT_AFTER_RUN_K2HFTFUSE=10
+
+WAIT_SEC_AFTER_RUN_CHMPX=5
+WAIT_SEC_AFTER_RUN_K2HFTFUSE_SVR=5
+WAIT_SEC_AFTER_RUN_K2HFTFUSE=10
 WAIT_SEC_AFTER_RUN_K2HFTFUSETEST=20
-WAIT_SEC_AFTER_STOP_PROCESS=20
-WAIT_SEC_AFTER_UMOUNT_K2HFTFUSE=20
+WAIT_SEC_AFTER_STOP_PROCESS=3
+WAIT_SEC_AFTER_UMOUNT_K2HFTFUSE=3
 
 #--------------------------------------------------------------
 # Usage
 #--------------------------------------------------------------
+# [NOTE]
+# The Transfer test runs multiple FUSE mounts at once, but it
+# often fails ALPINE's package tests. So transfer test is
+# optional and not run on CI.
+#
 func_usage()
 {
 	echo ""
-	echo "Usage: $1 { -help } { ini_conf } { yaml_conf } { json_conf } { json_string } { json_env } { silent | err | wan | msg }"
+	echo "Usage: $1 { -help } { ini_conf } { yaml_conf } { json_conf } { json_string } { json_env } { with_trans } { silent | err | wan | msg }"
 	echo ""
 }
 
@@ -145,12 +155,12 @@ PRNTITLE()
 
 PRNERR()
 {
-	echo "${CBLD}${CRED}[ERROR]${CDEF} ${CRED}$*${CDEF}"
+	echo "    ${CBLD}${CRED}[ERROR]${CDEF} ${CRED}$*${CDEF}"
 }
 
 PRNWARN()
 {
-	echo "${CYEL}${CREV}[WARNING]${CDEF} $*"
+	echo "    ${CYEL}${CREV}[WARNING]${CDEF} $*"
 }
 
 PRNMSG()
@@ -160,7 +170,7 @@ PRNMSG()
 
 PRNINFO()
 {
-	echo "${CREV}[INFO]${CDEF} $*"
+	echo "    ${CREV}[INFO]${CDEF} $*"
 }
 
 PRNSUCCEED()
@@ -372,7 +382,7 @@ run_all_processes()
 	# Now, we have not been able to identify the cause, but it has been
 	# resolved by restarting.
 	#
-	_RETRY_COUNT=10
+	_RETRY_COUNT="${RETRY_COUNT_AFTER_RUN_K2HFTFUSE}"
 	while [ "${_RETRY_COUNT}" -gt 0 ]; do
 		#
 		# Run
@@ -383,15 +393,27 @@ run_all_processes()
 			K2HFTJSONCONF="${CONF_OPT_SLV_FUSE_PARAM}" K2HDBGMODE=INFO K2HDBGFILE="${LOCAL_K2HFTFUSE_K2HASH_LOG}" CHMDBGMODE=MSG CHMDBGFILE="${LOCAL_K2HFTFUSE_CHMPX_LOG}" "${K2HFUSEBIN}" "${MOUNTDIR}" -o dbglevel=msg,chmpxlog="${LOCAL_K2HFTFUSE_CHMPX_LOG}" -f > "${LOCAL_K2HFTFUSE_LOG}" 2>&1 &
 		fi
 		K2HFTFUSEPID=$!
-		sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSE}"
 
 		#
 		# Check k2hftfuse process
 		#
-		if df | grep -q "${MOUNTDIR}"; then
-			PRNINFO "K2HFTFUSE                : ${K2HFTFUSEPID}"
+		_CHECK_COUNT="${CHECK_COUNT_AFTER_RUN_K2HFTFUSE}"
+		while [ "${_CHECK_COUNT}" -gt 0 ]; do
+			sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSE}"
+			if df | grep -q "${MOUTDIRNAME}"; then
+				PRNINFO "K2HFTFUSE                : ${K2HFTFUSEPID}"
+				break
+			fi
+			_CHECK_COUNT=$((_CHECK_COUNT - 1))
+		done
+		if [ "${_CHECK_COUNT}" -gt 0 ]; then
 			break
 		fi
+
+		#
+		# Stop for retry
+		#
+		stop_processes "${MOUNTDIR}" "${K2HFTFUSEPID}"
 
 		_RETRY_COUNT=$((_RETRY_COUNT - 1))
 	done
@@ -479,12 +501,11 @@ stop_processes()
 	#
 	# Umount k2hftfuse
 	#
-	if df | grep -q "${TG_MOUNT_DIR}"; then
-		if ! fusermount -u "${TG_MOUNT_DIR}" 2>/dev/null; then
-			PRNWARN "Failed to umount ${TG_MOUNT_DIR}, but processing will continue."
-		fi
-		sleep "${WAIT_SEC_AFTER_UMOUNT_K2HFTFUSE}"
-	fi
+	fusermount -u "${TG_MOUNT_DIR}" 2>/dev/null
+	sleep "${WAIT_SEC_AFTER_UMOUNT_K2HFTFUSE}"
+
+	_FUSE_BIN_PIDS=$(pgrep "${K2HFUSEBINNAME}")
+	_STOP_PIDS="${_STOP_PIDS} ${_FUSE_BIN_PIDS}"
 
 	#
 	# Stop all processes
@@ -536,6 +557,13 @@ stop_processes()
 			fi
 		fi
 	done
+
+	#
+	# Retry umount k2hftfuse
+	#
+	fusermount -u "${TG_MOUNT_DIR}" 2>/dev/null
+	sleep "${WAIT_SEC_AFTER_UMOUNT_K2HFTFUSE}"
+
 	return "${_STOP_RESULT}"
 }
 
@@ -596,6 +624,11 @@ cleanup_directories_logfiles()
 		return 1
 	fi
 
+	#
+	# Cleanup temporary files in /var/lib/antpickax
+	#
+	rm -rf /var/lib/antpickax/.fullock /var/lib/antpickax/.k2h* /var/lib/antpickax/*
+
 	return 0
 }
 
@@ -621,11 +654,12 @@ cleanup_all()
 	K2HFTFUSESVR_PROCS=$(ps ax | grep ' k2hftfusesvr ' | grep -v grep | awk '{print $1}' | tr '\n' ' ')
 	# shellcheck disable=SC2009
 	CHMPX_PROCS=$(ps ax | grep ' chmpx ' | grep -v grep | awk '{print $1}' | tr '\n' ' ')
+	CAT_PROCS=$(pgrep cat | grep -v grep | awk '{print $1}' | tr '\n' ' ')
 
 	#
 	# Stop all
 	#
-	if ! stop_processes "${TG_MOUNT_DIR}" "${K2HFTFUSE_PROCS} ${K2HFTFUSESVR_PROCS} ${CHMPX_PROCS}"; then
+	if ! stop_processes "${TG_MOUNT_DIR}" "${K2HFTFUSE_PROCS} ${K2HFTFUSESVR_PROCS} ${CHMPX_PROCS} ${CAT_PROCS}"; then
 		PRNWARN "Some processes may have failed to stop, but continue processing, but continue...."
 	fi
 
@@ -688,6 +722,7 @@ DO_YAML_CONF=0
 DO_JSON_CONF=0
 DO_JSON_STRING=0
 DO_JSON_ENV=0
+WITH_TRANS=0
 OPT_DEBUGMODE=""
 
 while [ $# -ne 0 ]; do
@@ -731,6 +766,13 @@ while [ $# -ne 0 ]; do
 			exit 1
 		fi
 		DO_JSON_ENV=1
+
+	elif [ "$1" = "with_trans" ] || [ "$1" = "WITH_TRANS" ]; then
+		if [ "${WITH_TRANS}" -ne 0 ]; then
+			PRNERR "Already specified \"with_trans\" option."
+			exit 1
+		fi
+		WITH_TRANS=1
 
 	elif [ "$1" = "silent" ] || [ "$1" = "SILENT" ]; then
 		if [ -n "${OPT_DEBUGMODE}" ]; then
@@ -907,7 +949,7 @@ if [ "${DO_INI_CONF}" -eq 1 ]; then
 	fi
 
 	#------------------------------------------------------
-	# RUN k2hdkclinetool process
+	# RUN k2hftfusetest process
 	#------------------------------------------------------
 	PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
 
@@ -915,6 +957,7 @@ if [ "${DO_INI_CONF}" -eq 1 ]; then
 		PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
 		TEST_SUBRESULT=0
 		sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+		sync
 	else
 		PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
 		TEST_SUBRESULT=1
@@ -925,6 +968,7 @@ if [ "${DO_INI_CONF}" -eq 1 ]; then
 	#
 	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
 	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+	sync
 
 	#------------------------------------------------------
 	# Stop all processes
@@ -964,14 +1008,14 @@ if [ "${DO_INI_CONF}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "unify.log file line count(${RESULT_LINE_COUNT}) is as same as 10."
+		TEST_SUBRESULT=0
 	fi
 
-	#
+	#----------------------------------------------------------
 	# Print all logs (if error)
-	#
+	#----------------------------------------------------------
 	if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
 		print_log_detail
-
 		PRNERR "TEST FOR INI CONF FILE (SINGLE)"
 		exit 1
 	else
@@ -986,96 +1030,100 @@ if [ "${DO_INI_CONF}" -eq 1 ]; then
 	#==========================================================
 	# Test transferred server
 	#==========================================================
-	PRNTITLE "TEST FOR INI CONF FILE (TRANSFERRED)"
+	if [ "${WITH_TRANS}" -eq 1 ]; then
+		PRNTITLE "TEST FOR INI CONF FILE (TRANSFERRED)"
 
-	#------------------------------------------------------
-	# RUN all test processes for transferred server
-	#------------------------------------------------------
-	if run_all_processes "transferred" "ini"; then
-		TEST_PROCESS_RESULT=0
-	else
-		TEST_PROCESS_RESULT=1
-	fi
+		#------------------------------------------------------
+		# RUN all test processes for transferred server
+		#------------------------------------------------------
+		if run_all_processes "transferred" "ini"; then
+			TEST_PROCESS_RESULT=0
+		else
+			TEST_PROCESS_RESULT=1
+		fi
 
-	#------------------------------------------------------
-	# RUN k2hdkclinetool process
-	#------------------------------------------------------
-	PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
+		#------------------------------------------------------
+		# RUN k2hftfusetest process
+		#------------------------------------------------------
+		PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
 
-	if "${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_COUNT}" "${K2HFTFUSETEST_OUTPUT_STRING}" > "${NEST_K2HFTFUSETEST_LOG}" 2>&1; then
-		PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
-		TEST_SUBRESULT=0
+		if "${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_COUNT}" "${K2HFTFUSETEST_OUTPUT_STRING}" > "${NEST_K2HFTFUSETEST_LOG}" 2>&1; then
+			PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
+			TEST_SUBRESULT=0
+			sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+			sync
+		else
+			PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
+			TEST_SUBRESULT=1
+		fi
+
+		# [NOTE]
+		# Write additionally to force output
+		#
+		"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
 		sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
-	else
-		PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
-		TEST_SUBRESULT=1
+		sync
+
+		#------------------------------------------------------
+		# Stop all processes
+		#------------------------------------------------------
+		PRNMSG "STOP ALL PROCESSES"
+
+		# [NOTE]
+		# The order of the list is the stop order and is important.
+		#
+		ALL_PIDS="	${K2HFTFUSEPID}
+					${K2HFTFUSESVRPID}
+					${K2HFTFUSESVRTRANSPID}
+					${CHMPXSLVPID}
+					${CHMPXSVRPID}
+					${CHMPXTRANSSLVPID}
+					${CHMPXTRANSSVRPID}"
+
+		if ! stop_processes "${MOUNTDIR}" "${ALL_PIDS}"; then
+			PRNERR "FAILED : STOP ALL PROCESSES"
+		else
+			PRNINFO "SUCCEED : STOP ALL PROCESSES"
+		fi
+
+		#------------------------------------------------------
+		# Check result
+		#------------------------------------------------------
+		PRNMSG "CHECK RESULT"
+
+		#
+		# Check line count
+		#
+		if [ ! -f "${K2HFTFUSESVR_UNITY_LOGFILE}" ]; then
+			PRNERR "Not found ${K2HFTFUSESVR_UNITY_LOGFILE} file."
+			TEST_SUBRESULT=1
+		elif ! RESULT_LINE_COUNT=$(wc -l "${K2HFTFUSESVR_UNITY_LOGFILE}" | awk '{print $1}'); then
+			PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE} file line count."
+			TEST_SUBRESULT=1
+		elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+			PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
+			TEST_SUBRESULT=1
+		else
+			PRNINFO "unify.log file line count(${RESULT_LINE_COUNT}) is as same as 10."
+			TEST_SUBRESULT=0
+		fi
+
+		#----------------------------------------------------------
+		# Print all logs (if error)
+		#----------------------------------------------------------
+		if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
+			print_log_detail
+			PRNERR "TEST FOR INI CONF FILE (TRANSFERRED)"
+			exit 1
+		else
+			PRNSUCCEED "TEST FOR INI CONF FILE (TRANSFERRED)"
+		fi
+
+		#----------------------------------------------------------
+		# Cleanup for after test processing
+		#----------------------------------------------------------
+		cleanup_all "${MOUNTDIR}"
 	fi
-
-	# [NOTE]
-	# Write additionally to force output
-	#
-	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
-	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
-
-	#------------------------------------------------------
-	# Stop all processes
-	#------------------------------------------------------
-	PRNMSG "STOP ALL PROCESSES"
-
-	# [NOTE]
-	# The order of the list is the stop order and is important.
-	#
-	ALL_PIDS="	${K2HFTFUSEPID}
-				${K2HFTFUSESVRPID}
-				${K2HFTFUSESVRTRANSPID}
-				${CHMPXSLVPID}
-				${CHMPXSVRPID}
-				${CHMPXTRANSSLVPID}
-				${CHMPXTRANSSVRPID}"
-
-	if ! stop_processes "${MOUNTDIR}" "${ALL_PIDS}"; then
-		PRNERR "FAILED : STOP ALL PROCESSES"
-	else
-		PRNINFO "SUCCEED : STOP ALL PROCESSES"
-	fi
-
-	#------------------------------------------------------
-	# Check result
-	#------------------------------------------------------
-	PRNMSG "CHECK RESULT"
-
-	#
-	# Check line count
-	#
-	if [ ! -f "${K2HFTFUSESVR_UNITY_LOGFILE}" ]; then
-		PRNERR "Not found ${K2HFTFUSESVR_UNITY_LOGFILE} file."
-		TEST_SUBRESULT=1
-	elif ! RESULT_LINE_COUNT=$(wc -l "${K2HFTFUSESVR_UNITY_LOGFILE}" | awk '{print $1}'); then
-		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE} file line count."
-		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
-		TEST_SUBRESULT=1
-	else
-		PRNINFO "unify.log file line count(${RESULT_LINE_COUNT}) is as same as 10."
-	fi
-
-	#
-	# Print all logs (if error)
-	#
-	if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
-		print_log_detail
-
-		PRNERR "TEST FOR INI CONF FILE (TRANSFERRED)"
-		exit 1
-	else
-		PRNSUCCEED "TEST FOR INI CONF FILE (TRANSFERRED)"
-	fi
-
-	#----------------------------------------------------------
-	# Cleanup for after test processing
-	#----------------------------------------------------------
-	cleanup_all "${MOUNTDIR}"
 fi
 
 #==============================================================
@@ -1097,7 +1145,7 @@ if [ "${DO_YAML_CONF}" -eq 1 ]; then
 	fi
 
 	#------------------------------------------------------
-	# RUN k2hdkclinetool process
+	# RUN k2hftfusetest process
 	#------------------------------------------------------
 	PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
 
@@ -1105,6 +1153,7 @@ if [ "${DO_YAML_CONF}" -eq 1 ]; then
 		PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
 		TEST_SUBRESULT=0
 		sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+		sync
 	else
 		PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
 		TEST_SUBRESULT=1
@@ -1115,6 +1164,7 @@ if [ "${DO_YAML_CONF}" -eq 1 ]; then
 	#
 	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
 	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+	sync
 
 	#------------------------------------------------------
 	# Stop all processes
@@ -1154,14 +1204,14 @@ if [ "${DO_YAML_CONF}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "unify.log file line count(${RESULT_LINE_COUNT}) is as same as 10."
+		TEST_SUBRESULT=0
 	fi
 
-	#
+	#----------------------------------------------------------
 	# Print all logs (if error)
-	#
+	#----------------------------------------------------------
 	if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
 		print_log_detail
-
 		PRNERR "TEST FOR YAML CONF FILE (SINGLE)"
 		exit 1
 	else
@@ -1176,93 +1226,97 @@ if [ "${DO_YAML_CONF}" -eq 1 ]; then
 	#==========================================================
 	# Test transferred server
 	#==========================================================
-	PRNTITLE "TEST FOR YAML CONF FILE (TRANSFERRED)"
+	if [ "${WITH_TRANS}" -eq 1 ]; then
+		PRNTITLE "TEST FOR YAML CONF FILE (TRANSFERRED)"
 
-	#------------------------------------------------------
-	# RUN all test processes for transferred server
-	#------------------------------------------------------
-	if run_all_processes "transferred" "yaml"; then
-		TEST_PROCESS_RESULT=0
-	else
-		TEST_PROCESS_RESULT=1
-	fi
+		#------------------------------------------------------
+		# RUN all test processes for transferred server
+		#------------------------------------------------------
+		if run_all_processes "transferred" "yaml"; then
+			TEST_PROCESS_RESULT=0
+		else
+			TEST_PROCESS_RESULT=1
+		fi
 
-	#------------------------------------------------------
-	# RUN k2hdkclinetool process
-	#------------------------------------------------------
-	PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
+		#------------------------------------------------------
+		# RUN k2hftfusetest process
+		#------------------------------------------------------
+		PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
 
-	if "${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_COUNT}" "${K2HFTFUSETEST_OUTPUT_STRING}" > "${NEST_K2HFTFUSETEST_LOG}" 2>&1; then
-		PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
-		TEST_SUBRESULT=0
+		if "${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_COUNT}" "${K2HFTFUSETEST_OUTPUT_STRING}" > "${NEST_K2HFTFUSETEST_LOG}" 2>&1; then
+			PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
+			TEST_SUBRESULT=0
+			sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+			sync
+		else
+			PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
+			TEST_SUBRESULT=1
+		fi
+
+		# [NOTE]
+		# Write additionally to force output
+		#
+		"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
 		sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
-	else
-		PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
-		TEST_SUBRESULT=1
+		sync
+
+		#------------------------------------------------------
+		# Stop all processes
+		#------------------------------------------------------
+		PRNMSG "STOP ALL PROCESSES"
+
+		# [NOTE]
+		# The order of the list is the stop order and is important.
+		#
+		ALL_PIDS="	${K2HFTFUSEPID}
+					${K2HFTFUSESVRPID}
+					${K2HFTFUSESVRTRANSPID}
+					${CHMPXSLVPID}
+					${CHMPXSVRPID}
+					${CHMPXTRANSSLVPID}
+					${CHMPXTRANSSVRPID}"
+
+		if ! stop_processes "${MOUNTDIR}" "${ALL_PIDS}"; then
+			PRNERR "FAILED : STOP ALL PROCESSES"
+		else
+			PRNINFO "SUCCEED : STOP ALL PROCESSES"
+		fi
+
+		#------------------------------------------------------
+		# Check result
+		#------------------------------------------------------
+		PRNMSG "CHECK RESULT"
+
+		#
+		# Check line count
+		#
+		if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
+			PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
+			TEST_SUBRESULT=1
+		elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+			PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
+			TEST_SUBRESULT=1
+		else
+			PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
+			TEST_SUBRESULT=0
+		fi
+
+		#----------------------------------------------------------
+		# Print all logs (if error)
+		#----------------------------------------------------------
+		if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
+			print_log_detail
+			PRNERR "TEST FOR YAML CONF FILE (TRANSFERRED)"
+			exit 1
+		else
+			PRNSUCCEED "TEST FOR YAML CONF FILE (TRANSFERRED)"
+		fi
+
+		#----------------------------------------------------------
+		# Cleanup for after test processing
+		#----------------------------------------------------------
+		cleanup_all "${MOUNTDIR}"
 	fi
-
-	# [NOTE]
-	# Write additionally to force output
-	#
-	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
-	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
-
-	#------------------------------------------------------
-	# Stop all processes
-	#------------------------------------------------------
-	PRNMSG "STOP ALL PROCESSES"
-
-	# [NOTE]
-	# The order of the list is the stop order and is important.
-	#
-	ALL_PIDS="	${K2HFTFUSEPID}
-				${K2HFTFUSESVRPID}
-				${K2HFTFUSESVRTRANSPID}
-				${CHMPXSLVPID}
-				${CHMPXSVRPID}
-				${CHMPXTRANSSLVPID}
-				${CHMPXTRANSSVRPID}"
-
-	if ! stop_processes "${MOUNTDIR}" "${ALL_PIDS}"; then
-		PRNERR "FAILED : STOP ALL PROCESSES"
-	else
-		PRNINFO "SUCCEED : STOP ALL PROCESSES"
-	fi
-
-	#------------------------------------------------------
-	# Check result
-	#------------------------------------------------------
-	PRNMSG "CHECK RESULT"
-
-	#
-	# Check line count
-	#
-	if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
-		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
-		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
-		TEST_SUBRESULT=1
-	else
-		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
-	fi
-
-	#
-	# Print all logs (if error)
-	#
-	if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
-		print_log_detail
-
-		PRNERR "TEST FOR YAML CONF FILE (TRANSFERRED)"
-		exit 1
-	else
-		PRNSUCCEED "TEST FOR YAML CONF FILE (TRANSFERRED)"
-	fi
-
-	#----------------------------------------------------------
-	# Cleanup for after test processing
-	#----------------------------------------------------------
-	cleanup_all "${MOUNTDIR}"
 fi
 
 #==============================================================
@@ -1284,7 +1338,7 @@ if [ "${DO_JSON_CONF}" -eq 1 ]; then
 	fi
 
 	#------------------------------------------------------
-	# RUN k2hdkclinetool process
+	# RUN k2hftfusetest process
 	#------------------------------------------------------
 	PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
 
@@ -1292,6 +1346,7 @@ if [ "${DO_JSON_CONF}" -eq 1 ]; then
 		PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
 		TEST_SUBRESULT=0
 		sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+		sync
 	else
 		PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
 		TEST_SUBRESULT=1
@@ -1302,6 +1357,7 @@ if [ "${DO_JSON_CONF}" -eq 1 ]; then
 	#
 	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
 	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+	sync
 
 	#------------------------------------------------------
 	# Stop all processes
@@ -1338,14 +1394,14 @@ if [ "${DO_JSON_CONF}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
+		TEST_SUBRESULT=0
 	fi
 
-	#
+	#----------------------------------------------------------
 	# Print all logs (if error)
-	#
+	#----------------------------------------------------------
 	if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
 		print_log_detail
-
 		PRNERR "TEST FOR JSON CONF FILE (SINGLE)"
 		exit 1
 	else
@@ -1360,93 +1416,97 @@ if [ "${DO_JSON_CONF}" -eq 1 ]; then
 	#==========================================================
 	# Test transferred server
 	#==========================================================
-	PRNTITLE "TEST FOR JSON CONF FILE (TRANSFERRED)"
+	if [ "${WITH_TRANS}" -eq 1 ]; then
+		PRNTITLE "TEST FOR JSON CONF FILE (TRANSFERRED)"
 
-	#------------------------------------------------------
-	# RUN all test processes for transferred server
-	#------------------------------------------------------
-	if run_all_processes "transferred" "json"; then
-		TEST_PROCESS_RESULT=0
-	else
-		TEST_PROCESS_RESULT=1
-	fi
+		#------------------------------------------------------
+		# RUN all test processes for transferred server
+		#------------------------------------------------------
+		if run_all_processes "transferred" "json"; then
+			TEST_PROCESS_RESULT=0
+		else
+			TEST_PROCESS_RESULT=1
+		fi
 
-	#------------------------------------------------------
-	# RUN k2hdkclinetool process
-	#------------------------------------------------------
-	PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
+		#------------------------------------------------------
+		# RUN k2hftfusetest process
+		#------------------------------------------------------
+		PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
 
-	if "${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_COUNT}" "${K2HFTFUSETEST_OUTPUT_STRING}" > "${NEST_K2HFTFUSETEST_LOG}" 2>&1; then
-		PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
-		TEST_SUBRESULT=0
+		if "${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_COUNT}" "${K2HFTFUSETEST_OUTPUT_STRING}" > "${NEST_K2HFTFUSETEST_LOG}" 2>&1; then
+			PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
+			TEST_SUBRESULT=0
+			sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+			sync
+		else
+			PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
+			TEST_SUBRESULT=1
+		fi
+
+		# [NOTE]
+		# Write additionally to force output
+		#
+		"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
 		sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
-	else
-		PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
-		TEST_SUBRESULT=1
+		sync
+
+		#------------------------------------------------------
+		# Stop all processes
+		#------------------------------------------------------
+		PRNMSG "STOP ALL PROCESSES"
+
+		# [NOTE]
+		# The order of the list is the stop order and is important.
+		#
+		ALL_PIDS="	${K2HFTFUSEPID}
+					${K2HFTFUSESVRPID}
+					${K2HFTFUSESVRTRANSPID}
+					${CHMPXSLVPID}
+					${CHMPXSVRPID}
+					${CHMPXTRANSSLVPID}
+					${CHMPXTRANSSVRPID}"
+
+		if ! stop_processes "${MOUNTDIR}" "${ALL_PIDS}"; then
+			PRNERR "FAILED : STOP ALL PROCESSES"
+		else
+			PRNINFO "SUCCEED : STOP ALL PROCESSES"
+		fi
+
+		#------------------------------------------------------
+		# Check result
+		#------------------------------------------------------
+		PRNMSG "CHECK RESULT"
+
+		#
+		# Check line count
+		#
+		if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
+			PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
+			TEST_SUBRESULT=1
+		elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+			PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
+			TEST_SUBRESULT=1
+		else
+			PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
+			TEST_SUBRESULT=0
+		fi
+
+		#----------------------------------------------------------
+		# Print all logs (if error)
+		#----------------------------------------------------------
+		if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
+			print_log_detail
+			PRNERR "TEST FOR JSON CONF FILE (TRANSFERRED)"
+			exit 1
+		else
+			PRNSUCCEED "TEST FOR JSON CONF FILE (TRANSFERRED)"
+		fi
+
+		#----------------------------------------------------------
+		# Cleanup for after test processing
+		#----------------------------------------------------------
+		cleanup_all "${MOUNTDIR}"
 	fi
-
-	# [NOTE]
-	# Write additionally to force output
-	#
-	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
-	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
-
-	#------------------------------------------------------
-	# Stop all processes
-	#------------------------------------------------------
-	PRNMSG "STOP ALL PROCESSES"
-
-	# [NOTE]
-	# The order of the list is the stop order and is important.
-	#
-	ALL_PIDS="	${K2HFTFUSEPID}
-				${K2HFTFUSESVRPID}
-				${K2HFTFUSESVRTRANSPID}
-				${CHMPXSLVPID}
-				${CHMPXSVRPID}
-				${CHMPXTRANSSLVPID}
-				${CHMPXTRANSSVRPID}"
-
-	if ! stop_processes "${MOUNTDIR}" "${ALL_PIDS}"; then
-		PRNERR "FAILED : STOP ALL PROCESSES"
-	else
-		PRNINFO "SUCCEED : STOP ALL PROCESSES"
-	fi
-
-	#------------------------------------------------------
-	# Check result
-	#------------------------------------------------------
-	PRNMSG "CHECK RESULT"
-
-	#
-	# Check line count
-	#
-	if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
-		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
-		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
-		TEST_SUBRESULT=1
-	else
-		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
-	fi
-
-	#
-	# Print all logs (if error)
-	#
-	if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
-		print_log_detail
-
-		PRNERR "TEST FOR JSON CONF FILE (TRANSFERRED)"
-		exit 1
-	else
-		PRNSUCCEED "TEST FOR JSON CONF FILE (TRANSFERRED)"
-	fi
-
-	#----------------------------------------------------------
-	# Cleanup for after test processing
-	#----------------------------------------------------------
-	cleanup_all "${MOUNTDIR}"
 fi
 
 #==============================================================
@@ -1468,7 +1528,7 @@ if [ "${DO_JSON_STRING}" -eq 1 ]; then
 	fi
 
 	#------------------------------------------------------
-	# RUN k2hdkclinetool process
+	# RUN k2hftfusetest process
 	#------------------------------------------------------
 	PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
 
@@ -1476,6 +1536,7 @@ if [ "${DO_JSON_STRING}" -eq 1 ]; then
 		PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
 		TEST_SUBRESULT=0
 		sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+		sync
 	else
 		PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
 		TEST_SUBRESULT=1
@@ -1486,6 +1547,7 @@ if [ "${DO_JSON_STRING}" -eq 1 ]; then
 	#
 	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
 	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+	sync
 
 	#------------------------------------------------------
 	# Stop all processes
@@ -1522,14 +1584,14 @@ if [ "${DO_JSON_STRING}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
+		TEST_SUBRESULT=0
 	fi
 
-	#
+	#----------------------------------------------------------
 	# Print all logs (if error)
-	#
+	#----------------------------------------------------------
 	if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
 		print_log_detail
-
 		PRNERR "TEST FOR JSON STRING (SINGLE)"
 		exit 1
 	else
@@ -1544,93 +1606,97 @@ if [ "${DO_JSON_STRING}" -eq 1 ]; then
 	#==========================================================
 	# Test transferred server
 	#==========================================================
-	PRNTITLE "TEST FOR JSON STRING (TRANSFERRED)"
+	if [ "${WITH_TRANS}" -eq 1 ]; then
+		PRNTITLE "TEST FOR JSON STRING (TRANSFERRED)"
 
-	#------------------------------------------------------
-	# RUN all test processes for transferred server
-	#------------------------------------------------------
-	if run_all_processes "transferred" "jsonstring"; then
-		TEST_PROCESS_RESULT=0
-	else
-		TEST_PROCESS_RESULT=1
-	fi
+		#------------------------------------------------------
+		# RUN all test processes for transferred server
+		#------------------------------------------------------
+		if run_all_processes "transferred" "jsonstring"; then
+			TEST_PROCESS_RESULT=0
+		else
+			TEST_PROCESS_RESULT=1
+		fi
 
-	#------------------------------------------------------
-	# RUN k2hdkclinetool process
-	#------------------------------------------------------
-	PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
+		#------------------------------------------------------
+		# RUN k2hftfusetest process
+		#------------------------------------------------------
+		PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
 
-	if "${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_COUNT}" "${K2HFTFUSETEST_OUTPUT_STRING}" > "${NEST_K2HFTFUSETEST_LOG}" 2>&1; then
-		PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
-		TEST_SUBRESULT=0
+		if "${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_COUNT}" "${K2HFTFUSETEST_OUTPUT_STRING}" > "${NEST_K2HFTFUSETEST_LOG}" 2>&1; then
+			PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
+			TEST_SUBRESULT=0
+			sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+			sync
+		else
+			PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
+			TEST_SUBRESULT=1
+		fi
+
+		# [NOTE]
+		# Write additionally to force output
+		#
+		"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
 		sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
-	else
-		PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
-		TEST_SUBRESULT=1
+		sync
+
+		#------------------------------------------------------
+		# Stop all processes
+		#------------------------------------------------------
+		PRNMSG "STOP ALL PROCESSES"
+
+		# [NOTE]
+		# The order of the list is the stop order and is important.
+		#
+		ALL_PIDS="	${K2HFTFUSEPID}
+					${K2HFTFUSESVRPID}
+					${K2HFTFUSESVRTRANSPID}
+					${CHMPXSLVPID}
+					${CHMPXSVRPID}
+					${CHMPXTRANSSLVPID}
+					${CHMPXTRANSSVRPID}"
+
+		if ! stop_processes "${MOUNTDIR}" "${ALL_PIDS}"; then
+			PRNERR "FAILED : STOP ALL PROCESSES"
+		else
+			PRNINFO "SUCCEED : STOP ALL PROCESSES"
+		fi
+
+		#------------------------------------------------------
+		# Check result
+		#------------------------------------------------------
+		PRNMSG "CHECK RESULT"
+
+		#
+		# Check line count
+		#
+		if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
+			PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
+			TEST_SUBRESULT=1
+		elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+			PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
+			TEST_SUBRESULT=1
+		else
+			PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
+			TEST_SUBRESULT=0
+		fi
+
+		#----------------------------------------------------------
+		# Print all logs (if error)
+		#----------------------------------------------------------
+		if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
+			print_log_detail
+			PRNERR "TEST FOR JSON STRING (TRANSFERRED)"
+			exit 1
+		else
+			PRNSUCCEED "TEST FOR JSON STRING (TRANSFERRED)"
+		fi
+
+		#----------------------------------------------------------
+		# Cleanup for after test processing
+		#----------------------------------------------------------
+		cleanup_all "${MOUNTDIR}"
 	fi
-
-	# [NOTE]
-	# Write additionally to force output
-	#
-	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
-	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
-
-	#------------------------------------------------------
-	# Stop all processes
-	#------------------------------------------------------
-	PRNMSG "STOP ALL PROCESSES"
-
-	# [NOTE]
-	# The order of the list is the stop order and is important.
-	#
-	ALL_PIDS="	${K2HFTFUSEPID}
-				${K2HFTFUSESVRPID}
-				${K2HFTFUSESVRTRANSPID}
-				${CHMPXSLVPID}
-				${CHMPXSVRPID}
-				${CHMPXTRANSSLVPID}
-				${CHMPXTRANSSVRPID}"
-
-	if ! stop_processes "${MOUNTDIR}" "${ALL_PIDS}"; then
-		PRNERR "FAILED : STOP ALL PROCESSES"
-	else
-		PRNINFO "SUCCEED : STOP ALL PROCESSES"
-	fi
-
-	#------------------------------------------------------
-	# Check result
-	#------------------------------------------------------
-	PRNMSG "CHECK RESULT"
-
-	#
-	# Check line count
-	#
-	if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
-		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
-		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
-		TEST_SUBRESULT=1
-	else
-		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
-	fi
-
-	#
-	# Print all logs (if error)
-	#
-	if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
-		print_log_detail
-
-		PRNERR "TEST FOR JSON STRING (TRANSFERRED)"
-		exit 1
-	else
-		PRNSUCCEED "TEST FOR JSON STRING (TRANSFERRED)"
-	fi
-
-	#----------------------------------------------------------
-	# Cleanup for after test processing
-	#----------------------------------------------------------
-	cleanup_all "${MOUNTDIR}"
 fi
 
 #==============================================================
@@ -1652,7 +1718,7 @@ if [ "${DO_JSON_ENV}" -eq 1 ]; then
 	fi
 
 	#------------------------------------------------------
-	# RUN k2hdkclinetool process
+	# RUN k2hftfusetest process
 	#------------------------------------------------------
 	PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
 
@@ -1660,6 +1726,7 @@ if [ "${DO_JSON_ENV}" -eq 1 ]; then
 		PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
 		TEST_SUBRESULT=0
 		sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+		sync
 	else
 		PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
 		TEST_SUBRESULT=1
@@ -1670,6 +1737,7 @@ if [ "${DO_JSON_ENV}" -eq 1 ]; then
 	#
 	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
 	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+	sync
 
 	#------------------------------------------------------
 	# Stop all processes
@@ -1706,14 +1774,14 @@ if [ "${DO_JSON_ENV}" -eq 1 ]; then
 		TEST_SUBRESULT=1
 	else
 		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
+		TEST_SUBRESULT=0
 	fi
 
-	#
+	#----------------------------------------------------------
 	# Print all logs (if error)
-	#
+	#----------------------------------------------------------
 	if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
 		print_log_detail
-
 		PRNERR "TEST FOR JSON ENVIRONMENT (SINGLE)"
 		exit 1
 	else
@@ -1728,93 +1796,97 @@ if [ "${DO_JSON_ENV}" -eq 1 ]; then
 	#==========================================================
 	# Test transferred server
 	#==========================================================
-	PRNTITLE "TEST FOR JSON ENVIRONMENT (TRANSFERRED)"
+	if [ "${WITH_TRANS}" -eq 1 ]; then
+		PRNTITLE "TEST FOR JSON ENVIRONMENT (TRANSFERRED)"
 
-	#------------------------------------------------------
-	# RUN all test processes for transferred server
-	#------------------------------------------------------
-	if run_all_processes "transferred" "jsonenv"; then
-		TEST_PROCESS_RESULT=0
-	else
-		TEST_PROCESS_RESULT=1
-	fi
+		#------------------------------------------------------
+		# RUN all test processes for transferred server
+		#------------------------------------------------------
+		if run_all_processes "transferred" "jsonenv"; then
+			TEST_PROCESS_RESULT=0
+		else
+			TEST_PROCESS_RESULT=1
+		fi
 
-	#------------------------------------------------------
-	# RUN k2hdkclinetool process
-	#------------------------------------------------------
-	PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
+		#------------------------------------------------------
+		# RUN k2hftfusetest process
+		#------------------------------------------------------
+		PRNMSG "RUN TEST PROCESS(k2hftfusetest)"
 
-	if "${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_COUNT}" "${K2HFTFUSETEST_OUTPUT_STRING}" > "${NEST_K2HFTFUSETEST_LOG}" 2>&1; then
-		PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
-		TEST_SUBRESULT=0
+		if "${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_COUNT}" "${K2HFTFUSETEST_OUTPUT_STRING}" > "${NEST_K2HFTFUSETEST_LOG}" 2>&1; then
+			PRNINFO "SUCCEED : RUN TEST PROCESS(k2hftfusetest)"
+			TEST_SUBRESULT=0
+			sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
+			sync
+		else
+			PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
+			TEST_SUBRESULT=1
+		fi
+
+		# [NOTE]
+		# Write additionally to force output
+		#
+		"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
 		sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
-	else
-		PRNERR "FAILED : RUN TEST PROCESS(k2hftfusetest)"
-		TEST_SUBRESULT=1
+		sync
+
+		#------------------------------------------------------
+		# Stop all processes
+		#------------------------------------------------------
+		PRNMSG "STOP ALL PROCESSES"
+
+		# [NOTE]
+		# The order of the list is the stop order and is important.
+		#
+		ALL_PIDS="	${K2HFTFUSEPID}
+					${K2HFTFUSESVRPID}
+					${K2HFTFUSESVRTRANSPID}
+					${CHMPXSLVPID}
+					${CHMPXSVRPID}
+					${CHMPXTRANSSLVPID}
+					${CHMPXTRANSSVRPID}"
+
+		if ! stop_processes "${MOUNTDIR}" "${ALL_PIDS}"; then
+			PRNERR "FAILED : STOP ALL PROCESSES"
+		else
+			PRNINFO "SUCCEED : STOP ALL PROCESSES"
+		fi
+
+		#------------------------------------------------------
+		# Check result
+		#------------------------------------------------------
+		PRNMSG "CHECK RESULT"
+
+		#
+		# Check line count
+		#
+		if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
+			PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
+			TEST_SUBRESULT=1
+		elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
+			PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
+			TEST_SUBRESULT=1
+		else
+			PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
+			TEST_SUBRESULT=0
+		fi
+
+		#----------------------------------------------------------
+		# Print all logs (if error)
+		#----------------------------------------------------------
+		if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
+			print_log_detail
+			PRNERR "TEST FOR JSON ENVIRONMENT (TRANSFERRED)"
+			exit 1
+		else
+			PRNSUCCEED "TEST FOR JSON ENVIRONMENT (TRANSFERRED)"
+		fi
+
+		#----------------------------------------------------------
+		# Cleanup for after test processing
+		#----------------------------------------------------------
+		cleanup_all "${MOUNTDIR}"
 	fi
-
-	# [NOTE]
-	# Write additionally to force output
-	#
-	"${K2HFUSETESTBIN}" "${K2HFTFUSETEST_LOGFILE}" "${K2HFTFUSETEST_LOOP_ADDITINAL_COUNT}" "${K2HFTFUSETEST_OUTPUT_ADDITINAL_STRING}" > "${SINGLE_K2HFTFUSETEST_LOG}" 2>&1
-	sleep "${WAIT_SEC_AFTER_RUN_K2HFTFUSETEST}"
-
-	#------------------------------------------------------
-	# Stop all processes
-	#------------------------------------------------------
-	PRNMSG "STOP ALL PROCESSES"
-
-	# [NOTE]
-	# The order of the list is the stop order and is important.
-	#
-	ALL_PIDS="	${K2HFTFUSEPID}
-				${K2HFTFUSESVRPID}
-				${K2HFTFUSESVRTRANSPID}
-				${CHMPXSLVPID}
-				${CHMPXSVRPID}
-				${CHMPXTRANSSLVPID}
-				${CHMPXTRANSSVRPID}"
-
-	if ! stop_processes "${MOUNTDIR}" "${ALL_PIDS}"; then
-		PRNERR "FAILED : STOP ALL PROCESSES"
-	else
-		PRNINFO "SUCCEED : STOP ALL PROCESSES"
-	fi
-
-	#------------------------------------------------------
-	# Check result
-	#------------------------------------------------------
-	PRNMSG "CHECK RESULT"
-
-	#
-	# Check line count
-	#
-	if ! RESULT_LINE_COUNT=$(grep -c "${K2HFTFUSETEST_LOGFILE_RELPATH}" "${K2HFTFUSESVR_UNITY_LOGFILE_NAME}"); then
-		PRNERR "Failed to get ${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count."
-		TEST_SUBRESULT=1
-	elif [ -z "${RESULT_LINE_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -lt "${K2HFTFUSETEST_LOOP_COUNT}" ] || [ "${RESULT_LINE_COUNT}" -gt "${K2HFTFUSETEST_LOOP_TOTAL_COUNT}" ]; then
-		PRNERR "${K2HFTFUSESVR_UNITY_LOGFILE} file line count(${RESULT_LINE_COUNT}) is not as same as (${K2HFTFUSETEST_LOOP_COUNT} - ${K2HFTFUSETEST_LOOP_TOTAL_COUNT})."
-		TEST_SUBRESULT=1
-	else
-		PRNINFO "${K2HFTFUSESVR_UNITY_LOGFILE_NAME} file line count(${RESULT_LINE_COUNT}) is as same as 10."
-	fi
-
-	#
-	# Print all logs (if error)
-	#
-	if [ "${TEST_PROCESS_RESULT}" -ne 0 ] || [ "${TEST_SUBRESULT}" -ne 0 ]; then
-		print_log_detail
-
-		PRNERR "TEST FOR JSON ENVIRONMENT (TRANSFERRED)"
-		exit 1
-	else
-		PRNSUCCEED "TEST FOR JSON ENVIRONMENT (TRANSFERRED)"
-	fi
-
-	#----------------------------------------------------------
-	# Cleanup for after test processing
-	#----------------------------------------------------------
-	cleanup_all "${MOUNTDIR}"
 fi
 
 #==============================================================

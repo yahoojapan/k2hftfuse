@@ -55,7 +55,9 @@ url="https://k2hftfuse.antpick.ax/"
 arch="x86_64"
 license="MIT"
 
-depends=""
+depends="
+	k2htpdtor
+"
 depends_dev="
 	chmpx-dev
 "
@@ -69,6 +71,7 @@ makedepends="
 	musl-locales
 	procps
 	yaml-dev
+	fuse-dev
 	k2htpdtor
 "
 

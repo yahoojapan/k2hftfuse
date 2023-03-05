@@ -78,13 +78,6 @@ int main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 
-	// open output file
-	FILE*	fp = fopen(filepath.c_str(), "a");
-	if(!fp){
-		fprintf(stderr, "[ERROR] could not open file(%s)\n", filepath.c_str());
-		exit(EXIT_FAILURE);
-	}
-
 	// buffer
 	char*	pBuff;
 	if(NULL == (pBuff = reinterpret_cast<char*>(malloc(output.length() + 32)))){
@@ -92,13 +85,24 @@ int main(int argc, char** argv)
 		exit(EXIT_FAILURE);
 	}
 
-	// writing
+	// writing(with open/close)
 	for(int cnt = 0; cnt < count; ++cnt){
+		// open output file
+		FILE*	fp = fopen(filepath.c_str(), "a");
+		if(!fp){
+			fprintf(stderr, "[ERROR] could not open file(%s)\n", filepath.c_str());
+			free(pBuff);
+			exit(EXIT_FAILURE);
+		}
+
 		sprintf(pBuff, "%s(%d)\n", output.c_str(), cnt + 1);
         fwrite(pBuff, sizeof(char), strlen(pBuff), fp);				// no check...(this is test)
+		fflush(fp);
+		fclose(fp);
+		sleep(1);
 	}
 
-	fclose(fp);
+	free(pBuff);
 	exit(EXIT_SUCCESS);
 }
 
