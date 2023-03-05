@@ -52,7 +52,7 @@ License: @PKGLICENSE@
 @RPMPKG_GROUP@
 URL: https://@GIT_DOMAIN@/@GIT_ORG@/@PACKAGE_NAME@
 Source0: https://@GIT_DOMAIN@/@GIT_ORG@/@PACKAGE_NAME@/archive/%{gittag}/%{name}-%{version}.tar.gz
-Requires: libfullock%{?_isa} >= 1.0.36, k2hash%{?_isa} >= 1.0.71, chmpx%{?_isa} >= 1.0.72, k2htpdtor%{?_isa} >= 1.0.30, libyaml, fuse
+Requires: libfullock%{?_isa} >= 1.0.36, k2hash%{?_isa} >= 1.0.71, chmpx%{?_isa} >= 1.0.72, k2htpdtor%{?_isa} >= 1.0.30, fuse
 BuildRequires: git-core gcc-c++ make libtool libfullock-devel >= 1.0.36, k2hash-devel >= 1.0.71, chmpx-devel >= 1.0.72, k2htpdtor >= 1.0.30, libyaml-devel, fuse, fuse-devel
 
 %description
