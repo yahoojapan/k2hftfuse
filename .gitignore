@@ -86,7 +86,7 @@ stamp-h1
 #
 Makefile.in
 Makefile
-
+buildutils/APKBUILD.templ
 
 #
 # archive files and backups
