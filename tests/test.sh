@@ -851,10 +851,11 @@ fi
 #
 # Check chmpx binary
 #
-if ! CHMPXBIN=$(command -v chmpx | tr -d '\n'); then
+if ! command -v chmpx >/dev/null 2>&1; then
 	PRNERR "Not found chmpx binary"
 	exit 1
 fi
+CHMPXBIN=$(command -v chmpx | tr -d '\n')
 
 #
 # Check permission for fusermount, etc
