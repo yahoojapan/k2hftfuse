@@ -1,3 +1,11 @@
+k2hftfuse (1.0.39) unstable; urgency=low
+
+  * Updated tool scripts and support OSs - #54
+  * Fixed bugs about test scripts - #53
+  * Fixed .gitignore to exclude APKBUILD.templ - #52
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Thu, 31 Aug 2023 20:27:24 +0900
+
 k2hftfuse (1.0.38) unstable; urgency=low
 
   * Updated building/packaging logic for ALPINE - #50
