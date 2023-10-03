@@ -2,7 +2,7 @@ Source: @PACKAGE_NAME@
 Section: utils
 Priority: optional
 Maintainer: @DEV_NAME@ <@DEV_EMAIL@>
-Build-Depends: @DEBHELPER_DEP@, k2hash-dev (>= 1.0.71), chmpx-dev (>= 1.0.72), libfullock-dev (>= 1.0.36), k2htpdtor (>= 1.0.30), libyaml-dev, fuse, libfuse-dev
+Build-Depends: @DEBHELPER_DEP@, k2hash-dev (>= 1.0.89), chmpx-dev (>= 1.0.102), libfullock-dev (>= 1.0.53), k2htpdtor (>= 1.0.41), libyaml-dev, fuse, libfuse-dev
 Depends: ${misc:Depends}
 Standards-Version: 3.9.8
 Homepage: https://@GIT_DOMAIN@/@GIT_ORG@/@GIT_REPO@
@@ -20,6 +20,6 @@ Description: @SHORTDESC@ (development)
 Package: @PACKAGE_NAME@
 Section: net
 Architecture: amd64
-Depends: ${shlibs:Depends}, ${misc:Depends}, k2hash (>= 1.0.71), chmpx (>= 1.0.72), libfullock (>= 1.0.36), k2htpdtor (>= 1.0.30), fuse
+Depends: ${shlibs:Depends}, ${misc:Depends}, k2hash (>= 1.0.89), chmpx (>= 1.0.102), libfullock (>= 1.0.53), k2htpdtor (>= 1.0.41), fuse
 Description: @SHORTDESC@
 @DEBLONGDESC@
