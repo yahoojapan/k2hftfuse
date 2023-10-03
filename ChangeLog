@@ -1,3 +1,9 @@
+k2hftfuse (1.0.40) unstable; urgency=low
+
+  * Updated versions of dependent packages - #56
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Tue, 03 Oct 2023 09:18:40 +0900
+
 k2hftfuse (1.0.39) unstable; urgency=low
 
   * Updated tool scripts and support OSs - #54
