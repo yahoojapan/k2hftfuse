@@ -1,3 +1,9 @@
+k2hftfuse (1.0.41) unstable; urgency=low
+
+  * Changed support OS (fedora and ubuntu) and updated tool - #58
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Mon, 30 Oct 2023 17:38:05 +0900
+
 k2hftfuse (1.0.40) unstable; urgency=low
 
   * Updated versions of dependent packages - #56
