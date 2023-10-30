@@ -122,20 +122,6 @@ elif [ "${CI_OSTYPE}" = "ubuntu:20.04" ] || [ "${CI_OSTYPE}" = "ubuntu:focal" ];
 	PKG_EXT="deb"
 	IS_OS_UBUNTU=1
 
-elif [ "${CI_OSTYPE}" = "ubuntu:18.04" ] || [ "${CI_OSTYPE}" = "ubuntu:bionic" ]; then
-	DIST_TAG="ubuntu/bionic"
-	INSTALL_PKG_LIST="git autoconf autotools-dev gcc g++ make gdb dh-make fakeroot dpkg-dev devscripts libtool pkg-config ruby-dev rubygems rubygems-integration procps libyaml-dev fuse libfuse-dev k2htpdtor chmpx-dev"
-	INSTALLER_BIN="apt-get"
-	UPDATE_CMD="update"
-	UPDATE_CMD_ARG=""
-	INSTALL_CMD="install"
-	INSTALL_CMD_ARG=""
-	INSTALL_AUTO_ARG="-y"
-	INSTALL_QUIET_ARG="-qq"
-	PKG_OUTPUT_DIR="debian_build"
-	PKG_EXT="deb"
-	IS_OS_UBUNTU=1
-
 elif [ "${CI_OSTYPE}" = "debian:12" ] || [ "${CI_OSTYPE}" = "debian:bookworm" ]; then
 	DIST_TAG="debian/bookworm"
 	INSTALL_PKG_LIST="git autoconf autotools-dev gcc g++ make gdb dh-make fakeroot dpkg-dev devscripts libtool pkg-config ruby-dev rubygems rubygems-integration procps libyaml-dev fuse libfuse-dev k2htpdtor chmpx-dev"
@@ -242,8 +228,8 @@ elif [ "${CI_OSTYPE}" = "centos:7" ] || [ "${CI_OSTYPE}" = "centos:centos7" ]; t
 	PKG_EXT="rpm"
 	IS_OS_CENTOS=1
 
-elif [ "${CI_OSTYPE}" = "fedora:37" ]; then
-	DIST_TAG="fedora/37"
+elif [ "${CI_OSTYPE}" = "fedora:38" ]; then
+	DIST_TAG="fedora/38"
 	INSTALL_PKG_LIST="git autoconf automake gcc gcc-c++ gdb make libtool pkgconfig redhat-rpm-config rpm-build ruby-devel rubygems procps libyaml-devel fuse fuse-devel k2htpdtor chmpx-devel"
 	INSTALLER_BIN="dnf"
 	UPDATE_CMD="update"
@@ -256,8 +242,8 @@ elif [ "${CI_OSTYPE}" = "fedora:37" ]; then
 	PKG_EXT="rpm"
 	IS_OS_FEDORA=1
 
-elif [ "${CI_OSTYPE}" = "fedora:36" ]; then
-	DIST_TAG="fedora/36"
+elif [ "${CI_OSTYPE}" = "fedora:37" ]; then
+	DIST_TAG="fedora/37"
 	INSTALL_PKG_LIST="git autoconf automake gcc gcc-c++ gdb make libtool pkgconfig redhat-rpm-config rpm-build ruby-devel rubygems procps libyaml-devel fuse fuse-devel k2htpdtor chmpx-devel"
 	INSTALLER_BIN="dnf"
 	UPDATE_CMD="update"
