@@ -1,3 +1,9 @@
+k2hftfuse (1.0.42) unstable; urgency=low
+
+  * Updated build_helper.sh for fixing a bug and installing ruby - #60
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Fri, 17 Nov 2023 17:25:37 +0900
+
 k2hftfuse (1.0.41) unstable; urgency=low
 
   * Changed support OS (fedora and ubuntu) and updated tool - #58
