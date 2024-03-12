@@ -189,6 +189,8 @@ bool K2hFtWriteBuff::StringPush(K2hFtBinBuff* pBuff, const unsigned char* data, 
 				return false;
 			}
 			// add stack
+			// cppcheck-suppress unmatchedSuppression
+			// cppcheck-suppress knownConditionTrueFalse
 			if(!StackPush(bufdata, buflength, pid)){
 				ERR_K2HFTPRN("Failed to stack one line data, but continue...");
 			}
@@ -223,6 +225,8 @@ bool K2hFtWriteBuff::StringPush(K2hFtBinBuff* pBuff, const unsigned char* data, 
 			return false;
 		}
 		// add stack
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress knownConditionTrueFalse
 		if(!StackPush(bufdata, buflength, pid)){
 			ERR_K2HFTPRN("Failed to stack one line data, but continue...");
 		}
@@ -263,6 +267,8 @@ bool K2hFtWriteBuff::BinaryPush(K2hFtBinBuff* pBuff, const unsigned char* data, 
 				return false;
 			}
 			// add stack
+			// cppcheck-suppress unmatchedSuppression
+			// cppcheck-suppress knownConditionTrueFalse
 			if(!StackPush(bufdata, buflength, pid)){
 				ERR_K2HFTPRN("Failed to stack one line data, but continue...");
 			}
@@ -279,6 +285,8 @@ bool K2hFtWriteBuff::BinaryPush(K2hFtBinBuff* pBuff, const unsigned char* data, 
 			return false;
 		}
 		// add stack
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress knownConditionTrueFalse
 		if(!StackPush(bufdata, buflength, pid)){
 			ERR_K2HFTPRN("Failed to stack one line data, but continue...");
 		}
@@ -385,7 +393,7 @@ bool K2hFtWriteBuff::IsStackLimit(void)
 	if(0 == count){
 		result = false;
 	}else if(count <= K2hFtWriteBuff::StackLineMax){
-		PK2HFTLINE	pline = Stack.front();
+		const PK2HFTLINE	pline = Stack.front();
 		if(pline && time(NULL) <= (pline->head.ts.tv_sec + K2hFtWriteBuff::StackTimeup)){
 			result = false;
 		}

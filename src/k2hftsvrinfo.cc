@@ -693,6 +693,8 @@ bool K2hFtSvrInfo::LoadIni(const char* conffile, K2hFtPluginMan& pluginman)
 			}
 			// check time format
 			for(k2hftsvrfplist_t::const_iterator iter = OutputFormat.begin(); iter != OutputFormat.end(); ++iter){
+				// cppcheck-suppress unmatchedSuppression
+				// cppcheck-suppress useStlAlgorithm
 				if(K2HFTSVR_FPT_TIME == iter->type){
 					if(0 == TimeFormat.size()){
 						WAN_K2HFTPRN("Output file format has '%%T', but %s is not specified.", INI_K2HFTSVR_FILE_TIMEFORM_STR);
@@ -1280,6 +1282,8 @@ bool K2hFtSvrInfo::LoadYamlMainSec(yaml_parser_t& yparser, K2hFtPluginMan& plugi
 				}
 				// check time format
 				for(k2hftsvrfplist_t::const_iterator iter = OutputFormat.begin(); iter != OutputFormat.end(); ++iter){
+					// cppcheck-suppress unmatchedSuppression
+					// cppcheck-suppress useStlAlgorithm
 					if(K2HFTSVR_FPT_TIME == iter->type){
 						if(0 == TimeFormat.size()){
 							WAN_K2HFTPRN("Output file format has '%%T', but %s is not specified.", INI_K2HFTSVR_FILE_TIMEFORM_STR);

@@ -69,8 +69,9 @@ jobs:
           - rockylinux:9
           - rockylinux:8
           - centos:centos7
+          - fedora:39
           - fedora:38
-          - fedora:37
+          - alpine:3.19
           - alpine:3.18
 
     container:
@@ -79,11 +80,17 @@ jobs:
       options: "--privileged --cap-add SYS_ADMIN --device /dev/fuse"
 
     steps:
+      # [NOTE]
+      # actions/checkout@v3 uses nodejs v16 and will be deprecated.
+      # However, @v4 does not work on centos7 depending on the glibc version,
+      # so we will continue to use @v3.
       #
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your
-      # job can access it
-      #
-      - name: Checkout sources
+      - name: Checkout source code(other than centos7)
+        if: matrix.container != 'centos:centos7'
+        uses: actions/checkout@v4
+
+      - name: Checkout source code(only centos7)
+        if: matrix.container == 'centos:centos7'
         uses: actions/checkout@v3
 
       #

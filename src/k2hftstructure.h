@@ -122,8 +122,8 @@ inline bool ParseK2hFtKey(unsigned char* pk2hftkey, char** path, pid_t* ppid)
 		*path = reinterpret_cast<char*>(pk2hftkey);
 	}
 	if(ppid){
-		char*	pTmp= &(reinterpret_cast<char*>(pk2hftkey)[strlen(reinterpret_cast<char*>(pk2hftkey)) + 1]);
-		*ppid		= static_cast<pid_t>(atoi(pTmp));
+		const char*	pTmp= &(reinterpret_cast<char*>(pk2hftkey)[strlen(reinterpret_cast<char*>(pk2hftkey)) + 1]);
+		*ppid			= static_cast<pid_t>(atoi(pTmp));
 	}
 	return true;
 }

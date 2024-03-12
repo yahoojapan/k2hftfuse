@@ -500,11 +500,16 @@ K2hFtPluginMan::~K2hFtPluginMan(void)
 bool K2hFtPluginMan::Clean(void)
 {
 	bool	result = true;
+
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress knownConditionTrueFalse
 	if(!StopPlugins(true)){
 		ERR_K2HFTPRN("Something error occurred during stopping plugins, but continue...");
 		result = false;
 	}
 
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress knownConditionTrueFalse
 	if(!StopWatchThread()){
 		ERR_K2HFTPRN("Something error occurred during stopping plugins, but continue...");
 		result = false;
@@ -851,6 +856,8 @@ bool K2hFtPluginMan::StopPlugin(PK2HFT_PLUGIN pplugin)
 	// check plugin is running
 	bool	is_found = false;
 	for(k2hftpluginmap_t::iterator iter = run_plugin.begin(); iter != run_plugin.end(); ++iter){
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress useStlAlgorithm
 		if(iter->second == pplugin){
 			is_found = true;
 			break;
@@ -922,7 +929,9 @@ bool K2hFtPluginMan::StopPlugins(bool force)
 		while(!fullock::flck_trylock_noshared_mutex(&lockval));	// MUTEX LOCK
 
 		for(k2hftpluginmap_t::iterator iter = run_plugin.begin(); iter != run_plugin.end(); ){
-			PK2HFT_PLUGIN	pplugin = iter->second;
+			// cppcheck-suppress unmatchedSuppression
+			// cppcheck-suppress constVariablePointer
+			const PK2HFT_PLUGIN	pplugin = iter->second;
 			if(K2HFT_INVALID_PID == pplugin->pid){
 				run_plugin.erase(iter++);
 			}else{

@@ -183,6 +183,8 @@ bool K2hFtManage::Clean(void)
 	}
 
 	// Push and Free all write buffer
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress knownConditionTrueFalse
 	if(!CloseAll()){
 		ERR_K2HFTPRN("Failed to close all cache and stack buffer, but continue...");
 		result = false;

@@ -47,6 +47,8 @@ bool read_ini_file_contents(const char* path, strlst_t& lines, strlst_t& files)
 	}
 	// is already listed
 	for(strlst_t::const_iterator iter = files.begin(); iter != files.end(); ++iter){
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress useStlAlgorithm
 		if(realpath == (*iter)){
 			ERR_K2HFTPRN("file(%s:%s) is already loaded.", path, realpath.c_str());
 			return false;
