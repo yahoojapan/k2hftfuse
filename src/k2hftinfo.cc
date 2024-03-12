@@ -1028,10 +1028,7 @@ bool K2hFtInfo::LoadIni(const char* conffile, mode_t init_mode, mode_t init_dmod
 
 				}else if(INI_K2HFT_ALLOW_STR == key || INI_K2HFT_DENY_STR == key){
 					// ALLOW / DENY
-					bool	is_key_allow = false;
-					if(INI_K2HFT_ALLOW_STR == key){
-						is_key_allow = true;
-					}
+					bool		is_key_allow = (INI_K2HFT_ALLOW_STR == key);
 					strlst_t	values;
 					parse_ini_value(value, values);
 
@@ -2352,6 +2349,8 @@ bool K2hFtInfo::ReadDir(const char* path, k2hftldlist_t& list) const
 		// check same basename
 		bool	already_set = false;
 		for(k2hftldlist_t::const_iterator liter = list.begin(); liter != list.end(); ++liter){
+			// cppcheck-suppress unmatchedSuppression
+			// cppcheck-suppress useStlAlgorithm
 			if((*liter)->strname == basename){
 				already_set = true;
 				break;
@@ -2408,6 +2407,8 @@ bool K2hFtInfo::TruncateZero(const char* path)
 	while(!fullock::flck_trylock_noshared_mutex(prule_lockval));
 
 	for(k2hftrulemap_t::const_iterator iter = RuleMap.begin(); iter != RuleMap.end(); ++iter){
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress useStlAlgorithm
 		if((iter->first) == path){
 			// found target path.
 			bool	result = true;
@@ -2454,6 +2455,8 @@ bool K2hFtInfo::SetOwner(const char* path, uid_t uid, gid_t gid)
 	while(!fullock::flck_trylock_noshared_mutex(prule_lockval));
 
 	for(k2hftrulemap_t::const_iterator iter = RuleMap.begin(); iter != RuleMap.end(); ++iter){
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress useStlAlgorithm
 		if((iter->first) == path){
 			// found target path.
 			bool	result = true;
@@ -2505,6 +2508,8 @@ bool K2hFtInfo::SetMode(const char* path, mode_t mode)
 	while(!fullock::flck_trylock_noshared_mutex(prule_lockval));
 
 	for(k2hftrulemap_t::const_iterator iter = RuleMap.begin(); iter != RuleMap.end(); ++iter){
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress useStlAlgorithm
 		if((iter->first) == path){
 			// found target path.
 			bool	result = true;
@@ -2553,6 +2558,8 @@ bool K2hFtInfo::SetTimespec(const char* path, const struct timespec& ts)
 	// Do not lock here.
 	//
 	for(k2hftrulemap_t::const_iterator iter = RuleMap.begin(); iter != RuleMap.end(); ++iter){
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress useStlAlgorithm
 		if((iter->first) == path){
 			// found target path.
 			bool	result = true;
@@ -2594,6 +2601,8 @@ bool K2hFtInfo::CreateFile(const char* path, mode_t mode, uid_t uid, gid_t gid, 
 	while(!fullock::flck_trylock_noshared_mutex(prule_lockval));
 
 	for(k2hftrulemap_t::const_iterator iter = RuleMap.begin(); iter != RuleMap.end(); ++iter){
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress useStlAlgorithm
 		if((iter->first) == path){
 			// found, nothing to create directory.
 			fullock::flck_unlock_noshared_mutex(prule_lockval);		// Unlock
@@ -2626,6 +2635,8 @@ bool K2hFtInfo::CreateFile(const char* path, mode_t mode, uid_t uid, gid_t gid, 
 
 	// make other Rule, copy from parent
 	for(k2hftrulemap_t::const_iterator iter = RuleMap.begin(); iter != RuleMap.end(); ++iter){
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress useStlAlgorithm
 		if((iter->first) == parentpath){
 			// found target path.
 			bool	result = true;

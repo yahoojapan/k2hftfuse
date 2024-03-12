@@ -124,7 +124,7 @@ static bool parse_parameter(int argc, const char** argv, optparams_t& optparams)
 	}
 	optparams.clear();
 
-	for(int cnt = 1; cnt < argc && argv && argv[cnt]; cnt++){
+	for(int cnt = 1; cnt < argc && argv[cnt]; cnt++){
 		OPTPARAM	param;
 		param.rawstring = "";
 		param.is_number = false;

@@ -617,13 +617,13 @@ static int h2htpfs_chown(const char* path, uid_t uid, gid_t gid)
 
 	// check uid/gid
 	if(uid != static_cast<uid_t>(-1)){
-		struct passwd*	pwdata = getpwuid(uid);
+		const struct passwd*	pwdata = getpwuid(uid);
 		if(pwdata){
 			uid = pwdata->pw_uid;
 		}
 	}
 	if(gid != static_cast<gid_t>(-1)){
-		struct group*	grdata = getgrgid(gid);
+		const struct group*	grdata = getgrgid(gid);
 		if(grdata){
 			gid = grdata->gr_gid;
 		}
@@ -879,7 +879,7 @@ static void* h2htpfs_init(struct fuse_conn_info *conn)
 
 static void h2htpfs_destroy(void* data)
 {
-	K2hFtManage*	pPrivateData = reinterpret_cast<K2hFtManage*>(data);
+	const K2hFtManage*	pPrivateData = reinterpret_cast<K2hFtManage*>(data);
 	assert(pPrivateData == pK2hFtMan);
 
 	if(pK2hFtMan){
