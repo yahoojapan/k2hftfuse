@@ -108,8 +108,7 @@ void* K2hFtManage::TimeupWorkerProc(void* param)
 		// check all buffer & stacking
 		while(!fullock::flck_trylock_noshared_mutex(&(pFtMan->wstack_lockval)));	// LOCK
 		for(k2hftwbufmap_t::iterator iter = pFtMan->wbstackmap.begin(); iter != pFtMan->wbstackmap.end() && pFtMan->run_thread; ++iter){
-			uint64_t		filehandle	= iter->first;
-			K2hFtWriteBuff*	pwbuf		= iter->second;
+			K2hFtWriteBuff*	pwbuf = iter->second;
 
 			// check timeup
 			if(pwbuf && pwbuf->IsStackLimit()){
@@ -117,6 +116,7 @@ void* K2hFtManage::TimeupWorkerProc(void* param)
 				PK2HFTVALUE	pValue = pwbuf->Pop();
 				if(pValue){
 					// stacked
+					uint64_t	filehandle = iter->first;
 					valmap[filehandle] = pValue;
 				}
 			}

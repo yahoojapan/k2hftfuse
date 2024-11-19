@@ -2291,19 +2291,18 @@ bool K2hFtInfo::ReadDir(const char* path, k2hftldlist_t& list) const
 	}
 	list.clear();
 
-	PK2HFTLISTDIR	ptempld = NULL;
 	{
 		// "."
-		ptempld			= new K2HFTLISTDIR;
-		ptempld->strname= ".";
-		ptempld->pstat	= NULL;
-		list.push_back(ptempld);
+		PK2HFTLISTDIR ptempld1	= new K2HFTLISTDIR;
+		ptempld1->strname		= ".";
+		ptempld1->pstat			= NULL;
+		list.push_back(ptempld1);
 
 		// ".."
-		ptempld			= new K2HFTLISTDIR;
-		ptempld->strname= "..";
-		ptempld->pstat	= NULL;
-		list.push_back(ptempld);
+		PK2HFTLISTDIR ptempld2	= new K2HFTLISTDIR;
+		ptempld2->strname		= "..";
+		ptempld2->pstat			= NULL;
+		list.push_back(ptempld2);
 	}
 
 	// Lock
@@ -2361,7 +2360,7 @@ bool K2hFtInfo::ReadDir(const char* path, k2hftldlist_t& list) const
 		}
 
 		// set
-		ptempld						= new K2HFTLISTDIR;
+		PK2HFTLISTDIR ptempld		= new K2HFTLISTDIR;
 		ptempld->strname			= basename;
 		ptempld->pstat				= new (struct stat);
 

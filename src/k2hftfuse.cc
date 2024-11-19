@@ -466,6 +466,8 @@ static int h2htpfs_getattr(const char* path, struct stat* stbuf)
 	return 0;
 }
 
+// cppcheck-suppress unmatchedSuppression
+// cppcheck-suppress constParameterCallback
 static int h2htpfs_readlink(const char* path, char* buf, size_t size)
 {
 	return -EPERM;
@@ -718,6 +720,8 @@ static int h2htpfs_open(const char* path, struct fuse_file_info* fi)
 	return 0;
 }
 
+// cppcheck-suppress unmatchedSuppression
+// cppcheck-suppress constParameterCallback
 static int h2htpfs_read(const char* path, char* buf, size_t size, off_t offset, struct fuse_file_info* fi)
 {
 	// [NOTE]
@@ -826,6 +830,8 @@ static int h2htpfs_fsync(const char* path, int isdatasync, struct fuse_file_info
 	return 0;
 }
 
+// cppcheck-suppress unmatchedSuppression
+// cppcheck-suppress constParameterCallback
 static int h2htpfs_opendir(const char* path, struct fuse_file_info* fi)
 {
 	// All objects(directories and files) have same uid, gid and mode.

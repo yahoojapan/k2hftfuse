@@ -56,7 +56,9 @@ arch="x86_64"
 license="MIT"
 
 depends="
+	procps
 	k2htpdtor
+	chmpx
 "
 depends_dev="
 	chmpx-dev
@@ -69,7 +71,6 @@ makedepends="
 	groff
 	util-linux-misc
 	musl-locales
-	procps
 	yaml-dev
 	fuse-dev
 	k2htpdtor
