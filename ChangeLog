@@ -1,3 +1,9 @@
+k2hftfuse (1.0.44) unstable; urgency=low
+
+  * Changed supported OS and modified some codes - #64
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Tue, 19 Nov 2024 11:38:56 +0900
+
 k2hftfuse (1.0.43) unstable; urgency=low
 
   * Changed support OS and Fixed about cppcheck, etc - #62
