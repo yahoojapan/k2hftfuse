@@ -169,6 +169,8 @@ inline PK2HFTVALUE BuildK2hFtValue(const k2hftlinelist_t& lines)
 
 	// set head
 	PK2HFTVALUE		pK2hFtVal	= reinterpret_cast<PK2HFTVALUE>(pBuff);
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress redundantInitialization
 	pK2hFtVal->head.bodylength	= totallen;
 	pK2hFtVal->head.linecount	= lines.size();
 
@@ -248,6 +250,8 @@ inline PK2HFTLINE BuildK2hFtLine(const unsigned char* data, size_t length, pid_t
 		return NULL;
 	}
 	PK2HFTLINE		pK2hFtLine	= reinterpret_cast<PK2HFTLINE>(pBuff);
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress redundantInitialization
 	pK2hFtLine->head.linelength	= length;
 	pK2hFtLine->head.pid		= pid;
 	get_local_hostname(pK2hFtLine->head.hostname);

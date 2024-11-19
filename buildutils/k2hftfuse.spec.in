@@ -52,8 +52,8 @@ License: @PKGLICENSE@
 @RPMPKG_GROUP@
 URL: https://@GIT_DOMAIN@/@GIT_ORG@/@PACKAGE_NAME@
 Source0: https://@GIT_DOMAIN@/@GIT_ORG@/@PACKAGE_NAME@/archive/%{gittag}/%{name}-%{version}.tar.gz
-Requires: libfullock%{?_isa} >= 1.0.59, k2hash%{?_isa} >= 1.0.93, chmpx%{?_isa} >= 1.0.105, k2htpdtor%{?_isa} >= 1.0.45, fuse
-BuildRequires: git-core gcc-c++ make libtool libfullock-devel >= 1.0.59, k2hash-devel >= 1.0.93, chmpx-devel >= 1.0.105, k2htpdtor >= 1.0.45, libyaml-devel, fuse, fuse-devel
+Requires: libfullock%{?_isa} >= @LIB_MINVER_LIBFULLOCK@, k2hash%{?_isa} >= @LIB_MINVER_LIBK2HASH@, chmpx%{?_isa} >= @LIB_MINVER_LIBCHMPX@, k2htpdtor%{?_isa} >= @LIB_MINVER_LIBK2HTPDTOR@, fuse
+BuildRequires: git-core gcc-c++ make libtool libfullock-devel >= @LIB_MINVER_LIBFULLOCK@, k2hash-devel >= @LIB_MINVER_LIBK2HASH@, chmpx-devel >= @LIB_MINVER_LIBCHMPX@, k2htpdtor >= @LIB_MINVER_LIBK2HTPDTOR@, libyaml-devel, fuse, fuse-devel
 
 %description
 @LONGDESC@
@@ -82,18 +82,8 @@ find %{buildroot} -name '*.la' -exec rm -f {} ';'
 %postun -p /sbin/ldconfig
 %endif
 
-%if 0%{?rhel} == 6
-%clean
-rm -rf %{buildroot}
-%endif
-
 %files
-%if 0%{?rhel} == 6
-%doc COPYING
-%defattr(-,root,root)
-%else
 %license COPYING
-%endif
 %doc README AUTHORS ChangeLog
 %{_mandir}/man1/*
 %{_bindir}/*
@@ -103,16 +93,13 @@ rm -rf %{buildroot}
 #
 %package devel
 Summary: @SHORTDESC@ (development)
-Requires: %{name}%{?_isa} = %{version}-%{release}, libfullock-devel%{?_isa} >= 1.0.59, k2hash-devel%{?_isa} >= 1.0.93, chmpx-devel%{?_isa} >= 1.0.105, k2htpdtor%{?_isa} >= 1.0.45, libyaml-devel, fuse, fuse-devel
+Requires: %{name}%{?_isa} = %{version}-%{release}, libfullock-devel%{?_isa} >= @LIB_MINVER_LIBFULLOCK@, k2hash-devel%{?_isa} >= @LIB_MINVER_LIBK2HASH@, chmpx-devel%{?_isa} >= @LIB_MINVER_LIBCHMPX@, k2htpdtor%{?_isa} >= @LIB_MINVER_LIBK2HTPDTOR@, libyaml-devel, fuse, fuse-devel
 
 %description devel
 Development package for building with @PACKAGE_NAME@ shared library.
 This package has header files and symbols for it.
 
 %files devel
-%if 0%{?rhel} == 6
-%defattr(-,root,root)
-%endif
 %doc README AUTHORS ChangeLog
 %{_includedir}/*
 
