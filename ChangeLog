@@ -1,3 +1,9 @@
+k2hftfuse (1.0.45) unstable; urgency=low
+
+  * Changed support OSes and Fixed scripts, etc - #67
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Fri, 07 Feb 2025 17:50:22 +0900
+
 k2hftfuse (1.0.44) unstable; urgency=low
 
   * Changed supported OS and modified some codes - #64
