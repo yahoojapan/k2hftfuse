@@ -121,20 +121,6 @@ elif echo "${CI_OSTYPE}" | grep -q -i -e "ubuntu:22.04" -e "ubuntu:jammy"; then
 	PKG_EXT="deb"
 	IS_OS_UBUNTU=1
 
-elif echo "${CI_OSTYPE}" | grep -q -i -e "ubuntu:20.04" -e "ubuntu:focal"; then
-	DIST_TAG="ubuntu/focal"
-	INSTALL_PKG_LIST="git autoconf autotools-dev gcc g++ make gdb dh-make fakeroot dpkg-dev devscripts libtool pkg-config ruby-dev rubygems rubygems-integration procps libyaml-dev fuse libfuse-dev k2htpdtor chmpx-dev"
-	INSTALLER_BIN="apt-get"
-	UPDATE_CMD="update"
-	UPDATE_CMD_ARG=""
-	INSTALL_CMD="install"
-	INSTALL_CMD_ARG=""
-	INSTALL_AUTO_ARG="-y"
-	INSTALL_QUIET_ARG="-qq"
-	PKG_OUTPUT_DIR="debian_build"
-	PKG_EXT="deb"
-	IS_OS_UBUNTU=1
-
 elif echo "${CI_OSTYPE}" | grep -q -i -e "debian:12" -e "debian:bookworm"; then
 	DIST_TAG="debian/bookworm"
 	INSTALL_PKG_LIST="git autoconf autotools-dev gcc g++ make gdb dh-make fakeroot dpkg-dev devscripts libtool pkg-config ruby-dev rubygems rubygems-integration procps libyaml-dev fuse libfuse-dev k2htpdtor chmpx-dev"
@@ -241,6 +227,20 @@ elif echo "${CI_OSTYPE}" | grep -q -i "fedora:40"; then
 	PKG_EXT="rpm"
 	IS_OS_FEDORA=1
 
+elif echo "${CI_OSTYPE}" | grep -q -i "alpine:3.21"; then
+	DIST_TAG="alpine/v3.21"
+	INSTALL_PKG_LIST="bash sudo alpine-sdk automake autoconf libtool groff util-linux-misc musl-locales ruby-dev procps yaml-dev fuse-dev k2htpdtor chmpx-dev"
+	INSTALLER_BIN="apk"
+	UPDATE_CMD="update"
+	UPDATE_CMD_ARG="--no-progress"
+	INSTALL_CMD="add"
+	INSTALL_CMD_ARG="--no-progress --no-cache"
+	INSTALL_AUTO_ARG=""
+	INSTALL_QUIET_ARG="-q"
+	PKG_OUTPUT_DIR="apk_build"
+	PKG_EXT="apk"
+	IS_OS_ALPINE=1
+
 elif echo "${CI_OSTYPE}" | grep -q -i "alpine:3.20"; then
 	DIST_TAG="alpine/v3.20"
 	INSTALL_PKG_LIST="bash sudo alpine-sdk automake autoconf libtool groff util-linux-misc musl-locales ruby-dev procps yaml-dev fuse-dev k2htpdtor chmpx-dev"
@@ -257,20 +257,6 @@ elif echo "${CI_OSTYPE}" | grep -q -i "alpine:3.20"; then
 
 elif echo "${CI_OSTYPE}" | grep -q -i "alpine:3.19"; then
 	DIST_TAG="alpine/v3.19"
-	INSTALL_PKG_LIST="bash sudo alpine-sdk automake autoconf libtool groff util-linux-misc musl-locales ruby-dev procps yaml-dev fuse-dev k2htpdtor chmpx-dev"
-	INSTALLER_BIN="apk"
-	UPDATE_CMD="update"
-	UPDATE_CMD_ARG="--no-progress"
-	INSTALL_CMD="add"
-	INSTALL_CMD_ARG="--no-progress --no-cache"
-	INSTALL_AUTO_ARG=""
-	INSTALL_QUIET_ARG="-q"
-	PKG_OUTPUT_DIR="apk_build"
-	PKG_EXT="apk"
-	IS_OS_ALPINE=1
-
-elif echo "${CI_OSTYPE}" | grep -q -i "alpine:3.18"; then
-	DIST_TAG="alpine/v3.18"
 	INSTALL_PKG_LIST="bash sudo alpine-sdk automake autoconf libtool groff util-linux-misc musl-locales ruby-dev procps yaml-dev fuse-dev k2htpdtor chmpx-dev"
 	INSTALLER_BIN="apk"
 	UPDATE_CMD="update"
