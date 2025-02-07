@@ -5,8 +5,9 @@ k2hftfuse
 [![GitHub forks](https://img.shields.io/github/forks/yahoojapan/k2hftfuse.svg)](https://github.com/yahoojapan/k2hftfuse/network)
 [![GitHub stars](https://img.shields.io/github/stars/yahoojapan/k2hftfuse.svg)](https://github.com/yahoojapan/k2hftfuse/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/yahoojapan/k2hftfuse.svg)](https://github.com/yahoojapan/k2hftfuse/issues)
-[![debian packages](https://img.shields.io/badge/deb-packagecloud.io-844fec.svg)](https://packagecloud.io/antpickax/stable)
 [![RPM packages](https://img.shields.io/badge/rpm-packagecloud.io-844fec.svg)](https://packagecloud.io/antpickax/stable)
+[![debian packages](https://img.shields.io/badge/deb-packagecloud.io-844fec.svg)](https://packagecloud.io/antpickax/stable)
+[![ALPINE packages](https://img.shields.io/badge/apk-packagecloud.io-844fec.svg)](https://packagecloud.io/antpickax/stable)
 
 k2hftfuse for file transaction by FUSE-based file system.  
 
@@ -41,6 +42,7 @@ Please see man k2hftfuse.
 ### Packages
   - [RPM packages(packagecloud.io)](https://packagecloud.io/antpickax/stable)
   - [Debian packages(packagecloud.io)](https://packagecloud.io/antpickax/stable)
+  - [ALPINE packages(packagecloud.io)](https://packagecloud.io/antpickax/stable)
 
 ### License
 This software is released under the MIT License, see the license file.

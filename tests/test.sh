@@ -446,15 +446,19 @@ stop_process()
 			#
 			# Check running status
 			#
-			if ! ps -p "${_ONE_PID}" >/dev/null 2>&1; then
+			# shellcheck disable=SC2009
+			if ! ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${_ONE_PID}$" || exit 1 && exit 0 ); then
 				break
 			fi
+
 			#
 			# Try HUP
 			#
 			kill -HUP "${_ONE_PID}" > /dev/null 2>&1
 			sleep 1
-			if ! ps -p "${_ONE_PID}" >/dev/null 2>&1; then
+
+			# shellcheck disable=SC2009
+			if ! ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${_ONE_PID}$" || exit 1 && exit 0 ); then
 				break
 			fi
 
@@ -463,7 +467,9 @@ stop_process()
 			#
 			kill -KILL "${_ONE_PID}" > /dev/null 2>&1
 			sleep 1
-			if ! ps -p "${_ONE_PID}" >/dev/null 2>&1; then
+
+			# shellcheck disable=SC2009
+			if ! ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${_ONE_PID}$" || exit 1 && exit 0 ); then
 				break
 			fi
 			_MAX_TRYCOUNT=$((_MAX_TRYCOUNT - 1))
@@ -471,11 +477,11 @@ stop_process()
 
 		if [ "${_MAX_TRYCOUNT}" -le 0 ]; then
 			# shellcheck disable=SC2009
-			if ps -p "${_ONE_PID}" | grep -v PID | grep -q -i 'defunct'; then
-				PRNWARN "Could not stop ${_ONE_PID} process, because it has defunct status. So assume we were able to stop it."
-			else
+			if ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${_ONE_PID}$" || exit 1 && exit 0 ); then
 				PRNERR "Could not stop ${_ONE_PID} process"
 				_STOP_RESULT=1
+			else
+				PRNWARN "Could not stop ${_ONE_PID} process, because it has maybe defunct status. So assume we were able to stop it."
 			fi
 		fi
 	done
@@ -518,9 +524,11 @@ stop_processes()
 			#
 			# Check running status
 			#
-			if ! ps -p "${_ONE_PID}" >/dev/null 2>&1; then
+			# shellcheck disable=SC2009
+			if ! ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${_ONE_PID}$" || exit 1 && exit 0 ); then
 				break
 			fi
+
 			#
 			# Try HUP
 			#
@@ -529,7 +537,9 @@ stop_processes()
 			else
 				PRNWARN "Failed to send singnal(HUP) to ${_ONE_PID} process."
 			fi
-			if ! ps -p "${_ONE_PID}" >/dev/null 2>&1; then
+
+			# shellcheck disable=SC2009
+			if ! ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${_ONE_PID}$" || exit 1 && exit 0 ); then
 				break
 			fi
 
@@ -541,7 +551,9 @@ stop_processes()
 			else
 				PRNWARN "Failed to send singnal(KILL) to ${_ONE_PID} process."
 			fi
-			if ! ps -p "${_ONE_PID}" >/dev/null 2>&1; then
+
+			# shellcheck disable=SC2009
+			if ! ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${_ONE_PID}$" || exit 1 && exit 0 ); then
 				break
 			fi
 			_MAX_TRYCOUNT=$((_MAX_TRYCOUNT - 1))
@@ -549,11 +561,11 @@ stop_processes()
 
 		if [ "${_MAX_TRYCOUNT}" -le 0 ]; then
 			# shellcheck disable=SC2009
-			if ps -p "${_ONE_PID}" | grep -v PID | grep -q -i 'defunct'; then
-				PRNWARN "Could not stop ${_ONE_PID} process, because it has defunct status. So assume we were able to stop it."
-			else
+			if ( ps -o pid,stat ax 2>/dev/null | grep -v 'PID' | awk '$2~/^[^Z]/ { print $1 }' | grep -q "^${_ONE_PID}$" || exit 1 && exit 0 ); then
 				PRNERR "Could not stop ${_ONE_PID} process"
 				_STOP_RESULT=1
+			else
+				PRNWARN "Could not stop ${_ONE_PID} process, because it has maybe defunct status. So assume we were able to stop it."
 			fi
 		fi
 	done
