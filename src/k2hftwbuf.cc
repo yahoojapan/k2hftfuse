@@ -393,6 +393,8 @@ bool K2hFtWriteBuff::IsStackLimit(void)
 	if(0 == count){
 		result = false;
 	}else if(count <= K2hFtWriteBuff::StackLineMax){
+		// cppcheck-suppress unmatchedSuppression
+		// cppcheck-suppress constVariablePointer
 		const PK2HFTLINE	pline = Stack.front();
 		if(pline && time(NULL) <= (pline->head.ts.tv_sec + K2hFtWriteBuff::StackTimeup)){
 			result = false;

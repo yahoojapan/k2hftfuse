@@ -400,10 +400,18 @@ bool get_parent_dirpath(const char* path, string& parent)
 		ERR_K2HFTPRN("path(/) is mount point.");
 		return false;
 	}
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress nullPointerOutOfMemory
 	char*	ptmp = strdup(path);
+
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress nullPointerOutOfMemory
 	if('/' == ptmp[strlen(ptmp) - 1]){
 		ptmp[strlen(ptmp) - 1] = '\0';
 	}
+
+	// cppcheck-suppress unmatchedSuppression
+	// cppcheck-suppress nullPointerOutOfMemory
 	char*	pos = strrchr(ptmp, '/');
 	if(!pos){
 		ERR_K2HFTPRN("path(%s) does not have /.", path);
