@@ -148,10 +148,10 @@ AS_IF([test "$PKG_CONFIG" = "no"], [AC_MSG_ERROR(You have to install pkg-config 
 #
 # Version list for Libraries
 #
-AC_SUBST([LIB_MINVER_LIBK2HTPDTOR], "1.0.46")
-AC_SUBST([LIB_MINVER_LIBCHMPX], "1.0.106")
-AC_SUBST([LIB_MINVER_LIBK2HASH], "1.0.97")
-AC_SUBST([LIB_MINVER_LIBFULLOCK], "1.0.61")
+AC_SUBST([LIB_MINVER_LIBK2HTPDTOR], "1.0.48")
+AC_SUBST([LIB_MINVER_LIBCHMPX], "1.0.109")
+AC_SUBST([LIB_MINVER_LIBK2HASH], "1.0.99")
+AC_SUBST([LIB_MINVER_LIBFULLOCK], "1.0.63")
 
 #
 # Checking Libraries
@@ -166,9 +166,9 @@ AC_ARG_ENABLE(check-depend-libs,
 	esac]
 )
 AS_IF([test ${check_depend_libs} = 1], [AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)])
-AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([fullock], [libfullock >= 1.0.61], [], [AC_MSG_ERROR(not found libfullock package)])])
-AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([k2hash], [libk2hash >= 1.0.97], [], [AC_MSG_ERROR(not found k2hash package)])])
-AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([chmpx], [libchmpx >= 1.0.106], [], [AC_MSG_ERROR(not found chmpx package)])])
+AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([fullock], [libfullock >= 1.0.63], [], [AC_MSG_ERROR(not found libfullock package)])])
+AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([k2hash], [libk2hash >= 1.0.99], [], [AC_MSG_ERROR(not found k2hash package)])])
+AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([chmpx], [libchmpx >= 1.0.109], [], [AC_MSG_ERROR(not found chmpx package)])])
 
 #
 # Checking FUSE Library
