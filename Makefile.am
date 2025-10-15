@@ -34,7 +34,7 @@ CPPCHECK_BUILD_DIR		= /tmp/cppcheck
 CPPCHECK_BASE_OPT		= --quiet \
 						  --error-exitcode=1 \
 						  --inline-suppr \
-						  -j 4 \
+						  -j 16 \
 						  --std=c++03 \
 						  --xml
 CPPCHECK_ENABLE_OPT		= --enable=warning,style,information,missingInclude

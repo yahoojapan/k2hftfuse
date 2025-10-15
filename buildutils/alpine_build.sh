@@ -208,8 +208,8 @@ fi
 #
 
 if [ -z "${DEBEMAIL}" ]; then
-	echo "[WARNING] DEBEMAIL environment is not set, so set default \"${USER}@$(hostname)\"" 1>&2
-	DEBEMAIL="${USER}@$(hostname)"
+	echo "[WARNING] DEBEMAIL environment is not set, so set default \"${USER}@$(hostname -f)\"" 1>&2
+	DEBEMAIL="${USER}@$(hostname -f)"
 fi
 
 if [ -z "${DEBFULLNAME}" ]; then
