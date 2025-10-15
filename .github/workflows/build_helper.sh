@@ -704,7 +704,7 @@ else
 	fi
 	if [ -z "${CI_DEVELOPER_EMAIL}" ]; then
 		PRNWARN "DEVELOPER_EMAIL is not set in the options or environment variables. There is no choice but to set the default value."
-		CI_DEVELOPER_EMAIL="antpickax-support@mail.yahoo.co.jp"
+		CI_DEVELOPER_EMAIL="ml-antpickax-support@lycorp.co.jp"
 	fi
 fi
 
@@ -1254,6 +1254,51 @@ if [ "${CI_DO_PUBLISH}" -eq 1 ]; then
 			exit 1
 		fi
 	fi
+
+	# [NOTE]
+	# Currently, the package_cloud tool must restrict gem packages depending on
+	# the Ruby version.
+	#
+	RB_MAJOR_VER=$(ruby -v | awk '{print $2}' | awk -F'[^0-9]' '{print $1}')
+	RB_MINOR_VER=$(ruby -v | awk '{print $2}' | awk -F'[^0-9]' '{print $2}')
+	RB_PATCH_VER=$(ruby -v | awk '{print $2}' | awk -F'[^0-9]' '{print $3}')
+	RB_ALL_VER=$((RB_MAJOR_VER*10000 + RB_MINOR_VER*100 + RB_PATCH_VER))
+
+	if [ "${RB_ALL_VER}" -ge 30400 ]; then
+		# [NOTE]
+		# For Ruby 3.4.0 and later, you must manually install the addrev gem package.
+		#
+		PRNINFO "Start to install addrev gem because ruby version is 3.4.0 later"
+		if ({ RUNCMD "${GEM_BIN}" "${GEM_INSTALL_CMD}" abbrev || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+			PRNERR "Failed to install addrev gem"
+			exit 1
+		fi
+
+		# [NOTE]
+		# A fix for JSON::Fragment has been made in json 2.10.0 and later, which
+		# causes an error when running the current package_cloud tool.
+		# To avoid this, we will limit it to json 2.9.1.(This will occur in Fedora 42)
+		#
+		GEMJSON_MAJOR_VER=$("${GEM_BIN}" list | grep '^json[[:space:]]*(' | grep -oP '\(\K[^\)]*' | awk -F'[^0-9]' '{print $1}')
+		GEMJSON_MINOR_VER=$("${GEM_BIN}" list | grep '^json[[:space:]]*(' | grep -oP '\(\K[^\)]*' | awk -F'[^0-9]' '{print $2}')
+		GEMJSON_PATCH_VER=$("${GEM_BIN}" list | grep '^json[[:space:]]*(' | grep -oP '\(\K[^\)]*' | awk -F'[^0-9]' '{print $3}')
+		GEMJSON_ALL_VER=$((GEMJSON_MAJOR_VER*10000 + GEMJSON_MINOR_VER*100 + GEMJSON_PATCH_VER))
+
+		if [ "${GEMJSON_ALL_VER}" -gt 20901 ]; then
+			PRNINFO "Start to uninstall all json gem"
+			for json_installed_path in $("${GEM_BIN}" env gempath | tr ':' '\n'); do
+				if ({ RUNCMD "${GEM_BIN}" uninstall -i "${json_installed_path}" json -aIx || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+					PRNERR "Failed to uninstall json gem in ${json_installed_path}, but continue..."
+				fi
+			done
+
+			PRNINFO "Start to install json gem 2.9.1"
+			if ({ RUNCMD "${GEM_BIN}" "${GEM_INSTALL_CMD}" json -v 2.9.1 || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+				PRNERR "Failed to install json gem"
+				exit 1
+			fi
+		fi
+	fi
 else
 	PRNINFO "Skip to install published tools for uploading packages to packagecloud.io, because this CI process does not upload any packages."
 fi
@@ -1277,7 +1322,7 @@ if [ "${RUN_CPPCHECK}" -eq 1 ]; then
 		fi
 
 	elif [ "${IS_OS_ROCKY}" -eq 1 ]; then
-		if echo "${CI_OSTYPE}" | sed -e 's#:##g' | grep -q -i 'rockylinux8'; then
+		if echo "${CI_OSTYPE}" | sed -e 's#:##g' | grep -q -i 'rockylinux[:]*8'; then
 			#
 			# Rocky 8
 			#
@@ -1293,11 +1338,23 @@ if [ "${RUN_CPPCHECK}" -eq 1 ]; then
 				PRNERR "Failed to enable powertools"
 				exit 1
 			fi
-		else
+		elif echo "${CI_OSTYPE}" | sed -e 's#:##g' | grep -q -i 'rockylinux[:]*9'; then
 			#
 			# Rocky 9 or later
 			#
 			if ({ RUNCMD "${INSTALLER_BIN}" "${INSTALL_CMD}" "${INSTALL_CMD_ARG}" "${INSTALL_AUTO_ARG}" https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+				PRNERR "Failed to install epel repository"
+				exit 1
+			fi
+			if ({ RUNCMD "${INSTALLER_BIN}" config-manager --enable epel || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
+				PRNERR "Failed to enable epel repository"
+				exit 1
+			fi
+		else
+			#
+			# Rocky 10 or later
+			#
+			if ({ RUNCMD "${INSTALLER_BIN}" "${INSTALL_CMD}" "${INSTALL_CMD_ARG}" "${INSTALL_AUTO_ARG}" https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
 				PRNERR "Failed to install epel repository"
 				exit 1
 			fi

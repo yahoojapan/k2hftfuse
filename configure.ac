@@ -98,7 +98,7 @@ AC_CHECK_FILE([configure.custom],
 		custom_git_org="yahoojapan"
 		custom_git_repo="k2hftfuse"
 		custom_git_endpoint="https://api.github.com/repos/"
-		custom_dev_email="antpickax-support@mail.yahoo.co.jp"
+		custom_dev_email="ml-antpickax-support@lycorp.co.jp"
 		custom_dev_name="K2HASH_DEVELOPER"
 	]
 )
