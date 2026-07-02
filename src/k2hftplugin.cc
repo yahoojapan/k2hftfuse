@@ -948,7 +948,7 @@ bool K2hFtPluginMan::StopPlugins(bool force)
 	return true;
 }
 
-bool K2hFtPluginMan::Write(PK2HFT_PLUGIN pplugin, unsigned char* pdata, size_t length)
+bool K2hFtPluginMan::Write(PK2HFT_PLUGIN pplugin, const unsigned char* pdata, size_t length)
 {
 	if(!pplugin || !pdata || 0 == length){
 		ERR_K2HFTPRN("parameters are wrong.");

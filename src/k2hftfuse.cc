@@ -458,7 +458,7 @@ static int h2htpfs_getattr(const char* path, struct stat* stbuf)
 	//
 	memset(stbuf, 0, sizeof(struct stat));		// st_rdev and st_dev is not set because these value is ignored by fuse.
 
-	K2hFtManage*	pk2hftman = get_k2hftman_from_context();
+	const K2hFtManage*	pk2hftman = get_k2hftman_from_context();
 	if(!pk2hftman->FindPath(path, *stbuf)){
 		MSG_K2HFTPRN("Could not find %s path for getting stat.", path);
 		return -ENOENT;
@@ -733,6 +733,8 @@ static int h2htpfs_read(const char* path, char* buf, size_t size, off_t offset, 
 	return -EIO;
 }
 
+// cppcheck-suppress unmatchedSuppression
+// cppcheck-suppress constParameterCallback
 static int h2htpfs_write(const char* path, const char* buf, size_t size, off_t offset, struct fuse_file_info* fi)
 {
 	// [NOTE]
@@ -769,6 +771,8 @@ static int h2htpfs_statfs(const char* path, struct statvfs* stbuf)
 	return 0;
 }
 
+// cppcheck-suppress unmatchedSuppression
+// cppcheck-suppress constParameterCallback
 static int h2htpfs_flush(const char* path, struct fuse_file_info* fi)
 {
 	// [NOTE]
@@ -790,6 +794,8 @@ static int h2htpfs_flush(const char* path, struct fuse_file_info* fi)
 	return 0;
 }
 
+// cppcheck-suppress unmatchedSuppression
+// cppcheck-suppress constParameterCallback
 static int h2htpfs_release(const char* path, struct fuse_file_info* fi)
 {
 	// [NOTE]
@@ -808,6 +814,8 @@ static int h2htpfs_release(const char* path, struct fuse_file_info* fi)
 	return 0;
 }
 
+// cppcheck-suppress unmatchedSuppression
+// cppcheck-suppress constParameterCallback
 static int h2htpfs_fsync(const char* path, int isdatasync, struct fuse_file_info* fi)
 {
 	// [NOTE]
@@ -848,8 +856,8 @@ static int h2htpfs_readdir(const char* path, void* buf, fuse_fill_dir_t filler, 
 	// [NOTE]
 	// 'offset' and 'fi' are not used in this function.
 	//
-	K2hFtManage*	pk2hftman	= get_k2hftman_from_context();
-	k2hftldlist_t	list;
+	const K2hFtManage*	pk2hftman	= get_k2hftman_from_context();
+	k2hftldlist_t		list;
 	if(!pk2hftman->ReadDir(path, list)){
 		MSG_K2HFTPRN("Could not listing file/directory under %s directory.", path);
 		free_k2hftldlist(list);
@@ -896,7 +904,7 @@ static void h2htpfs_destroy(void* data)
 static int h2htpfs_access(const char* path, int mask)
 {
 	struct fuse_context* 	pfusectx	= get_and_check_context();
-	K2hFtManage*			pk2hftman	= get_k2hftman_from_context(pfusectx);
+	const K2hFtManage*		pk2hftman	= get_k2hftman_from_context(pfusectx);
 	struct stat				stbuf;
 	if(!pk2hftman->FindPath(path, stbuf)){
 		MSG_K2HFTPRN("Could not find %s path for checking access.", path);

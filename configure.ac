@@ -148,10 +148,10 @@ AS_IF([test "$PKG_CONFIG" = "no"], [AC_MSG_ERROR(You have to install pkg-config 
 #
 # Version list for Libraries
 #
-AC_SUBST([LIB_MINVER_LIBK2HTPDTOR], "1.0.51")
-AC_SUBST([LIB_MINVER_LIBCHMPX], "1.0.112")
-AC_SUBST([LIB_MINVER_LIBK2HASH], "1.0.102")
-AC_SUBST([LIB_MINVER_LIBFULLOCK], "1.0.67")
+AC_SUBST([LIB_MINVER_LIBK2HTPDTOR], "1.0.52")
+AC_SUBST([LIB_MINVER_LIBCHMPX], "1.0.113")
+AC_SUBST([LIB_MINVER_LIBK2HASH], "1.0.103")
+AC_SUBST([LIB_MINVER_LIBFULLOCK], "1.0.68")
 
 #
 # Checking Libraries
@@ -166,15 +166,12 @@ AC_ARG_ENABLE(check-depend-libs,
 	esac]
 )
 AS_IF([test ${check_depend_libs} = 1], [AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)])
-AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([fullock], [libfullock >= 1.0.67], [], [AC_MSG_ERROR(not found libfullock package)])])
-AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([k2hash], [libk2hash >= 1.0.102], [], [AC_MSG_ERROR(not found k2hash package)])])
-AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([chmpx], [libchmpx >= 1.0.112], [], [AC_MSG_ERROR(not found chmpx package)])])
+AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([fullock], [libfullock >= 1.0.68], [], [AC_MSG_ERROR(not found libfullock package)])])
+AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([k2hash], [libk2hash >= 1.0.103], [], [AC_MSG_ERROR(not found k2hash package)])])
+AS_IF([test ${check_depend_libs} = 1], [PKG_CHECK_MODULES([chmpx], [libchmpx >= 1.0.113], [], [AC_MSG_ERROR(not found chmpx package)])])
 
 #
 # Checking FUSE Library
-#
-# [NOTE]
-# libfuse minimum version is 2.8.3 for CentOS-6.
 #
 check_fuse_lib=1
 AC_MSG_CHECKING([for checking FUSE library])
@@ -186,7 +183,7 @@ AC_ARG_ENABLE(check-fuse-lib,
 	esac]
 )
 AS_IF([test ${check_fuse_lib} = 1], [AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)])
-AS_IF([test ${check_fuse_lib} = 1], [PKG_CHECK_MODULES([fuse], [fuse >= 2.8.3], [], [AC_MSG_ERROR(not found FUSE library package)])])
+AS_IF([test ${check_fuse_lib} = 1], [PKG_CHECK_MODULES([fuse], [fuse >= 2.9.7], [], [AC_MSG_ERROR(not found FUSE library package)])])
 
 #
 # CFLAGS/CXXFLAGS

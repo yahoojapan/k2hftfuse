@@ -34,11 +34,17 @@ name: C/C++ AntPickax CI
 on:
   push:
   pull_request:
+
   #
   # CRON event is fire on every sunday(UTC).
   #
   schedule:
     - cron: '0 15 * * 0'
+
+  #
+  # Manually triggering a workflow
+  #
+  workflow_dispatch:
 
 #
 # Jobs
@@ -72,6 +78,7 @@ jobs:
           - rockylinux:8
           - fedora:44
           - fedora:43
+          - alpine:3.24
           - alpine:3.23
           - alpine:3.22
           - alpine:3.21

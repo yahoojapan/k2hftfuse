@@ -131,7 +131,7 @@ static PK2HFTMATCHPTN build_k2hft_match_pattern(const char* compptn, const char*
 			char*	psetpos			= ptmprepptn;
 			bool	is_last_escape	= false;
 			bool	is_found_term	= false;
-			for(char* preadpos = &ptmprepptn[1]; preadpos && '\0' != *preadpos; ++preadpos){
+			for(const char* preadpos = &ptmprepptn[1]; preadpos && '\0' != *preadpos; ++preadpos){
 				if('\\' == *preadpos){
 					// found escape character
 					if(is_last_escape){
@@ -2804,8 +2804,8 @@ bool K2hFtInfo::Processing(K2HShm* pk2hash, PK2HFTVALUE pValue, uint64_t filehan
 			PK2HFTLINE	pNextLines = GetNextK2hFtLine(pLines);
 
 			if(0 < pLines->head.linelength){
-				size_t			linelen	= pLines->head.linelength;
-				unsigned char*	pOutput	= &(pLines->byLine[K2HFT_LINE_BODY_START_POS]);
+				size_t					linelen	= pLines->head.linelength;
+				const unsigned char*	pOutput	= &(pLines->byLine[K2HFT_LINE_BODY_START_POS]);
 
 				if(pRule->pPlugin){
 					// plugin
