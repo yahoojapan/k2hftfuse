@@ -559,7 +559,7 @@ PK2HFTFW K2hFtFdCache::GetFileWatch(const string& filepath, int openflags, mode_
 
 bool K2hFtFdCache::Register(const string& filepath, int openflags, mode_t openmode, dev_t& st_dev, ino_t& st_ino)
 {
-	PK2HFTFW	pfw;
+	const K2HFTFW*	pfw;
 	if(NULL == (pfw = GetFileWatch(filepath, openflags, openmode))){
 		ERR_K2HFTPRN("Could not get file watch for file(%s)", filepath.c_str());
 		return false;
@@ -592,11 +592,11 @@ bool K2hFtFdCache::Find(const string& filepath, dev_t st_dev, ino_t st_ino)
 	return result;
 }
 
-bool K2hFtFdCache::Write(const string& filepath, int openflags, mode_t openmode, unsigned char* pdata, size_t length)
+bool K2hFtFdCache::Write(const string& filepath, int openflags, mode_t openmode, const unsigned char* pdata, size_t length)
 {
-	PK2HFTFW	pfw;
-	int			fd;
-	int			direct_fd = K2HFT_INVALID_HANDLE;
+	const K2HFTFW*	pfw;
+	int				fd;
+	int				direct_fd = K2HFT_INVALID_HANDLE;
 	if(NULL == (pfw = GetFileWatch(filepath, openflags, openmode))){
 		WAN_K2HFTPRN("Could not open file(%s) by caching fd method, but try to open directly", filepath.c_str());
 

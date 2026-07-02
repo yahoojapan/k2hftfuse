@@ -532,10 +532,9 @@ bool K2hFtManage::CloseAll(void)
 	while(!fullock::flck_trylock_noshared_mutex(&wstack_lockval));		// LOCK
 
 	for(k2hftwbufmap_t::iterator iter = wbstackmap.begin(); iter != wbstackmap.end(); wbstackmap.erase(iter++)){
-		uint64_t		filehandle	= iter->first;
-		K2hFtWriteBuff*	pwbuf		= iter->second;
-
+		K2hFtWriteBuff*	pwbuf = iter->second;
 		if(pwbuf){
+			uint64_t	filehandle	= iter->first;
 			// Force Push All
 			if(!pwbuf->ForceAllPush(IsBinMode())){
 				ERR_K2HFTPRN("Failed to force push for all, file handle(0x%" PRIx64 "), but continue...", filehandle);

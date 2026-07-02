@@ -102,7 +102,7 @@ inline bool make_time_output_string(string& strtime, const k2hftsvrtplist_t& lis
 		ERR_K2HFTPRN("ts is empty.");
 		return false;
 	}
-	struct tm*	tm = localtime(&(ts->tv_sec));
+	const struct tm* tm = localtime(&(ts->tv_sec));
 	if(!tm){
 		ERR_K2HFTPRN("Could not get localtime.");
 		return false;
@@ -1456,7 +1456,7 @@ PK2HFT_PLUGIN K2hFtSvrInfo::GetPlugin(string& outputpath, string& basedir, K2hFt
 	if(pPlugin){
 		return pPlugin;
 	}
-	PK2HFT_PLUGIN	pBasePlugin = FindPlugin(basedir);
+	const K2HFT_PLUGIN*	pBasePlugin = FindPlugin(basedir);
 	if(!pBasePlugin || !pBasePlugin->not_execute){
 		// not_execute should be true!
 		return NULL;

@@ -280,6 +280,20 @@ elif echo "${CI_OSTYPE}" | grep -q -i "fedora:43"; then
 	PKG_EXT="rpm"
 	IS_OS_FEDORA=1
 
+elif echo "${CI_OSTYPE}" | grep -q -i "alpine:3.24"; then
+	DIST_TAG="alpine/v3.24"
+	INSTALL_PKG_LIST="bash sudo alpine-sdk automake autoconf libtool groff util-linux-misc musl-locales ruby-dev procps yaml-dev fuse-dev k2htpdtor chmpx-dev"
+	INSTALLER_BIN="apk"
+	UPDATE_CMD="update"
+	UPDATE_CMD_ARG="--no-progress"
+	INSTALL_CMD="add"
+	INSTALL_CMD_ARG="--no-progress --no-cache"
+	INSTALL_AUTO_ARG=""
+	INSTALL_QUIET_ARG="-q"
+	PKG_OUTPUT_DIR="apk_build"
+	PKG_EXT="apk"
+	IS_OS_ALPINE=1
+
 elif echo "${CI_OSTYPE}" | grep -q -i "alpine:3.23"; then
 	DIST_TAG="alpine/v3.23"
 	INSTALL_PKG_LIST="bash sudo alpine-sdk automake autoconf libtool groff util-linux-misc musl-locales ruby-dev procps yaml-dev fuse-dev k2htpdtor chmpx-dev"

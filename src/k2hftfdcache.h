@@ -96,7 +96,7 @@ class K2hFtFdCache
 
 		bool Register(const std::string& filepath, int openflags, mode_t openmode, dev_t& st_dev, ino_t& st_ino);
 		bool Find(const std::string& filepath, dev_t st_dev, ino_t st_ino);
-		bool Write(const std::string& filepath, int openflags, mode_t openmode, unsigned char* pdata, size_t length);
+		bool Write(const std::string& filepath, int openflags, mode_t openmode, const unsigned char* pdata, size_t length);
 };
 
 #endif	// K2HFTFDCACHE_H

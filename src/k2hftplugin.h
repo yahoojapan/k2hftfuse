@@ -104,7 +104,7 @@ class K2hFtPluginMan
 		bool ExecPlugins(void);
 		bool StopPlugins(bool force = false);
 
-		bool Write(PK2HFT_PLUGIN pplugin, unsigned char* pdata, size_t length);
+		bool Write(PK2HFT_PLUGIN pplugin, const unsigned char* pdata, size_t length);
 };
 
 #endif	// K2HFTPLUGIN_H
