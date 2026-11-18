@@ -32,7 +32,7 @@ set -e
 #
 case "$1" in
 	'install' | 'upgrade')
-		if [ -f /etc/fuse.conf ]; then
+		if [ ! -L /etc/fuse.conf ] && [ -f /etc/fuse.conf ]; then
 			if ! grep -q '^[[:space:]]*user_allow_other[[:space:]]*$' /etc/fuse.conf; then
 				if ! chmod -f 0644 /etc/fuse.conf > /dev/null 2>&1; then
 					echo "[ERROR] could not set permisstion to /etc/fuse.conf" >&2
@@ -44,7 +44,7 @@ case "$1" in
 					echo "user_allow_other"
 				} >> /etc/fuse.conf
 			fi
-		else
+		elif [ ! -e /etc/fuse.conf ] && [ ! -L /etc/fuse.conf ]; then
 			if ! touch /etc/fuse.conf; then
 				echo "[ERROR] could not create /etc/fuse.conf file"
 				exit 1
@@ -57,8 +57,11 @@ case "$1" in
 				echo "### Added by k2hftfuse"
 				echo "user_allow_other"
 			} >> /etc/fuse.conf
+		else
+			echo "[ERROR] Found /etc/fuse.conf, but it is not regular file" >&2
+			exit 1
 		fi
-		if [ -c /dev/fuse ]; then
+		if [ ! -L /dev/fuse ] && [ -c /dev/fuse ]; then
 			_PERM_OWN=$(stat --format='%a' /dev/fuse | cut -b 1)
 			_PERM_GRP=$(stat --format='%a' /dev/fuse | cut -b 2)
 			_PERM_OTH=$(stat --format='%a' /dev/fuse | cut -b 3)
@@ -69,7 +72,7 @@ case "$1" in
 				fi
 			fi
 		fi
-		if [ -f /bin/fusermount ]; then
+		if [ -f /bin/fusermount ] && [ -x /bin/fusermount ]; then
 			_PERM=$(stat --format='%a' /bin/fusermount)
 			if [ -z "${_PERM}" ] || [ "${_PERM}" -le 4000 ]; then
 				if ! chmod -f o+rx /bin/fusermount > /dev/null 2>&1; then
