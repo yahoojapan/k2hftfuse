@@ -418,47 +418,9 @@ run_publish_package()
 			PRNERR "Token for uploading to packagecloud.io is not specified."
 			return 1
 		fi
-
-		# [NOTE]
-		# The Ruby environment of some OS uses RVM (Ruby Version Manager) and requires a Bash shell environment.
-		#
-		if [ "${IS_OS_DEBIAN}" -eq 1 ] && echo "${CI_OSTYPE}" | sed -e 's#:##g' | grep -q -i -e 'debian10' -e 'debianbuster'; then
-			#
-			# Case for Debian 10(buster)
-			#
-			{
-				#
-				# Create bash script for run package_cloud command, because using RVM(Ruby Version Manager).
-				#
-				echo '#!/bin/bash'
-				echo ''
-				echo 'source /etc/profile.d/rvm.sh'
-				echo ''
-				echo 'if ! '"PACKAGECLOUD_TOKEN=${CI_PACKAGECLOUD_TOKEN} package_cloud push ${CI_PACKAGECLOUD_OWNER}/${CI_PACKAGECLOUD_PUBLISH_REPO}/${DIST_TAG} ${SRCTOP}/${PKG_OUTPUT_DIR}/*.${PKG_EXT}; then"
-				echo '	exit 1'
-				echo 'fi'
-				echo ''
-				echo 'exit 0'
-			} > /tmp/run_package_cloud.sh
-			chmod +x /tmp/run_package_cloud.sh
-
-			#
-			# Run bash script
-			#
-			if ({ RUNCMD /tmp/run_package_cloud.sh || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
-				PRNERR "Failed to publish *.${PKG_EXT} packages to ${CI_PACKAGECLOUD_OWNER}/${CI_PACKAGECLOUD_PUBLISH_REPO}/${DIST_TAG}"
-				rm -f /tmp/run_package_cloud.sh
-				return 1
-			fi
-			rm -f /tmp/run_package_cloud.sh
-		else
-			#
-			# Case for other than Debian 10(buster)
-			#
-			if ! PACKAGECLOUD_TOKEN="${CI_PACKAGECLOUD_TOKEN}" /bin/sh -c "package_cloud push ${CI_PACKAGECLOUD_OWNER}/${CI_PACKAGECLOUD_PUBLISH_REPO}/${DIST_TAG} ${SRCTOP}/${PKG_OUTPUT_DIR}/*.${PKG_EXT}"; then
-				PRNERR "Failed to publish *.${PKG_EXT} packages to ${CI_PACKAGECLOUD_OWNER}/${CI_PACKAGECLOUD_PUBLISH_REPO}/${DIST_TAG}"
-				return 1
-			fi
+		if ! PACKAGECLOUD_TOKEN="${CI_PACKAGECLOUD_TOKEN}" /bin/sh -c "package_cloud push ${CI_PACKAGECLOUD_OWNER}/${CI_PACKAGECLOUD_PUBLISH_REPO}/${DIST_TAG} ${SRCTOP}/${PKG_OUTPUT_DIR}/*.${PKG_EXT}"; then
+			PRNERR "Failed to publish *.${PKG_EXT} packages to ${CI_PACKAGECLOUD_OWNER}/${CI_PACKAGECLOUD_PUBLISH_REPO}/${DIST_TAG}"
+			return 1
 		fi
 	else
 		PRNINFO "Not need to publish packages"
@@ -1172,145 +1134,13 @@ if [ "${CI_DO_PUBLISH}" -eq 1 ]; then
 			PRNERR "Failed to install packagecloud.io upload tools"
 			exit 1
 		fi
-
-	elif [ "${IS_OS_DEBIAN}" -eq 1 ] && echo "${CI_OSTYPE}" | sed -e 's#:##g' | grep -q -i -e 'debian10' -e 'debianbuster'; then
-		#
-		# Case for Debian 10/buster (default ruby 2.5)
-		#
-
-		#
-		# Set RVM(Ruby Version Manager) and install Ruby 2.7 and package_cloud
-		#
-		# [NOTE]
-		# Install Ruby2.7 using RVM tools.
-		# Installation and running RVM tools must be done in Bash.
-		# This set of installations will create a Bash script and run it.
-		#
-		# The script does the following:
-		# First, we need to install the GPG key before installing RVM.
-		# This is done with one of the following commands:
-		#
-		#	sudo gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-		#		or
-		#	command curl -sSL https://rvm.io/mpapis.asc | sudo gpg --import -
-		#	command curl -sSL https://rvm.io/pkuczynski.asc | sudo gpg --import -
-		#
-		# After that, install RVM installation, RVM environment settings, Ruby2.7 installation, and package_cloud tools.
-		#
-		# [NOTE]
-		# The RVM installation requires running from a bash shell.
-		# So create a Bash script and run it.
-		{
-			echo '#!/bin/bash'
-			echo ''
-			echo 'if ! curl -sSL https://rvm.io/mpapis.asc | gpg --import - 2>&1; then'
-			echo '	echo "Failed to run [ curl -sSL https://rvm.io/mpapis.asc | gpg --import - ] command."'
-			echo '	exit 1'
-			echo 'fi'
-			echo 'if ! curl -sSL https://rvm.io/pkuczynski.asc | gpg --import - 2>&1; then'
-			echo '	echo "Failed to run [ curl -sSL https://rvm.io/pkuczynski.asc | gpg --import - ] command."'
-			echo '	exit 1'
-			echo 'fi'
-			echo ''
-			echo 'if ! curl -sSL https://get.rvm.io | bash -s stable --ruby 2>&1; then'
-			echo '	echo "Failed to install RVM tool."'
-			echo '	exit 1'
-			echo 'fi'
-			echo ''
-			echo 'if [ ! -f /etc/profile.d/rvm.sh ]; then'
-			echo '	echo "Not found /etc/profile.d/rvm.sh file."'
-			echo '	exit 1'
-			echo 'fi'
-			echo 'source /etc/profile.d/rvm.sh'
-			echo ''
-			echo 'if ! rvm get stable --autolibs=enable 2>&1; then'
-			echo '	echo "Failed to get/update RVM stable."'
-			echo '	exit 1'
-			echo 'fi'
-			echo 'if ! usermod -a -G rvm root 2>&1; then'
-			echo '	echo "Failed to add rvm user to root group."'
-			echo '	exit 1'
-			echo 'fi'
-			echo 'if ! rvm install ruby-2.7 2>&1; then'
-			echo '	echo "Failed to install ruby 2.7."'
-			echo '	exit 1'
-			echo 'fi'
-			echo 'if ! rvm --default use ruby-2.7 2>&1; then'
-			echo '	echo "Failed to set ruby 2.7 as default."'
-			echo '	exit 1'
-			echo 'fi'
-			echo ''
-			echo 'if ! '"${GEM_BIN} ${GEM_INSTALL_CMD} package_cloud 2>&1; then"
-			echo '	echo "Failed to install packagecloud.io upload tools"'
-			echo '	exit 1'
-			echo 'fi'
-			echo ''
-			echo 'exit 0'
-		} > /tmp/rvm_setup.sh
-		chmod +x /tmp/rvm_setup.sh
-
-		#
-		# Run bash script
-		#
-		if ({ RUNCMD /tmp/rvm_setup.sh || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
-			PRNERR "Failed to set up RVM."
-			rm -f /tmp/rvm_setup.sh
-			exit 1
-		fi
-		rm -f /tmp/rvm_setup.sh
-
 	else
 		#
-		# Case for other than Alpine / Debian 10 / Rocky Linux 8
+		# Case for other than Alpine / Rocky Linux 8
 		#
 		if ({ RUNCMD "${GEM_BIN}" "${GEM_INSTALL_CMD}" rake package_cloud || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
 			PRNERR "Failed to install packagecloud.io upload tools"
 			exit 1
-		fi
-	fi
-
-	# [NOTE]
-	# Currently, the package_cloud tool must restrict gem packages depending on
-	# the Ruby version.
-	#
-	RB_MAJOR_VER=$(ruby -v | awk '{print $2}' | awk -F'[^0-9]' '{print $1}')
-	RB_MINOR_VER=$(ruby -v | awk '{print $2}' | awk -F'[^0-9]' '{print $2}')
-	RB_PATCH_VER=$(ruby -v | awk '{print $2}' | awk -F'[^0-9]' '{print $3}')
-	RB_ALL_VER=$((RB_MAJOR_VER*10000 + RB_MINOR_VER*100 + RB_PATCH_VER))
-
-	if [ "${RB_ALL_VER}" -ge 30400 ]; then
-		# [NOTE]
-		# For Ruby 3.4.0 and later, you must manually install the addrev gem package.
-		#
-		PRNINFO "Start to install addrev gem because ruby version is 3.4.0 later"
-		if ({ RUNCMD "${GEM_BIN}" "${GEM_INSTALL_CMD}" abbrev || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
-			PRNERR "Failed to install addrev gem"
-			exit 1
-		fi
-
-		# [NOTE]
-		# A fix for JSON::Fragment has been made in json 2.10.0 and later, which
-		# causes an error when running the current package_cloud tool.
-		# To avoid this, we will limit it to json 2.9.1.(This will occur in Fedora 42)
-		#
-		GEMJSON_MAJOR_VER=$("${GEM_BIN}" list | grep '^json[[:space:]]*(' | grep -oP '\(\K[^\)]*' | awk -F'[^0-9]' '{print $1}')
-		GEMJSON_MINOR_VER=$("${GEM_BIN}" list | grep '^json[[:space:]]*(' | grep -oP '\(\K[^\)]*' | awk -F'[^0-9]' '{print $2}')
-		GEMJSON_PATCH_VER=$("${GEM_BIN}" list | grep '^json[[:space:]]*(' | grep -oP '\(\K[^\)]*' | awk -F'[^0-9]' '{print $3}')
-		GEMJSON_ALL_VER=$((GEMJSON_MAJOR_VER*10000 + GEMJSON_MINOR_VER*100 + GEMJSON_PATCH_VER))
-
-		if [ "${GEMJSON_ALL_VER}" -gt 20901 ]; then
-			PRNINFO "Start to uninstall all json gem"
-			for json_installed_path in $("${GEM_BIN}" env gempath | tr ':' '\n'); do
-				if ({ RUNCMD "${GEM_BIN}" uninstall -i "${json_installed_path}" json -aIx || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
-					PRNERR "Failed to uninstall json gem in ${json_installed_path}, but continue..."
-				fi
-			done
-
-			PRNINFO "Start to install json gem 2.9.1"
-			if ({ RUNCMD "${GEM_BIN}" "${GEM_INSTALL_CMD}" json -v 2.9.1 || echo > "${PIPEFAILURE_FILE}"; } | sed -e 's/^/    /g') && rm "${PIPEFAILURE_FILE}" >/dev/null 2>&1; then
-				PRNERR "Failed to install json gem"
-				exit 1
-			fi
 		fi
 	fi
 else
