@@ -170,7 +170,7 @@ static bool parse_parameter(int argc, const char** argv, optparams_t& optparams)
 //---------------------------------------------------------
 // Parser
 //---------------------------------------------------------
-static bool ParseBinCom(PBCOM pBinCom, unsigned char** ppKey, size_t& keylen, unsigned char** ppVal, size_t& vallen)
+static bool ParseBinCom(PBCOM pBinCom, size_t length, unsigned char** ppKey, size_t& keylen, unsigned char** ppVal, size_t& vallen)
 {
 	if(!pBinCom){
 		ERR_K2HFTPRN("pBinCom is NULL.");
@@ -188,6 +188,13 @@ static bool ParseBinCom(PBCOM pBinCom, unsigned char** ppKey, size_t& keylen, un
 	// check data and set buffer
 	if(0 == pBinCom->scom.key_length || 0 == pBinCom->scom.val_length){
 		WAN_K2HFTPRN("pBinCom doe not have key or value.");
+		return false;
+	}
+
+	if(	(static_cast<size_t>(pBinCom->scom.key_pos) < sizeof(SCOM)) || (length < static_cast<size_t>(pBinCom->scom.key_pos + pBinCom->scom.key_length))	||
+		(static_cast<size_t>(pBinCom->scom.val_pos) < sizeof(SCOM)) || (length < static_cast<size_t>(pBinCom->scom.val_pos + pBinCom->scom.val_length))	)
+	{
+		WAN_K2HFTPRN("The key and val regions are set outside the buffer size of pBinCom.");
 		return false;
 	}
 	*ppKey	= static_cast<unsigned char*>(&pBinCom->byData[pBinCom->scom.key_pos]);
@@ -294,7 +301,7 @@ bool Processing(K2hFtSvrInfo& confinfo, K2hFtPluginMan& pluginman, K2HShm* pTran
 			ERR_K2HFTPRN("Length(%zu) of received message body is wrong(should be %zu).", length, scom_total_length(pBinCom->scom));
 			return false;
 		}
-		if(!ParseBinCom(pBinCom, &pKey, keylen, &pVal, vallen)){
+		if(!ParseBinCom(pBinCom, length, &pKey, keylen, &pVal, vallen)){
 			// [NOTE]
 			// Often come here because removing key makes DEL_KEY transaction.
 			// Because of the suppression of the output of the error message, returns true.

@@ -34,6 +34,7 @@ using namespace std;
 // Class K2hFtBinBuff : Variables
 //---------------------------------------------------------
 const size_t	K2hFtBinBuff::BUFFER_SINGLE_SIZE;
+const size_t	K2hFtBinBuff::DEFAULT_LINE_LIMIT;
 
 //---------------------------------------------------------
 // Class K2hFtBinBuff : Methods
@@ -59,6 +60,11 @@ bool K2hFtBinBuff::AppendStringBuff(const unsigned char* data, size_t length, bo
 	if(CacheBuffSize < (CacheBuffPos + length + 1)){			// for '\0' = +1
 		// buffer over flow, so reallocate
 		CacheBuffSize += max(K2hFtBinBuff::BUFFER_SINGLE_SIZE, (length + 1));
+
+		if(K2hFtWriteBuff::GetLineByteLimit() < CacheBuffSize){
+			ERR_K2HFTPRN("Needed allocation memory(%zu) is over limit(%zu).", CacheBuffSize, K2hFtWriteBuff::GetLineByteLimit());
+			return false;
+		}
 
 		unsigned char*	TmpBuff;
 		if(NULL == (TmpBuff = reinterpret_cast<unsigned char*>(realloc(CacheBuff, CacheBuffSize)))){
@@ -98,12 +104,11 @@ bool K2hFtBinBuff::TakeoutBuff(unsigned char** data, size_t* length)
 //---------------------------------------------------------
 // Class K2hFtWriteBuff : Variable
 //---------------------------------------------------------
-const size_t	K2hFtWriteBuff::DEFAULT_LINE_LIMIT;
 const size_t	K2hFtWriteBuff::BUFFER_BINARY_SIZE;
 const size_t	K2hFtWriteBuff::DEFAULT_LINE_MAX;
 const time_t	K2hFtWriteBuff::DEFAULT_TIMEUP;
 size_t			K2hFtWriteBuff::BinaryBuffLimit	= K2hFtWriteBuff::BUFFER_BINARY_SIZE;
-size_t			K2hFtWriteBuff::LineByteLimit	= K2hFtWriteBuff::DEFAULT_LINE_LIMIT;
+size_t			K2hFtWriteBuff::LineByteLimit	= K2hFtBinBuff::DEFAULT_LINE_LIMIT;
 size_t			K2hFtWriteBuff::StackLineMax	= K2hFtWriteBuff::DEFAULT_LINE_MAX;
 time_t			K2hFtWriteBuff::StackTimeup		= K2hFtWriteBuff::DEFAULT_TIMEUP;
 
@@ -305,6 +310,11 @@ bool K2hFtWriteBuff::StackPush(unsigned char* data, size_t length, pid_t pid)
 		return true;
 	}
 
+	if(K2hFtWriteBuff::GetLineByteLimit() < length){
+		MSG_K2HFTPRN("data length(%zu) is over line byte limit(%zu), so this data is not processed.", length, K2hFtWriteBuff::GetLineByteLimit());
+		return true;
+	}
+
 	// convert output data
 	size_t			cvtlength	= 0;
 	unsigned char*	pOutput		= pK2hFtMan->CvtPushData(data, length, filehandle, cvtlength);
@@ -315,8 +325,8 @@ bool K2hFtWriteBuff::StackPush(unsigned char* data, size_t length, pid_t pid)
 	}
 
 	// check limit
-	if(K2hFtWriteBuff::DEFAULT_LINE_LIMIT != K2hFtWriteBuff::LineByteLimit && K2hFtWriteBuff::LineByteLimit < cvtlength){
-		MSG_K2HFTPRN("data length(%zu) after converting is over line byte limit(%zu), so this data is not processed.", cvtlength, K2hFtWriteBuff::LineByteLimit);
+	if(K2hFtWriteBuff::GetLineByteLimit() < cvtlength){
+		MSG_K2HFTPRN("data length(%zu) after converting is over line byte limit(%zu), so this data is not processed.", cvtlength, K2hFtWriteBuff::GetLineByteLimit());
 
 		if(pOutput != data){		// [NOTICE]
 			K2HFT_FREE(pOutput);

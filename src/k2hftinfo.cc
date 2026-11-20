@@ -322,7 +322,7 @@ static char* append_lastword(char* tgdata, size_t& tgoffset, size_t& tglength, c
 	}
 
 	// check tgdata last word position
-	for(for_del_last_pos = 1; for_del_last_pos <= tgoffset && '\0' == data[tgoffset - for_del_last_pos]; ++for_del_last_pos);
+	for(for_del_last_pos = 1; for_del_last_pos <= tgoffset && '\0' == tgdata[tgoffset - for_del_last_pos]; ++for_del_last_pos);
 	if(tgoffset < for_del_last_pos){
 		tgoffset = 0;
 	}else{

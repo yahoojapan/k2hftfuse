@@ -649,7 +649,44 @@ static int h2htpfs_truncate(const char* path, off_t length)
 		return -EPERM;
 	}
 
-	K2hFtManage*	pk2hftman = get_k2hftman_from_context();
+	// get context
+	struct fuse_context* 	pfusectx	= get_and_check_context();
+	K2hFtManage*			pk2hftman	= get_k2hftman_from_context(pfusectx);
+
+	// check parent dir access
+	string	parentpath;
+	if(!get_parent_dirpath(path, parentpath)){
+		ERR_K2HFTPRN("Could not get parent directory path from path(%s).", path);
+		return -EACCES;
+	}
+	struct stat	parent_stbuf;
+	if(!pk2hftman->FindPath(parentpath.c_str(), parent_stbuf)){
+		MSG_K2HFTPRN("Could not find %s path for checking access.", parentpath.c_str());
+		return -ENOENT;
+	}
+	int	result;
+	if(0 != (result = check_permission_access(X_OK, parent_stbuf, pfusectx->uid, pfusectx->gid))){
+		ERR_K2HFTPRN("parent directory path(%s) does not allow to execute.", path);
+		return result;
+	}
+
+	// check path
+	struct stat	stbuf;
+	if(pk2hftman->FindPath(path, stbuf)){
+		if(S_ISDIR(stbuf.st_mode)){
+			ERR_K2HFTPRN("path(%s) is directory.", path);
+			return -EISDIR;
+		}
+		if(!S_ISREG(stbuf.st_mode)){
+			ERR_K2HFTPRN("path(%s) is not reglar file.", path);
+			return -EISDIR;
+		}
+		if(0 != (result = check_permission_access(W_OK, stbuf, pfusectx->uid, pfusectx->gid))){
+			ERR_K2HFTPRN("file(%s) does not allow to write.", path);
+			return result;
+		}
+	}
+
 	if(!pk2hftman->TruncateZero(path)){
 		MSG_K2HFTPRN("Could not change file(%s) size to %zd(must be zero).", path, length);
 		return -EIO;
@@ -673,17 +710,6 @@ static int h2htpfs_open(const char* path, struct fuse_file_info* fi)
 	struct fuse_context* 	pfusectx	= get_and_check_context();
 	K2hFtManage*			pk2hftman	= get_k2hftman_from_context(pfusectx);
 
-	// check path directory?
-	struct stat	stbuf;
-	uint64_t	file_handle= 0;
-	if(pk2hftman->FindPath(path, stbuf)){
-		if(S_ISDIR(stbuf.st_mode)){
-			ERR_K2HFTPRN("path(%s) is directory.", path);
-			return -EISDIR;
-		}
-		file_handle = pk2hftman->GetFileHandle(path);
-	}
-
 	// check parent dir access
 	string	parentpath;
 	if(!get_parent_dirpath(path, parentpath)){
@@ -701,6 +727,25 @@ static int h2htpfs_open(const char* path, struct fuse_file_info* fi)
 		return result;
 	}
 
+	// check path directory?
+	struct stat	stbuf;
+	uint64_t	file_handle= 0;
+	if(pk2hftman->FindPath(path, stbuf)){
+		if(S_ISDIR(stbuf.st_mode)){
+			ERR_K2HFTPRN("path(%s) is directory.", path);
+			return -EISDIR;
+		}
+		if(!S_ISREG(stbuf.st_mode)){
+			ERR_K2HFTPRN("path(%s) is not reglar file.", path);
+			return -EISDIR;
+		}
+		if(0 != (result = check_permission_access(W_OK, stbuf, pfusectx->uid, pfusectx->gid))){
+			ERR_K2HFTPRN("file(%s) does not allow to write.", path);
+			return result;
+		}
+		file_handle = pk2hftman->GetFileHandle(path);
+	}
+
 	if(0 == file_handle){
 		// create file object in K2hFtInfo
 		if(0 != (result = check_permission_access(W_OK, parent_stbuf, pfusectx->uid, pfusectx->gid))){
@@ -714,6 +759,7 @@ static int h2htpfs_open(const char* path, struct fuse_file_info* fi)
 			return -EIO;
 		}
 	}
+
 	// set handle
 	fi->fh = file_handle;
 
@@ -738,7 +784,11 @@ static int h2htpfs_read(const char* path, char* buf, size_t size, off_t offset, 
 static int h2htpfs_write(const char* path, const char* buf, size_t size, off_t offset, struct fuse_file_info* fi)
 {
 	// [NOTE]
-	// offset is not used.
+	// Offset is not used.
+	//
+	// Verify that the file handle is valid. If the file handle is valid,
+	// it means the permission check has already been performed, so there
+	// is no need to check it again here.
 	//
 	if(0 == fi->fh){
 		ERR_K2HFTPRN("file handle is null for path(%s).", path);

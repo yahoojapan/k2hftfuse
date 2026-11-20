@@ -37,6 +37,8 @@ class K2hFtBinBuff
 		size_t			CacheBuffPos;
 
 	public:
+		static const size_t	DEFAULT_LINE_LIMIT	= (128 * 1024 * 1024);	// 256MB
+
 		K2hFtBinBuff(void);
 		virtual ~K2hFtBinBuff(void);
 
@@ -65,7 +67,6 @@ class K2hFtManage;
 class K2hFtWriteBuff
 {
 	protected:
-		static const size_t	DEFAULT_LINE_LIMIT	= 0;	// = no limit
 		static const size_t	BUFFER_BINARY_SIZE	= (8192 * 10);
 		static size_t		BinaryBuffLimit;
 		static size_t		LineByteLimit;
@@ -91,9 +92,10 @@ class K2hFtWriteBuff
 		bool StackPush(unsigned char* data, size_t length, pid_t pid);
 
 	public:
-		static void SetBinaryBuffLimit(size_t size) { K2hFtWriteBuff::BinaryBuffLimit = size; }
-		static void SetLineByteLimit(size_t size) { K2hFtWriteBuff::LineByteLimit = size; }
-		static void SetStackLineMax(size_t linemax) { K2hFtWriteBuff::StackLineMax = linemax; }
+		static void SetBinaryBuffLimit(size_t size) { if(0 != size){ K2hFtWriteBuff::BinaryBuffLimit = size; } }
+		static void SetLineByteLimit(size_t size) { if(0 != size){ K2hFtWriteBuff::LineByteLimit = size; } }
+		static size_t GetLineByteLimit(void) { return K2hFtWriteBuff::LineByteLimit; }
+		static void SetStackLineMax(size_t linemax) { if(0 != linemax){ K2hFtWriteBuff::StackLineMax = linemax; } }
 		static size_t GetStackLineMax(void) { return K2hFtWriteBuff::StackLineMax; }
 		static void SetStackTimeup(time_t timeup) { K2hFtWriteBuff::StackTimeup = timeup; }
 		static time_t GetStackTimeup(void) { return K2hFtWriteBuff::StackTimeup; }

@@ -81,7 +81,7 @@ bool read_ini_file_contents(const char* path, strlst_t& lines, strlst_t& files)
 			if(key == INI_INCLUDE_STR){
 				// found include, do reentrant
 				if(!read_ini_file_contents(value.c_str(), lines, files)){
-					ERR_K2HFTPRN("Failed to load include file(%s)", value.c_str());
+					ERR_K2HFTPRN("Failed to load include file(%s:%d)", value.c_str(), lineno);
 					cfgstream.close();
 					return false;
 				}
