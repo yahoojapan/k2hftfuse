@@ -1,3 +1,10 @@
+k2hftfuse (1.0.51) unstable; urgency=low
+
+  * Strengthened variable checks and fixed bugs - #80
+  * Changed support OSes and fixed files - #79
+
+ -- Takeshi Nakatani <ggtakec@gmail.com>  Fri, 20 Nov 2026 17:43:37 +0900
+
 k2hftfuse (1.0.50) unstable; urgency=low
 
   * Supports Alpine 3.24, manual trigger for GHA, and fix codes - #77
