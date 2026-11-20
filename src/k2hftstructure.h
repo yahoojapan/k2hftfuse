@@ -73,6 +73,34 @@ typedef union k2hft_value{
 //---------------------------------------------------------
 // Utility Functions
 //---------------------------------------------------------
+inline bool has_dot_component(const char* path)
+{
+	if(!path || '\0' == *path){
+		return false;
+	}
+	const char* ptmp = path;
+	while('\0' != *ptmp){
+		while('/' == *ptmp){
+			++ptmp;
+		}
+		if('\0' == *ptmp){
+			break;
+		}
+
+		const char* next = ptmp;
+		while('\0' != *next && '/' != *next){
+			++next;
+		}
+
+		size_t len = static_cast<size_t>(next - ptmp);
+		if((1 == len && '.' == ptmp[0]) || (2 == len && '.' == ptmp[0] && '.' == ptmp[1])){
+			return true;
+		}
+		ptmp = next;
+	}
+	return false;
+}
+
 //
 // Key format :	"<file path char array>\0<pid decimal char array>\0"
 //				(file path and pid string separated by '\0')
@@ -83,6 +111,11 @@ inline unsigned char* BuildK2hFtKey(size_t& length, const char* path, pid_t pid)
 		ERR_K2HFTPRN("path is NULL.");
 		return NULL;
 	}
+	if(has_dot_component(path)){
+		ERR_K2HFTPRN("path(%s) has \"..\" or \".\"", path);
+		return NULL;
+	}
+
 	// copy path
 	size_t	pathlength = strlen(path);
 	char*	pBuff;
@@ -120,6 +153,10 @@ inline bool ParseK2hFtKey(unsigned char* pk2hftkey, char** path, pid_t* ppid)
 	}
 	if(path){
 		*path = reinterpret_cast<char*>(pk2hftkey);
+		if(has_dot_component(*path)){
+			ERR_K2HFTPRN("path(%s) has \"..\" or \".\"", *path);
+			return false;
+		}
 	}
 	if(ppid){
 		const char*	pTmp= &(reinterpret_cast<char*>(pk2hftkey)[strlen(reinterpret_cast<char*>(pk2hftkey)) + 1]);
@@ -136,6 +173,10 @@ inline bool ParseK2hFtKey(unsigned char* pk2hftkey, char** path, char** ppid)
 	}
 	if(path){
 		*path = reinterpret_cast<char*>(pk2hftkey);
+		if(has_dot_component(*path)){
+			ERR_K2HFTPRN("path(%s) has \"..\" or \".\"", *path);
+			return false;
+		}
 	}
 	if(ppid){
 		*ppid = &(reinterpret_cast<char*>(pk2hftkey)[strlen(reinterpret_cast<char*>(pk2hftkey)) + 1]);

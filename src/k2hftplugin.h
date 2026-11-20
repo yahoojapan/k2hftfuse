@@ -60,8 +60,10 @@ class K2hFtPluginMan
 {
 	protected:
 		static const int		WRITE_RETRY_MAX = 500;	// retry count(500 * 100us = 50ms)
+		static const int		MAX_NAMED_PIPE	= 1024;	// max 1024 files
 		static volatile bool	thread_exit;			// request flag for watching children thread exit
 		static volatile bool	is_run_thread;
+		static int				namedpipe_count;
 		static pthread_t		watch_thread_tid;		// watch children thread id
 
 		K2hFtFdCache*			pfdcache;				// fd cache class

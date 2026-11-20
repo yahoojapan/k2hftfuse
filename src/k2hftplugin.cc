@@ -54,6 +54,7 @@ using namespace std;
 const int		K2hFtPluginMan::WRITE_RETRY_MAX;
 volatile bool	K2hFtPluginMan::thread_exit			= true;
 volatile bool	K2hFtPluginMan::is_run_thread		= false;
+int				K2hFtPluginMan::namedpipe_count		= 0;
 pthread_t		K2hFtPluginMan::watch_thread_tid;
 
 //---------------------------------------------------------
@@ -252,6 +253,11 @@ bool K2hFtPluginMan::BuildNamedPipeFile(string& path)
 	static bool		init_time = false;
 	static time_t	base_number;
 
+	if(K2hFtPluginMan::WRITE_RETRY_MAX <= K2hFtPluginMan::namedpipe_count){
+		ERR_K2HFTPRN("The maximum number(%d) of named pipes that can be created has been reached.", K2hFtPluginMan::namedpipe_count);
+		return false;
+	}
+
 	if(!init_time){
 		base_number	= time(NULL);
 		init_time	= true;
@@ -278,6 +284,7 @@ bool K2hFtPluginMan::BuildNamedPipeFile(string& path)
 		return false;
 	}
 	path = nppath;
+	K2hFtPluginMan::namedpipe_count++;
 
 	return true;
 }
@@ -294,6 +301,7 @@ bool K2hFtPluginMan::RemoveAllNamedPipeFiles(void)
 		ERR_K2HFTPRN("Could not remove named pipes directory, return code(%d)", rtncode);
 		return false;
 	}
+	K2hFtPluginMan::namedpipe_count = 0;
 	return true;
 }
 
